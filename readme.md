@@ -28,7 +28,8 @@ let tokens = analysis_to_tokens(analysis)
 
 ## Acknowledgements
 
-- ColorJS.io powers all color conversions necessary for grouping and sorting
+- [CSSTree](https://github.com/csstree/csstree) does all the heavy lifting of parsing CSS
+- [ColorJS.io](https://colorjs.io/) powers all color conversions necessary for grouping and sorting
 
 ## Related projects
 
