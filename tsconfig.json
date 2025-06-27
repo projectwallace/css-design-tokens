@@ -14,7 +14,7 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"allowSyntheticDefaultImports": true,
-		// "noEmit": true,
+		"noEmit": true,
 		// Code runs in the DOM
 		"lib": [
 			"ES2022",
@@ -23,9 +23,10 @@
 		],
 	},
 	"include": [
-		"src/index.ts"
+		"src/**/*.ts"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"src/**/*.test.ts"
 	]
 }
