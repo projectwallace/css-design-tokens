@@ -16,16 +16,20 @@ import { css_to_tokens } from '@projectwallace/css-design-tokens'
 let tokens = css_to_tokens(`.my-design-system { color: green; }`)
 
 // Or if you already have done CSS analysis with @projectwallace/css-analyzer:
+// NOTE: it is important that `useLocations` is true
 import { analyze } from '@projectwallace/css-analyzer'
 import { analysis_to_tokens } from '@projectwallace/css-design-tokens'
 
-let analysis = analyze(`.my-design-system { color: green; }`)
-let tokens = css_to_tokens(analysis)
+let analysis = analyze(`.my-design-system { color: green; }`, {
+  useLocations: true // MUST be true
+})
+let tokens = analysis_to_tokens(analysis)
 ```
 
 ## Acknowledgements
 
-- ColorJS.io powers all color conversions necessary for grouping
+- [CSSTree](https://github.com/csstree/csstree) does all the heavy lifting of parsing CSS
+- [ColorJS.io](https://colorjs.io/) powers all color conversions necessary for grouping and sorting
 
 ## Related projects
 
