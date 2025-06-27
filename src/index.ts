@@ -1,3 +1,4 @@
+import { analyze } from '@projectwallace/css-analyzer'
 import { convert as convert_duration } from 'css-time-sort'
 import { group_colors, color_dict } from './group-colors.js'
 import { destructure_box_shadow, type DestructuredShadow } from './destructure-box-shadow.js'
@@ -20,7 +21,14 @@ import {
 
 const TYPE_CUBIC_BEZIER = 'cubicBezier' as const
 
-export function generate_tokens(analysis: CssAnalysis) {
+export function css_to_tokens(css: string) {
+	let analysis = analyze(css, {
+		useLocations: true,
+	})
+	return analysis_to_tokens(analysis)
+}
+
+export function analysis_to_tokens(analysis: CssAnalysis) {
 	return {
 		Color: (() => {
 			let colors = Object.create(null) as Record<string, UnparsedToken>
@@ -35,7 +43,7 @@ export function generate_tokens(analysis: CssAnalysis) {
 			}
 			return colors
 		})(),
-		FontSizes: (() => {
+		FontSize: (() => {
 			let font_sizes = Object.create(null) as Record<string, UnparsedToken | DimensionToken>
 
 			for (let font_size in analysis.values.fontSizes.uniqueWithLocations) {
