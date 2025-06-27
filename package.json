@@ -1,0 +1,44 @@
+{
+  "name": "@projectwallace/css-design-tokens",
+  "description": "Generate spec-compliant Design Tokens from CSS.",
+  "version": "0.0.0",
+  "license": "EUPL-1.2",
+  "author": "Bart Veneman <bart@projectwallace.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/projectwallace/css-design-tokens.git"
+  },
+  "homepage": "https://github.com/projectwallace/css-design-tokens",
+  "issues": "https://github.com/projectwallace/css-design-tokens/issues",
+  "keywords": [
+    "css",
+    "design-tokens",
+    "spec"
+  ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/css-design-tokens.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/css-design-tokens.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@projectwallace/css-analyzer": "^7.5.0",
+    "color-sorter": "^7.0.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  }
+}
