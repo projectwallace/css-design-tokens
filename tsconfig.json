@@ -14,7 +14,7 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"allowSyntheticDefaultImports": true,
-		// "noEmit": true,
+		"noEmit": true,
 		// Code runs in the DOM
 		"lib": [
 			"ES2022",
