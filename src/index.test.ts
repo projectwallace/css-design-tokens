@@ -18,7 +18,15 @@ describe('analysis_to_tokens', () => {
 	let expected = {
 		color: {
 			'green-5e0cf03': {
-				$value: 'green'
+				$type: 'color',
+				$value: {
+					colorSpace: 'srgb',
+					components: [0, 0.5019607843137255, 0],
+					alpha: 1,
+				},
+				$extensions: {
+					[EXTENSION_AUTHORED_AS]: 'green'
+				}
 			},
 		},
 		font_size: {
@@ -69,16 +77,32 @@ describe('css_to_tokens', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				color: green;
-				color: rgb(100 100 100 / 0.2);
+				color: rgb(100 100 100 / 20%);
 			}
 		`)
 			expect(actual.color).toEqual({
 				'green-5e0cf03': {
-					$value: 'green'
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0, 0.5019607843137255, 0],
+						alpha: 1,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'green'
+					}
 				},
-				'grey-812aeee': {
-					$value: 'rgb(100 100 100 / 0.2)'
-				},
+				'grey-8139d9b': {
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0.39215686274509803, 0.39215686274509803, 0.39215686274509803],
+						alpha: 0.2,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'rgb(100 100 100 / 20%)'
+					},
+				}
 			})
 		})
 	})
@@ -242,7 +266,17 @@ describe('css_to_tokens', () => {
 							unit: 'px'
 						},
 						inset: false,
-						color: 'rgba(0, 0, 0, 0.5)',
+						color: {
+							$type: 'color',
+							$value: {
+								colorSpace: 'srgb',
+								components: [0, 0, 0],
+								alpha: 0.5,
+							},
+							$extensions: {
+								[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
+							}
+						},
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5)'
@@ -283,7 +317,17 @@ describe('css_to_tokens', () => {
 								unit: 'px'
 							},
 							inset: false,
-							color: 'rgba(0, 0, 0, 0.5)'
+							color: {
+								$type: 'color',
+								$value: {
+									colorSpace: 'srgb',
+									components: [0, 0, 0],
+									alpha: 0.5,
+								},
+								$extensions: {
+									[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
+								}
+							},
 						},
 						{
 							offsetX: {
@@ -307,7 +351,17 @@ describe('css_to_tokens', () => {
 								unit: 'px'
 							},
 							inset: false,
-							color: 'rgba(0, 0, 0, 0.5)'
+							color: {
+								$type: 'color',
+								$value: {
+									colorSpace: 'srgb',
+									components: [0, 0, 0],
+									alpha: 0.5,
+								},
+								$extensions: {
+									[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
+								}
+							},
 						}
 					],
 					$extensions: {

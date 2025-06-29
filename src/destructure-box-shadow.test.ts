@@ -1,11 +1,27 @@
 import { test, expect, describe } from 'vitest'
 import { destructure_box_shadow } from './destructure-box-shadow.js'
+import { ColorToken, EXTENSION_AUTHORED_AS } from './types.js'
+import { color_to_token } from './colors.js'
 
 function create_px_length(value: number): { value: number, unit: string, $type: 'dimension' } {
 	return {
 		$type: 'dimension',
 		value,
 		unit: 'px'
+	}
+}
+
+function create_color_token(): ColorToken {
+	return {
+		$type: 'color',
+		$value: {
+			colorSpace: 'srgb',
+			components: [0, 0, 0],
+			alpha: 1,
+		},
+		$extensions: {
+			[EXTENSION_AUTHORED_AS]: '#000'
+		}
 	}
 }
 
@@ -19,7 +35,7 @@ test('handles invalid input', () => {
 test('0px 0px 0px 0px #000', () => {
 	expect(destructure_box_shadow('0px 0px 0px 0px #000')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(0),
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
@@ -32,7 +48,7 @@ test('0px 0px 0px 0px #000', () => {
 test('adds units when omitted: 0 0 0 0 #000', () => {
 	expect(destructure_box_shadow('0 0 0 0 #000')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(0),
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
@@ -45,7 +61,7 @@ test('adds units when omitted: 0 0 0 0 #000', () => {
 test('offsetX and offsetY: 2px 4px #000', () => {
 	expect(destructure_box_shadow('2px 4px #000')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(0),
@@ -58,7 +74,7 @@ test('offsetX and offsetY: 2px 4px #000', () => {
 test('offsetX, offsetY and blur: 2px 4px 6px #000', () => {
 	expect(destructure_box_shadow('2px 4px 6px #000')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -71,7 +87,7 @@ test('offsetX, offsetY and blur: 2px 4px 6px #000', () => {
 test('offsetX, offsetY, blur and spread: 2px 4px 6px 8px #000', () => {
 	expect(destructure_box_shadow('2px 4px 6px 8px #000')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -84,7 +100,7 @@ test('offsetX, offsetY, blur and spread: 2px 4px 6px 8px #000', () => {
 test('inset: 2px 4px 6px 8px #000 inset', () => {
 	expect(destructure_box_shadow('2px 4px 6px 8px #000 inset')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -97,7 +113,7 @@ test('inset: 2px 4px 6px 8px #000 inset', () => {
 test('INSET: 2px 4px 6px 8px #000 inset', () => {
 	expect(destructure_box_shadow('2px 4px 6px 8px #000 INSET')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -110,7 +126,7 @@ test('INSET: 2px 4px 6px 8px #000 inset', () => {
 test('color in a different order: #000 2px 4px 6px 8px', () => {
 	expect(destructure_box_shadow('#000 2px 4px 6px 8px')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -123,7 +139,7 @@ test('color in a different order: #000 2px 4px 6px 8px', () => {
 test('multiple shadows', () => {
 	expect(destructure_box_shadow('2px 4px 6px 8px #000, 0 0 0 0 #fff inset')).toEqual([
 		{
-			color: '#000',
+			color: create_color_token(),
 			offsetX: create_px_length(2),
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
@@ -131,7 +147,7 @@ test('multiple shadows', () => {
 			inset: false
 		},
 		{
-			color: '#fff',
+			color: color_to_token('#fff'),
 			offsetX: create_px_length(0),
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
@@ -154,7 +170,7 @@ describe('color formats', () => {
 		test(`1px ${color}`, () => {
 			expect(destructure_box_shadow(`1px ${color}`)).toEqual([
 				{
-					color: color,
+					color: color_to_token(color),
 					offsetX: create_px_length(1),
 					offsetY: create_px_length(0),
 					blur: create_px_length(0),

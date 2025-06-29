@@ -25,6 +25,24 @@ export type UnparsedToken = BaseToken & {
 	$type?: never
 }
 
+type ColorSpace = string | 'srgb' | 'display-p3' | 'hsl' | 'hwb' | 'lab' | 'lch' | 'oklab' | 'oklch' | 'display-p3' | 'a98-rgb' | 'prophoto-rgb' | 'rec2020' | 'xyz-d65' | 'xyz-d50'
+type ColorComponent = number | 'none'
+
+export type ColorValue = {
+	colorSpace: ColorSpace
+	components: [ColorComponent, ColorComponent, ColorComponent]
+	alpha: number
+	hex?: string
+}
+
+export type ColorToken = BaseToken & {
+	$type: 'color'
+	$value: ColorValue
+	$extensions: {
+		[EXTENSION_AUTHORED_AS]: string
+	}
+}
+
 export type DimensionToken = BaseToken & {
 	$type: 'dimension'
 	$value: {

@@ -1,5 +1,6 @@
 import { parse, type CssNode, type Value } from 'css-tree'
-import { named_colors, system_colors, color_functions } from './colors'
+import { named_colors, system_colors, color_functions, color_to_token } from './colors.js'
+import type { ColorToken } from './types.js'
 
 type CssLength = {
 	value: number
@@ -7,7 +8,7 @@ type CssLength = {
 }
 
 export type DestructuredShadow = {
-	color: string | undefined
+	color: ColorToken | undefined
 	offsetX: CssLength | undefined
 	offsetY: CssLength | undefined
 	blur: CssLength | undefined
@@ -51,7 +52,7 @@ export function destructure_box_shadow(value: string): null | DestructuredShadow
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
 			} else if (named_colors.has(node.name) || system_colors.has(node.name)) {
-				current_shadow.color = node.name
+				current_shadow.color = color_to_token(node.name)
 			}
 		}
 		else if (node.type === 'Dimension' || (node.type === 'Number' && node.value === '0')) {
@@ -77,13 +78,13 @@ export function destructure_box_shadow(value: string): null | DestructuredShadow
 		}
 		else if (node.type === 'Function') {
 			if (color_functions.has(node.name)) {
-				current_shadow.color = generate(node)
+				current_shadow.color = color_to_token(generate(node))
 			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
-				current_shadow.color = generate(node)
+				current_shadow.color = color_to_token(generate(node))
 			}
 		}
 		else if (node.type === 'Hash') {
-			current_shadow.color = generate(node)
+			current_shadow.color = color_to_token(generate(node))
 		}
 		else if (node.type === 'Operator' && node.value === ',') {
 			// Start a new shadow, but only after we've made sure that the current shadow is valid
@@ -123,7 +124,7 @@ function complete_shadow_token(token: DestructuredShadow) {
 		token.spread = DIMENSION_ZERO
 	}
 	if (!token.color) {
-		token.color = '#000'
+		token.color = color_to_token('#000')
 	}
 	return token
 }

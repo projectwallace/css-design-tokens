@@ -1,4 +1,6 @@
 import { KeywordSet } from './keyword-set.js'
+import { EXTENSION_AUTHORED_AS, type ColorToken } from './types.js'
+import Color from 'colorjs.io'
 
 export const named_colors = new KeywordSet([
 	// CSS Named Colors
@@ -192,3 +194,18 @@ export const color_functions = new KeywordSet([
 	'lab',
 	'oklab',
 ])
+
+export function color_to_token(color: string): ColorToken {
+	let parsed_color = new Color(color)
+	return {
+		$type: 'color',
+		$value: {
+			colorSpace: parsed_color.space.id,
+			components: parsed_color.coords,
+			alpha: parsed_color.alpha.valueOf(),
+		},
+		$extensions: {
+			[EXTENSION_AUTHORED_AS]: color
+		}
+	}
+}
