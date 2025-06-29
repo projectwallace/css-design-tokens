@@ -20,8 +20,6 @@ import {
 } from './types.js'
 import { color_to_token } from './colors.js'
 
-const TYPE_CUBIC_BEZIER = 'cubicBezier' as const
-
 export function css_to_tokens(css: string) {
 	let analysis = analyze(css)
 	return analysis_to_tokens(analysis)
@@ -55,14 +53,15 @@ function get_unique(collection: Collection) {
 export function analysis_to_tokens(analysis: CssAnalysis) {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<string, ColorToken>
+			let colors = Object.create(null) as Record<string, ColorToken | UnparsedToken>
 			let unique = get_unique(analysis.values.colors)
-			let grouped_colors = group_colors(unique)
+			let color_groups = group_colors(unique)
 
-			for (let [group, group_colors] of grouped_colors) {
+			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
-					let color_token = color_to_token(color.authored)
-					colors[`${color_dict.get(group)}-${hash(color.authored)}`] = color_token
+					let color_token = color_to_token(color)
+					let name = `${color_dict.get(group)}-${hash(color)}`
+					colors[name] = color_token
 				}
 			}
 			return colors
@@ -249,7 +248,7 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 				if (value) {
 					easings[name] = {
 						$value: value,
-						$type: TYPE_CUBIC_BEZIER,
+						$type: 'cubicBezier',
 						$extensions: {
 							[EXTENSION_AUTHORED_AS]: easing
 						}

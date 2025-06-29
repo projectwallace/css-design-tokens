@@ -2,6 +2,7 @@ import { test, expect, describe } from 'vitest'
 import { analysis_to_tokens, css_to_tokens } from './index.js'
 import { EXTENSION_AUTHORED_AS } from './types.js'
 import { analyze } from '@projectwallace/css-analyzer'
+import { hash } from './hash.js'
 
 describe('analysis_to_tokens', () => {
 	test('exports a function', () => {
@@ -147,6 +148,24 @@ describe('css_to_tokens', () => {
 				},
 			})
 		})
+
+		test('handles colors with var()', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				color: var(--my-color);
+				color: oklch(var(--my-color) / .4);
+			}
+		`)
+			expect(actual.color).toEqual({
+				// Skip `color: var(--my-color)` entirely
+				'unknown-7d338ae5': {
+					$value: 'oklch(var(--my-color) / .4)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'oklch(var(--my-color) / .4)'
+					}
+				},
+			})
+		})
 	})
 
 	describe('font sizes', () => {
@@ -181,6 +200,38 @@ describe('css_to_tokens', () => {
 					$value: '20vmin',
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '20vmin'
+					}
+				},
+			})
+		})
+
+		test('handles values with var()', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: var(--font-size);
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-f25d5b4b': {
+					$value: 'var(--font-size)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'var(--font-size)'
+					}
+				},
+			})
+		})
+
+		test('handles values with calc()', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: calc(16px + 20%);
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-804e5477': {
+					$value: 'calc(16px + 20%)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'calc(16px + 20%)'
 					}
 				},
 			})
