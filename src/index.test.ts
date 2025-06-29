@@ -105,6 +105,48 @@ describe('css_to_tokens', () => {
 				}
 			})
 		})
+
+		test('handles currentColor', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				color: currentColor;
+			}
+		`)
+			expect(actual.color).toEqual({
+				'black-5601056a': {
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0, 0, 0],
+						alpha: 1,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'currentColor'
+					}
+				},
+			})
+		})
+
+		test('handles transparent', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				color: transparent;
+			}
+		`)
+			expect(actual.color).toEqual({
+				'black-991c5d52': {
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0, 0, 0],
+						alpha: 0,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'transparent'
+					}
+				},
+			})
+		})
 	})
 
 	describe('font sizes', () => {
