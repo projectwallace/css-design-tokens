@@ -22,17 +22,41 @@ import {
 const TYPE_CUBIC_BEZIER = 'cubicBezier' as const
 
 export function css_to_tokens(css: string) {
-	let analysis = analyze(css, {
-		useLocations: true,
-	})
+	let analysis = analyze(css)
 	return analysis_to_tokens(analysis)
+}
+
+// TODO: get @projectwallace/css-analyzer types in order
+type UniqueCount = Record<string, number>
+type UniqueWithLocations = Record<string, {
+	line: number
+	column: number
+	offset: number
+	length: number
+}[]>
+type Collection = {
+	unique: UniqueCount
+} | {
+	uniqueWithLocations: UniqueWithLocations
+}
+
+/**
+ * Function to get the unique values from a collection regardless of whether the analysis was run with
+ * locations enabled or not.
+ */
+function get_unique(collection: Collection) {
+	if ('uniqueWithLocations' in collection) {
+		return collection.uniqueWithLocations
+	}
+	return collection.unique
 }
 
 export function analysis_to_tokens(analysis: CssAnalysis) {
 	return {
-		Color: (() => {
+		color: (() => {
 			let colors = Object.create(null) as Record<string, UnparsedToken>
-			let grouped_colors = group_colors(analysis.values.colors.uniqueWithLocations)
+			let unique = get_unique(analysis.values.colors)
+			let grouped_colors = group_colors(unique)
 
 			for (let [group, group_colors] of grouped_colors) {
 				for (let color of group_colors) {
@@ -43,10 +67,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return colors
 		})(),
-		FontSize: (() => {
+		font_size: (() => {
 			let font_sizes = Object.create(null) as Record<string, UnparsedToken | DimensionToken>
+			let unique = get_unique(analysis.values.fontSizes)
 
-			for (let font_size in analysis.values.fontSizes.uniqueWithLocations) {
+			for (let font_size in unique) {
 				let name = `fontSize-${hash(font_size)}`
 				let parsed = parse_length(font_size)
 				if (parsed === null) {
@@ -68,10 +93,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return font_sizes
 		})(),
-		FontFamily: (() => {
+		font_family: (() => {
 			let families = Object.create(null) as Record<string, FontFamilyToken>
+			let unique = get_unique(analysis.values.fontFamilies)
 
-			for (let fontFamily in analysis.values.fontFamilies.uniqueWithLocations) {
+			for (let fontFamily in unique) {
 				let parsed = destructure_font_family(fontFamily)
 				let name = `fontFamily-${hash(fontFamily)}`
 				families[name] = {
@@ -84,10 +110,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return families
 		})(),
-		LineHeight: (() => {
+		line_height: (() => {
 			let line_heights = Object.create(null) as Record<string, UnparsedToken | DimensionToken | NumberToken>
+			let unique = get_unique(analysis.values.lineHeights)
 
-			for (let line_height in analysis.values.lineHeights.uniqueWithLocations) {
+			for (let line_height in unique) {
 				let name = `lineHeight-${hash(line_height)}`
 				let parsed = destructure_line_height(line_height)
 
@@ -127,25 +154,27 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return line_heights
 		})(),
-		Gradient: (() => {
+		gradient: (() => {
 			let gradients = Object.create(null) as Record<string, UnparsedToken>
+			let unique = get_unique(analysis.values.gradients)
 
-			for (let gradient in analysis.values.gradients.uniqueWithLocations) {
+			for (let gradient in unique) {
 				gradients[`gradient-${hash(gradient)}`] = {
 					$value: gradient
 				}
 			}
 			return gradients
 		})(),
-		BoxShadow: (() => {
+		box_shadow: (() => {
 			type ShadowToken = BaseToken & {
 				$type: 'shadow'
 				$value: DestructuredShadow | DestructuredShadow[]
 			}
 
 			let shadows = Object.create(null) as Record<string, ShadowToken | UnparsedToken>
+			let unique = get_unique(analysis.values.boxShadows)
 
-			for (let box_shadow in analysis.values.boxShadows.uniqueWithLocations) {
+			for (let box_shadow in unique) {
 				let name = `boxShadow-${hash(box_shadow)}`
 				let parsed = destructure_box_shadow(box_shadow)
 
@@ -168,10 +197,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return shadows
 		})(),
-		Radius: (() => {
+		radius: (() => {
 			let radii = Object.create(null) as Record<string, UnparsedToken>
+			let unique = get_unique(analysis.values.borderRadiuses)
 
-			for (let radius in analysis.values.borderRadiuses.uniqueWithLocations) {
+			for (let radius in unique) {
 				let name = `radius-${hash(radius)}`
 				radii[name] = {
 					$value: radius
@@ -179,10 +209,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return radii
 		})(),
-		Duration: (() => {
+		duration: (() => {
 			let durations = Object.create(null) as Record<string, DurationToken | UnparsedToken>
+			let unique = get_unique(analysis.values.animations.durations)
 
-			for (let duration in analysis.values.animations.durations.uniqueWithLocations) {
+			for (let duration in unique) {
 				let parsed = convert_duration(duration)
 				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
 				let name = hash(parsed.toString())
@@ -208,10 +239,11 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			}
 			return durations
 		})(),
-		Easing: (() => {
+		easing: (() => {
 			let easings = Object.create(null) as Record<string, UnparsedToken | CubicBezierToken>
+			let unique = get_unique(analysis.values.animations.timingFunctions)
 
-			for (let easing in analysis.values.animations.timingFunctions.uniqueWithLocations) {
+			for (let easing in unique) {
 				let name = `easing-${hash(easing)}`
 				let value = destructure_easing(easing)
 				if (value) {
