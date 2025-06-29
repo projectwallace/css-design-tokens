@@ -1,5 +1,5 @@
 import { KeywordSet } from './keyword-set.js'
-import { EXTENSION_AUTHORED_AS, type ColorToken, type ColorComponent } from './types.js'
+import { EXTENSION_AUTHORED_AS, type ColorToken } from './types.js'
 import Color from 'colorjs.io'
 
 export const named_colors = new KeywordSet([
@@ -195,7 +195,49 @@ export const color_functions = new KeywordSet([
 	'oklab',
 ])
 
+// List of CSS keywords that we will treat as full black colors.
+const color_keywords = new KeywordSet([
+	'currentcolor',
+	'inherit',
+	'initial',
+	'unset',
+	'revert',
+	'revert-layer',
+])
+
 export function color_to_token(color: string): ColorToken {
+	let lowercased = color.toLowerCase()
+
+	// The keyword "transparent" specifies a transparent black.
+	// > https://drafts.csswg.org/css-color-4/#transparent-color
+	if (lowercased === 'transparent') {
+		return {
+			$type: 'color',
+			$value: {
+				colorSpace: 'srgb',
+				components: [0, 0, 0],
+				alpha: 0,
+			},
+			$extensions: {
+				[EXTENSION_AUTHORED_AS]: color
+			}
+		}
+	}
+
+	if (color_keywords.has(lowercased)) {
+		return {
+			$type: 'color',
+			$value: {
+				colorSpace: 'srgb',
+				components: [0, 0, 0],
+				alpha: 1,
+			},
+			$extensions: {
+				[EXTENSION_AUTHORED_AS]: color
+			}
+		}
+	}
+
 	let parsed_color = new Color(color)
 	return {
 		$type: 'color',
