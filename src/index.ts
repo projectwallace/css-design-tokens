@@ -7,7 +7,7 @@ import { destructure_font_family } from './destructure-font-family.js'
 import { hash } from './hash.js'
 import { destructure_line_height } from './destructure-line-height.js'
 import { parse_length } from './parse-length.js'
-import type { CssAnalysis } from './types.js'
+import type { ColorToken, CssAnalysis } from './types.js'
 import {
 	EXTENSION_AUTHORED_AS,
 	type CubicBezierToken,
@@ -18,6 +18,7 @@ import {
 	type BaseToken,
 	type UnparsedToken,
 } from './types.js'
+import { color_to_token } from './colors.js'
 
 const TYPE_CUBIC_BEZIER = 'cubicBezier' as const
 
@@ -54,15 +55,14 @@ function get_unique(collection: Collection) {
 export function analysis_to_tokens(analysis: CssAnalysis) {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<string, UnparsedToken>
+			let colors = Object.create(null) as Record<string, ColorToken>
 			let unique = get_unique(analysis.values.colors)
 			let grouped_colors = group_colors(unique)
 
 			for (let [group, group_colors] of grouped_colors) {
 				for (let color of group_colors) {
-					colors[`${color_dict.get(group)}-${hash(color.authored)}`] = {
-						$value: color.authored
-					}
+					let color_token = color_to_token(color.authored)
+					colors[`${color_dict.get(group)}-${hash(color.authored)}`] = color_token
 				}
 			}
 			return colors
