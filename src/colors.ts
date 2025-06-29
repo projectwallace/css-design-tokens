@@ -1,6 +1,21 @@
 import { KeywordSet } from './keyword-set.js'
 import { EXTENSION_AUTHORED_AS, type ColorToken } from './types.js'
-import Color from 'colorjs.io'
+import {
+	parse,
+	ColorSpace,
+	sRGB,
+	P3,
+	LCH,
+	HSL,
+	OKLCH,
+} from "colorjs.io/fn"
+
+// Register color spaces for parsing and converting
+ColorSpace.register(sRGB) // Parses keywords and hex colors
+ColorSpace.register(P3)
+ColorSpace.register(HSL)
+ColorSpace.register(LCH)
+ColorSpace.register(OKLCH)
 
 export const named_colors = new KeywordSet([
 	// CSS Named Colors
@@ -238,17 +253,19 @@ export function color_to_token(color: string): ColorToken {
 		}
 	}
 
-	let parsed_color = new Color(color)
+	let parsed_color = parse(color)
+	let [component_a, component_b, component_c] = parsed_color.coords
+
 	return {
 		$type: 'color',
 		$value: {
-			colorSpace: parsed_color.space.id,
+			colorSpace: parsed_color.spaceId,
 			components: [
-				parsed_color.coords[0] ?? 'none',
-				parsed_color.coords[1] ?? 'none',
-				parsed_color.coords[2] ?? 'none',
+				component_a ?? 'none',
+				component_b ?? 'none',
+				component_c ?? 'none',
 			],
-			alpha: parsed_color.alpha.valueOf(),
+			alpha: parsed_color.alpha ?? 0,
 		},
 		$extensions: {
 			[EXTENSION_AUTHORED_AS]: color
