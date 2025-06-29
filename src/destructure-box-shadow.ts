@@ -1,6 +1,6 @@
 import { parse, type CssNode, type Value } from 'css-tree'
 import { named_colors, system_colors, color_functions, color_to_token } from './colors.js'
-import type { ColorToken } from './types.js'
+import type { ColorToken, UnparsedToken } from './types.js'
 
 type CssLength = {
 	value: number
@@ -8,7 +8,7 @@ type CssLength = {
 }
 
 export type DestructuredShadow = {
-	color: ColorToken | undefined
+	color: ColorToken | UnparsedToken | undefined
 	offsetX: CssLength | undefined
 	offsetY: CssLength | undefined
 	blur: CssLength | undefined

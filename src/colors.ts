@@ -1,21 +1,55 @@
 import { KeywordSet } from './keyword-set.js'
-import { EXTENSION_AUTHORED_AS, type ColorToken } from './types.js'
+import { EXTENSION_AUTHORED_AS, type ColorToken, type UnparsedToken } from './types.js'
 import {
 	parse,
 	ColorSpace,
-	sRGB,
-	P3,
+	XYZ_D65,
+	XYZ_D50,
+	XYZ_ABS_D65,
+	Lab_D65,
+	Lab,
 	LCH,
+	sRGB_Linear,
+	sRGB,
 	HSL,
+	HWB,
+	HSV,
+	P3_Linear,
+	P3,
+	A98RGB_Linear,
+	A98RGB,
+	ProPhoto_Linear,
+	ProPhoto,
+	REC_2020_Linear,
+	REC_2020,
+	OKLab,
 	OKLCH,
+	OKLrab,
 } from "colorjs.io/fn"
 
 // Register color spaces for parsing and converting
 ColorSpace.register(sRGB) // Parses keywords and hex colors
-ColorSpace.register(P3)
-ColorSpace.register(HSL)
+ColorSpace.register(XYZ_D65)
+ColorSpace.register(XYZ_D50)
+ColorSpace.register(XYZ_ABS_D65)
+ColorSpace.register(Lab_D65)
+ColorSpace.register(Lab)
 ColorSpace.register(LCH)
+ColorSpace.register(sRGB_Linear)
+ColorSpace.register(HSL)
+ColorSpace.register(HWB)
+ColorSpace.register(HSV)
+ColorSpace.register(P3_Linear)
+ColorSpace.register(P3)
+ColorSpace.register(A98RGB_Linear)
+ColorSpace.register(A98RGB)
+ColorSpace.register(ProPhoto_Linear)
+ColorSpace.register(ProPhoto)
+ColorSpace.register(REC_2020_Linear)
+ColorSpace.register(REC_2020)
+ColorSpace.register(OKLab)
 ColorSpace.register(OKLCH)
+ColorSpace.register(OKLrab)
 
 export const named_colors = new KeywordSet([
 	// CSS Named Colors
@@ -220,7 +254,7 @@ const color_keywords = new KeywordSet([
 	'revert-layer',
 ])
 
-export function color_to_token(color: string): ColorToken {
+export function color_to_token(color: string): ColorToken | UnparsedToken {
 	let lowercased = color.toLowerCase()
 
 	// The keyword "transparent" specifies a transparent black.
@@ -253,22 +287,41 @@ export function color_to_token(color: string): ColorToken {
 		}
 	}
 
-	let parsed_color = parse(color)
-	let [component_a, component_b, component_c] = parsed_color.coords
+	if (lowercased.includes('var(')) {
+		return {
+			$value: color,
+			$extensions: {
+				[EXTENSION_AUTHORED_AS]: color
+			}
+		}
+	}
 
-	return {
-		$type: 'color',
-		$value: {
-			colorSpace: parsed_color.spaceId,
-			components: [
-				component_a ?? 'none',
-				component_b ?? 'none',
-				component_c ?? 'none',
-			],
-			alpha: parsed_color.alpha ?? 0,
-		},
-		$extensions: {
-			[EXTENSION_AUTHORED_AS]: color
+	try {
+		let parsed_color = parse(color)
+		let [component_a, component_b, component_c] = parsed_color.coords
+
+		return {
+			$type: 'color',
+			$value: {
+				colorSpace: parsed_color.spaceId,
+				components: [
+					component_a ?? 'none',
+					component_b ?? 'none',
+					component_c ?? 'none',
+				],
+				alpha: parsed_color.alpha ?? 0,
+			},
+			$extensions: {
+				[EXTENSION_AUTHORED_AS]: color
+			}
+		}
+	} catch (error) {
+		// A catch for edge cases that we don't support yet.
+		return {
+			$value: color,
+			$extensions: {
+				[EXTENSION_AUTHORED_AS]: color
+			}
 		}
 	}
 }
