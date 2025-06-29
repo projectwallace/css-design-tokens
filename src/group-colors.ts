@@ -29,7 +29,7 @@ export const color_dict = new Map<number, string>([
 	[unknown, 'unknown']
 ])
 
-export function group_colors(colors: CssAnalysis['values']['colors']['uniqueWithLocations']) {
+export function group_colors(colors: Record<string, unknown>) {
 	let color_groups = new Map<number, NormalizedColorWithAuthored[]>()
 
 	for (let color in colors) {
