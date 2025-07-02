@@ -1,13 +1,12 @@
 import { analyze } from '@projectwallace/css-analyzer'
 import { convert as convert_duration } from 'css-time-sort'
 import { group_colors, color_dict } from './group-colors.js'
-import { destructure_box_shadow, type DestructuredShadow } from './destructure-box-shadow.js'
+import { destructure_box_shadow } from './destructure-box-shadow.js'
 import { destructure_easing } from './destructure-easing.js'
 import { destructure_font_family } from './destructure-font-family.js'
 import { hash } from './hash.js'
 import { destructure_line_height } from './destructure-line-height.js'
 import { parse_length } from './parse-length.js'
-import type { ColorToken, CssAnalysis } from './types.js'
 import {
 	EXTENSION_AUTHORED_AS,
 	type CubicBezierToken,
@@ -15,8 +14,10 @@ import {
 	type DurationToken,
 	type FontFamilyToken,
 	type NumberToken,
-	type BaseToken,
 	type UnparsedToken,
+	type ColorToken,
+	type CssAnalysis,
+	type ShadowToken,
 } from './types.js'
 import { color_to_token } from './colors.js'
 
@@ -27,16 +28,30 @@ export function css_to_tokens(css: string) {
 
 // TODO: get @projectwallace/css-analyzer types in order
 type UniqueCount = Record<string, number>
-type UniqueWithLocations = Record<string, {
+type CssLocation = {
 	line: number
 	column: number
 	offset: number
 	length: number
-}[]>
+}
+type UniqueWithLocations = Record<string, CssLocation[]>
 type Collection = {
 	unique: UniqueCount
 } | {
 	uniqueWithLocations: UniqueWithLocations
+}
+type TokenID = string
+
+type Tokens = {
+	color: Record<TokenID, ColorToken | UnparsedToken>
+	font_size: Record<TokenID, UnparsedToken | DimensionToken>
+	font_family: Record<TokenID, FontFamilyToken>
+	line_height: Record<TokenID, UnparsedToken | DimensionToken | NumberToken>
+	gradient: Record<TokenID, UnparsedToken>
+	box_shadow: Record<TokenID, ShadowToken | UnparsedToken>
+	radius: Record<TokenID, UnparsedToken>
+	duration: Record<TokenID, DurationToken | UnparsedToken>
+	easing: Record<TokenID, UnparsedToken | CubicBezierToken>
 }
 
 /**
@@ -50,7 +65,7 @@ function get_unique(collection: Collection) {
 	return collection.unique
 }
 
-export function analysis_to_tokens(analysis: CssAnalysis) {
+export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
 			let colors = Object.create(null) as Record<string, ColorToken | UnparsedToken>
@@ -165,11 +180,6 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 			return gradients
 		})(),
 		box_shadow: (() => {
-			type ShadowToken = BaseToken & {
-				$type: 'shadow'
-				$value: DestructuredShadow | DestructuredShadow[]
-			}
-
 			let shadows = Object.create(null) as Record<string, ShadowToken | UnparsedToken>
 			let unique = get_unique(analysis.values.boxShadows)
 
@@ -183,15 +193,15 @@ export function analysis_to_tokens(analysis: CssAnalysis) {
 						$extensions: {
 							[EXTENSION_AUTHORED_AS]: box_shadow
 						}
-					} as UnparsedToken
+					}
 				} else {
 					shadows[name] = {
 						$type: 'shadow',
-						$value: parsed.length === 1 ? parsed[0] : parsed,
+						$value: parsed.length === 1 ? parsed[0]! : parsed,
 						$extensions: {
 							[EXTENSION_AUTHORED_AS]: box_shadow
 						}
-					} as ShadowToken
+					}
 				}
 			}
 			return shadows

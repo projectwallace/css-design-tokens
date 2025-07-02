@@ -1,4 +1,5 @@
 import type { analyze } from '@projectwallace/css-analyzer'
+import type { DestructuredShadow } from './destructure-box-shadow'
 
 export type CssAnalysis = ReturnType<typeof analyze>
 
@@ -64,4 +65,9 @@ export type CubicBezierToken = BaseToken & {
 export type FontFamilyToken = BaseToken & {
 	$type: 'fontFamily'
 	$value: string[] | string
+}
+
+export type ShadowToken = BaseToken & {
+	$type: 'shadow'
+	$value: DestructuredShadow | DestructuredShadow[]
 }
