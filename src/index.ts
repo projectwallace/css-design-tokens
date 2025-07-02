@@ -7,7 +7,6 @@ import { destructure_font_family } from './destructure-font-family.js'
 import { hash } from './hash.js'
 import { destructure_line_height } from './destructure-line-height.js'
 import { parse_length } from './parse-length.js'
-import type { ColorToken, CssAnalysis, ShadowToken } from './types.js'
 import {
 	EXTENSION_AUTHORED_AS,
 	type CubicBezierToken,
@@ -16,6 +15,9 @@ import {
 	type FontFamilyToken,
 	type NumberToken,
 	type UnparsedToken,
+	type ColorToken,
+	type CssAnalysis,
+	type ShadowToken,
 } from './types.js'
 import { color_to_token } from './colors.js'
 
