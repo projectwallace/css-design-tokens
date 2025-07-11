@@ -1,6 +1,7 @@
 import { resolve } from "path"
 import { defineConfig } from "vite"
 import dts from "vite-plugin-dts"
+import pkg from "./package.json"
 
 export default defineConfig({
 	build: {
@@ -9,7 +10,7 @@ export default defineConfig({
 			formats: ["es"],
 		},
 		rollupOptions: {
-			external: ["@projectwallace/css-analyzer"],
+			external: Object.keys(pkg.dependencies),
 		},
 	},
 	plugins: [
