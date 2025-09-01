@@ -2,7 +2,6 @@ import { test, expect, describe } from 'vitest'
 import { analysis_to_tokens, css_to_tokens } from './index.js'
 import { EXTENSION_AUTHORED_AS } from './types.js'
 import { analyze } from '@projectwallace/css-analyzer'
-import { hash } from './hash.js'
 
 describe('analysis_to_tokens', () => {
 	test('exports a function', () => {
