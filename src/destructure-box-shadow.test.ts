@@ -30,6 +30,8 @@ test('handles invalid input', () => {
 	expect.soft(destructure_box_shadow('foo')).toBeNull()
 	expect.soft(destructure_box_shadow('#000')).toBeNull()
 	expect.soft(destructure_box_shadow('2px')).toBeNull()
+	expect.soft(destructure_box_shadow('var(--my-var)')).toBeNull()
+	expect.soft(destructure_box_shadow('var(--my-var, 0px 0px 0px #000)')).toBeNull()
 })
 
 test('0px 0px 0px 0px #000', () => {

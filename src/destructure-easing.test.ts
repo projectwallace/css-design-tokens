@@ -38,6 +38,9 @@ describe('unsupported', () => {
 	test('var(--test)', () => {
 		expect(destructure_easing('var(--test)')).toBeUndefined()
 	})
+	test('var(--test, ease-in)', () => {
+		expect(destructure_easing('var(--test, ease-in)')).toBeUndefined()
+	})
 	test('step-start', () => {
 		expect(destructure_easing('step-start')).toBeUndefined()
 	})

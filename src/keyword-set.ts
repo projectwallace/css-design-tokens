@@ -4,7 +4,7 @@
 export class KeywordSet {
 	private set: Set<string>
 
-	constructor(items: string[]) {
+	constructor(items: Lowercase<string>[]) {
 		this.set = new Set(items)
 	}
 

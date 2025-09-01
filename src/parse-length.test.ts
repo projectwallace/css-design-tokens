@@ -30,13 +30,15 @@ test('invalid values', () => {
 	expect.soft(parse_length('')).toBeNull()
 	expect.soft(parse_length('1')).toBeNull()
 	expect.soft(parse_length('1.5')).toBeNull()
+})
 
-	// Unsupported units
+test('unsupported units', () => {
 	expect.soft(parse_length('100%')).toBeNull()
 	expect.soft(parse_length('100vh')).toBeNull()
 	expect.soft(parse_length('1em')).toBeNull()
+})
 
-	// Unsupported keywords
+test('unsupported keywords', () => {
 	expect.soft(parse_length('normal')).toBeNull()
 	expect.soft(parse_length('smaller')).toBeNull()
 	expect.soft(parse_length('inherit')).toBeNull()
