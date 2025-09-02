@@ -1,5 +1,4 @@
-import { convert, type NormalizedColorWithAuthored } from 'color-sorter'
-import type { CssAnalysis } from './types.js'
+import { convert } from 'color-sorter'
 
 const white = 0
 const black = 1

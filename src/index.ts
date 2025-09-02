@@ -75,8 +75,10 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
-					let name = `${color_dict.get(group)}-${hash(color)}`
-					colors[name] = color_token
+					if (color_token !== null) {
+						let name = `${color_dict.get(group)}-${hash(color)}`
+						colors[name] = color_token
+					}
 				}
 			}
 			return colors

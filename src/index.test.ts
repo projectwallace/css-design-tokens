@@ -112,19 +112,7 @@ describe('css_to_tokens', () => {
 				color: currentColor;
 			}
 		`)
-			expect(actual.color).toEqual({
-				'black-5601056a': {
-					$type: 'color',
-					$value: {
-						colorSpace: 'srgb',
-						components: [0, 0, 0],
-						alpha: 1,
-					},
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'currentColor'
-					}
-				},
-			})
+			expect(actual.color).toEqual({})
 		})
 
 		test('handles transparent', () => {
@@ -155,15 +143,7 @@ describe('css_to_tokens', () => {
 				color: oklch(var(--my-color) / .4);
 			}
 		`)
-			expect(actual.color).toEqual({
-				// Skip `color: var(--my-color)` entirely
-				'unknown-7d338ae5': {
-					$value: 'oklch(var(--my-color) / .4)',
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'oklch(var(--my-color) / .4)'
-					}
-				},
-			})
+			expect(actual.color).toEqual({})
 		})
 	})
 
