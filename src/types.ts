@@ -71,3 +71,11 @@ export type ShadowToken = BaseToken & {
 	$type: 'shadow'
 	$value: DestructuredShadow | DestructuredShadow[]
 }
+
+export type GradientToken = BaseToken & {
+	$type: 'gradient',
+	$value: {
+		color: ColorToken
+		position: number
+	}[]
+}
