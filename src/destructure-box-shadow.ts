@@ -52,7 +52,11 @@ export function destructure_box_shadow(value: string): null | DestructuredShadow
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
 			} else if (named_colors.has(node.name) || system_colors.has(node.name)) {
-				current_shadow.color = color_to_token(node.name)
+				let color_token = color_to_token(node.name)
+				if (color_token === null) {
+					return
+				}
+				current_shadow.color = color_token
 			}
 		}
 		else if (node.type === 'Dimension' || (node.type === 'Number' && node.value === '0')) {
@@ -78,13 +82,25 @@ export function destructure_box_shadow(value: string): null | DestructuredShadow
 		}
 		else if (node.type === 'Function') {
 			if (color_functions.has(node.name)) {
-				current_shadow.color = color_to_token(generate(node))
+				let color_token = color_to_token(generate(node))
+				if (color_token === null) {
+					return
+				}
+				current_shadow.color = color_token
 			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
-				current_shadow.color = color_to_token(generate(node))
+				let color_token = color_to_token(generate(node))
+				if (color_token === null) {
+					return
+				}
+				current_shadow.color = color_token
 			}
 		}
 		else if (node.type === 'Hash') {
-			current_shadow.color = color_to_token(generate(node))
+			let color_token = color_to_token(generate(node))
+			if (color_token === null) {
+				return
+			}
+			current_shadow.color = color_token
 		}
 		else if (node.type === 'Operator' && node.value === ',') {
 			// Start a new shadow, but only after we've made sure that the current shadow is valid
@@ -124,7 +140,7 @@ function complete_shadow_token(token: DestructuredShadow) {
 		token.spread = DIMENSION_ZERO
 	}
 	if (!token.color) {
-		token.color = color_to_token('#000')
+		token.color = color_to_token('#000')!
 	}
 	return token
 }
