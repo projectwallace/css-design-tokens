@@ -9,7 +9,7 @@ export type Easing = [number, number, number, number]
 
 export type BaseToken = {
 	$extensions?: {
-		[EXTENSION_AUTHORED_AS]?: string
+		[EXTENSION_AUTHORED_AS]: string
 	}
 }
 
