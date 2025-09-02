@@ -254,7 +254,7 @@ const color_keywords = new KeywordSet([
 	'revert-layer',
 ])
 
-export function color_to_token(color: string): ColorToken | UnparsedToken {
+export function color_to_token(color: string): ColorToken | UnparsedToken | null {
 	let lowercased = color.toLowerCase()
 
 	// The keyword "transparent" specifies a transparent black.
@@ -274,26 +274,11 @@ export function color_to_token(color: string): ColorToken | UnparsedToken {
 	}
 
 	if (color_keywords.has(lowercased)) {
-		return {
-			$type: 'color',
-			$value: {
-				colorSpace: 'srgb',
-				components: [0, 0, 0],
-				alpha: 1,
-			},
-			$extensions: {
-				[EXTENSION_AUTHORED_AS]: color
-			}
-		}
+		return null
 	}
 
 	if (lowercased.includes('var(')) {
-		return {
-			$value: color,
-			$extensions: {
-				[EXTENSION_AUTHORED_AS]: color
-			}
-		}
+		return null
 	}
 
 	try {
