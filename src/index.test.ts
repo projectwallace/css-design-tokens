@@ -318,36 +318,26 @@ describe('css_to_tokens', () => {
 					$type: 'shadow',
 					$value: {
 						offsetX: {
-							$type: 'dimension',
 							value: 0,
 							unit: 'px'
 						},
 						offsetY: {
-							$type: 'dimension',
 							value: 0,
 							unit: 'px'
 						},
 						blur: {
-							$type: 'dimension',
 							value: 10,
 							unit: 'px'
 						},
 						spread: {
-							$type: 'dimension',
 							value: 0,
 							unit: 'px'
 						},
 						inset: false,
 						color: {
-							$type: 'color',
-							$value: {
-								colorSpace: 'srgb',
-								components: [0, 0, 0],
-								alpha: 0.5,
-							},
-							$extensions: {
-								[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
-							}
+							colorSpace: 'srgb',
+							components: [0, 0, 0],
+							alpha: 0.5,
 						},
 					},
 					$extensions: {
@@ -369,70 +359,50 @@ describe('css_to_tokens', () => {
 					$value: [
 						{
 							offsetX: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							offsetY: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							blur: {
-								$type: 'dimension',
 								value: 10,
 								unit: 'px'
 							},
 							spread: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							inset: false,
 							color: {
-								$type: 'color',
-								$value: {
-									colorSpace: 'srgb',
-									components: [0, 0, 0],
-									alpha: 0.5,
-								},
-								$extensions: {
-									[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
-								}
+								colorSpace: 'srgb',
+								components: [0, 0, 0],
+								alpha: 0.5,
 							},
 						},
 						{
 							offsetX: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							offsetY: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							blur: {
-								$type: 'dimension',
 								value: 10,
 								unit: 'px'
 							},
 							spread: {
-								$type: 'dimension',
 								value: 0,
 								unit: 'px'
 							},
 							inset: false,
 							color: {
-								$type: 'color',
-								$value: {
-									colorSpace: 'srgb',
-									components: [0, 0, 0],
-									alpha: 0.5,
-								},
-								$extensions: {
-									[EXTENSION_AUTHORED_AS]: 'rgba(0, 0, 0, 0.5)'
-								}
+								colorSpace: 'srgb',
+								components: [0, 0, 0],
+								alpha: 0.5,
 							},
 						}
 					],
