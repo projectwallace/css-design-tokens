@@ -10,7 +10,7 @@ export default defineConfig({
 			formats: ["es"],
 		},
 		rollupOptions: {
-			external: Object.keys(pkg.dependencies),
+			external: Object.keys(pkg.dependencies).concat('colorjs.io/fn'),
 		},
 	},
 	plugins: [

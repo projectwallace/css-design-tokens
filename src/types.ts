@@ -44,12 +44,14 @@ export type ColorToken = BaseToken & {
 	}
 }
 
+export type DimensionValue = {
+	value: number
+	unit: string
+}
+
 export type DimensionToken = BaseToken & {
 	$type: 'dimension'
-	$value: {
-		value: number
-		unit: string
-	}
+	$value: DimensionValue
 }
 
 export type NumberToken = BaseToken & {
