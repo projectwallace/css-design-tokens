@@ -1,6 +1,7 @@
 import { parse, type CssNode, type Value } from 'css-tree'
-import { named_colors, system_colors, color_functions, color_to_token } from './colors.js'
+import { color_to_token } from './colors.js'
 import type { ColorToken, ColorValue } from './types.js'
+import { namedColors as named_colors, systemColors as system_colors, colorFunctions as color_functions } from '@projectwallace/css-analyzer'
 
 type CssLength = {
 	value: number
