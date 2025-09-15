@@ -36,21 +36,21 @@ describe('cubic-bezier', () => {
 
 describe('unsupported', () => {
 	test('var(--test)', () => {
-		expect(destructure_easing('var(--test)')).toBeUndefined()
+		expect(destructure_easing('var(--test)')).toBeNull()
 	})
 	test('var(--test, ease-in)', () => {
-		expect(destructure_easing('var(--test, ease-in)')).toBeUndefined()
+		expect(destructure_easing('var(--test, ease-in)')).toBeNull()
 	})
 	test('step-start', () => {
-		expect(destructure_easing('step-start')).toBeUndefined()
+		expect(destructure_easing('step-start')).toBeNull()
 	})
 	test('steps(4, end)', () => {
-		expect(destructure_easing('steps(4, end)')).toBeUndefined()
+		expect(destructure_easing('steps(4, end)')).toBeNull()
 	})
 	test('cubic-bezier(1, var(--test), 0 0)', () => {
-		expect(destructure_easing('cubic-bezier(1, var(--test), 0 0)')).toBeUndefined()
+		expect(destructure_easing('cubic-bezier(1, var(--test), 0 0)')).toBeNull()
 	})
 	test('cubic-bezier(1, 2, 3)', () => {
-		expect(destructure_easing('cubic-bezier(1, 2, 3)')).toBeUndefined()
+		expect(destructure_easing('cubic-bezier(1, 2, 3)')).toBeNull()
 	})
 })

@@ -4,12 +4,14 @@ import type { DestructuredShadow } from './destructure-box-shadow'
 export type CssAnalysis = ReturnType<typeof analyze>
 
 export const EXTENSION_AUTHORED_AS = 'com.projectwallace.css-authored-as'
+export const EXTENSION_USAGE_COUNT = 'com.projectwallace.usage-count'
 
 export type Easing = [number, number, number, number]
 
 export type BaseToken = {
-	$extensions?: {
-		[EXTENSION_AUTHORED_AS]: string
+	$extensions: {
+		[EXTENSION_AUTHORED_AS]: string,
+		[EXTENSION_USAGE_COUNT]: number
 	}
 }
 
@@ -27,6 +29,7 @@ export type UnparsedToken = BaseToken & {
 }
 
 type ColorSpace = string | 'srgb' | 'display-p3' | 'hsl' | 'hwb' | 'lab' | 'lch' | 'oklab' | 'oklch' | 'display-p3' | 'a98-rgb' | 'prophoto-rgb' | 'rec2020' | 'xyz-d65' | 'xyz-d50'
+
 export type ColorComponent = number | 'none'
 
 export type ColorValue = {

@@ -8,7 +8,7 @@ const EASING_KEYWORDS = new Map<string, Easing>([
 	['ease-in-out', [0.42, 0, 0.58, 1]]
 ])
 
-export function destructure_easing(easing: string): Easing | undefined {
+export function destructure_easing(easing: string): Easing | null {
 	easing = easing.trim().toLowerCase()
 
 	if (EASING_KEYWORDS.has(easing)) {
@@ -16,7 +16,7 @@ export function destructure_easing(easing: string): Easing | undefined {
 	}
 
 	if (easing.includes('var(')) {
-		return undefined
+		return null
 	}
 
 	if (easing.startsWith('cubic-bezier(')) {
@@ -30,5 +30,5 @@ export function destructure_easing(easing: string): Easing | undefined {
 		}
 	}
 
-	return undefined
+	return null
 }
