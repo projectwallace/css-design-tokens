@@ -68,7 +68,7 @@ function get_unique(collection: Collection) {
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<string, ColorToken | UnparsedToken>
+			let colors = Object.create(null) as Record<TokenID, ColorToken | UnparsedToken>
 			let unique = get_unique(analysis.values.colors)
 			let color_groups = group_colors(unique)
 
@@ -84,7 +84,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return colors
 		})(),
 		font_size: (() => {
-			let font_sizes = Object.create(null) as Record<string, UnparsedToken | DimensionToken>
+			let font_sizes = Object.create(null) as Record<TokenID, UnparsedToken | DimensionToken>
 			let unique = get_unique(analysis.values.fontSizes)
 
 			for (let font_size in unique) {
@@ -110,7 +110,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return font_sizes
 		})(),
 		font_family: (() => {
-			let families = Object.create(null) as Record<string, FontFamilyToken>
+			let families = Object.create(null) as Record<TokenID, FontFamilyToken>
 			let unique = get_unique(analysis.values.fontFamilies)
 
 			for (let fontFamily in unique) {
@@ -127,7 +127,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return families
 		})(),
 		line_height: (() => {
-			let line_heights = Object.create(null) as Record<string, UnparsedToken | DimensionToken | NumberToken>
+			let line_heights = Object.create(null) as Record<TokenID, UnparsedToken | DimensionToken | NumberToken>
 			let unique = get_unique(analysis.values.lineHeights)
 
 			for (let line_height in unique) {
@@ -171,18 +171,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return line_heights
 		})(),
 		gradient: (() => {
-			let gradients = Object.create(null) as Record<string, UnparsedToken>
+			let gradients = Object.create(null) as Record<TokenID, UnparsedToken>
 			let unique = get_unique(analysis.values.gradients)
 
 			for (let gradient in unique) {
 				gradients[`gradient-${hash(gradient)}`] = {
-					$value: gradient
+					$value: gradient,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: gradient,
+					},
 				}
 			}
 			return gradients
 		})(),
 		box_shadow: (() => {
-			let shadows = Object.create(null) as Record<string, ShadowToken | UnparsedToken>
+			let shadows = Object.create(null) as Record<TokenID, ShadowToken | UnparsedToken>
 			let unique = get_unique(analysis.values.boxShadows)
 
 			for (let box_shadow in unique) {
@@ -192,9 +195,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				if (parsed === null) {
 					shadows[name] = {
 						$value: box_shadow,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: box_shadow
-						}
 					}
 				} else {
 					shadows[name] = {
@@ -209,19 +209,22 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return shadows
 		})(),
 		radius: (() => {
-			let radii = Object.create(null) as Record<string, UnparsedToken>
+			let radii = Object.create(null) as Record<TokenID, UnparsedToken>
 			let unique = get_unique(analysis.values.borderRadiuses)
 
 			for (let radius in unique) {
 				let name = `radius-${hash(radius)}`
 				radii[name] = {
-					$value: radius
+					$value: radius,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: radius,
+					},
 				}
 			}
 			return radii
 		})(),
 		duration: (() => {
-			let durations = Object.create(null) as Record<string, DurationToken | UnparsedToken>
+			let durations = Object.create(null) as Record<TokenID, DurationToken | UnparsedToken>
 			let unique = get_unique(analysis.values.animations.durations)
 
 			for (let duration in unique) {
@@ -251,7 +254,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return durations
 		})(),
 		easing: (() => {
-			let easings = Object.create(null) as Record<string, UnparsedToken | CubicBezierToken>
+			let easings = Object.create(null) as Record<TokenID, UnparsedToken | CubicBezierToken>
 			let unique = get_unique(analysis.values.animations.timingFunctions)
 
 			for (let easing in unique) {
