@@ -72,7 +72,7 @@ export type CubicBezierToken = BaseToken & {
 
 export type FontFamilyToken = BaseToken & {
 	$type: 'fontFamily'
-	$value: string[] | string
+	$value: string[]
 }
 
 export type ShadowToken = BaseToken & {
