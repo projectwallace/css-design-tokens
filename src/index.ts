@@ -9,6 +9,8 @@ import { destructure_line_height } from './destructure-line-height.js'
 import { parse_length } from './parse-length.js'
 import {
 	EXTENSION_AUTHORED_AS,
+	EXTENSION_USAGE_COUNT,
+	EXTENSION_CSS_PROPERTIES,
 	type CubicBezierToken,
 	type DimensionToken,
 	type DurationToken,
@@ -18,7 +20,6 @@ import {
 	type ColorToken,
 	type CssAnalysis,
 	type ShadowToken,
-	EXTENSION_USAGE_COUNT,
 } from './types.js'
 import { color_to_token } from './colors.js'
 
@@ -41,6 +42,11 @@ type Collection = {
 } | {
 	uniqueWithLocations: UniqueWithLocations
 }
+type ItemsPerContext = Record<string, {
+	unique: Record<string, number>,
+	uniqueWithLocations?: UniqueWithLocations,
+}>
+
 type TokenID = string
 
 type Tokens = {
@@ -66,6 +72,10 @@ function get_unique(collection: Collection) {
 	return collection.unique
 }
 
+/**
+ * Function to get the count of a specific value from a collection item regardless of whether the
+ * analysis was run with locations enabled or not.
+ */
 function get_count(collection_item: number | CssLocation[]) {
 	if (Array.isArray(collection_item)) {
 		return collection_item.length
@@ -83,14 +93,25 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
+
 					if (color_token !== null) {
 						let name = `${color_dict.get(group)}-${hash(color)}`
+
+						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
+						let properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
+							if (color in collection.unique || (collection.uniqueWithLocations && color in collection.uniqueWithLocations)) {
+								acc.push(property)
+							}
+							return acc
+						}, [] as Array<string>)
+
 						colors[name] = {
 							$type: 'color',
 							$value: color_token,
 							$extensions: {
 								[EXTENSION_AUTHORED_AS]: color,
-								[EXTENSION_USAGE_COUNT]: get_count(unique[color]!)
+								[EXTENSION_USAGE_COUNT]: get_count(unique[color]!),
+								[EXTENSION_CSS_PROPERTIES]: properties,
 							}
 						}
 					}
