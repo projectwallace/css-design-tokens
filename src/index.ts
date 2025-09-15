@@ -18,6 +18,7 @@ import {
 	type ColorToken,
 	type CssAnalysis,
 	type ShadowToken,
+	EXTENSION_USAGE_COUNT,
 } from './types.js'
 import { color_to_token } from './colors.js'
 
@@ -65,6 +66,13 @@ function get_unique(collection: Collection) {
 	return collection.unique
 }
 
+function get_count(collection_item: number | CssLocation[]) {
+	if (Array.isArray(collection_item)) {
+		return collection_item.length
+	}
+	return collection_item
+}
+
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
@@ -81,7 +89,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							$type: 'color',
 							$value: color_token,
 							$extensions: {
-								[EXTENSION_AUTHORED_AS]: color
+								[EXTENSION_AUTHORED_AS]: color,
+								[EXTENSION_USAGE_COUNT]: get_count(unique[color]!)
 							}
 						}
 					}
@@ -96,11 +105,14 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let font_size in unique) {
 				let name = `fontSize-${hash(font_size)}`
 				let parsed = parse_length(font_size)
+				let count = get_count(unique[font_size]!)
+
 				if (parsed === null) {
 					font_sizes[name] = {
 						$value: font_size,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: font_size
+							[EXTENSION_AUTHORED_AS]: font_size,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else {
@@ -108,7 +120,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						$type: 'dimension',
 						$value: parsed,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: font_size
+							[EXTENSION_AUTHORED_AS]: font_size,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				}
@@ -119,14 +132,15 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let families = Object.create(null) as Record<TokenID, FontFamilyToken>
 			let unique = get_unique(analysis.values.fontFamilies)
 
-			for (let fontFamily in unique) {
-				let parsed = destructure_font_family(fontFamily)
-				let name = `fontFamily-${hash(fontFamily)}`
+			for (let font_family in unique) {
+				let parsed = destructure_font_family(font_family)
+				let name = `fontFamily-${hash(font_family)}`
 				families[name] = {
 					$type: 'fontFamily',
 					$value: parsed,
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: fontFamily
+						[EXTENSION_AUTHORED_AS]: font_family,
+						[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!)
 					}
 				}
 			}
@@ -139,12 +153,14 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let line_height in unique) {
 				let name = `lineHeight-${hash(line_height)}`
 				let parsed = destructure_line_height(line_height)
+				let count = get_count(unique[line_height]!)
 
 				if (parsed === null) {
 					line_heights[name] = {
 						$value: line_height,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: line_height
+							[EXTENSION_AUTHORED_AS]: line_height,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else if (typeof parsed === 'number') {
@@ -152,7 +168,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						$type: 'number',
 						$value: parsed,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: line_height
+							[EXTENSION_AUTHORED_AS]: line_height,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else if (typeof parsed === 'object') {
@@ -161,14 +178,16 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							$type: 'dimension',
 							$value: parsed,
 							$extensions: {
-								[EXTENSION_AUTHORED_AS]: line_height
+								[EXTENSION_AUTHORED_AS]: line_height,
+								[EXTENSION_USAGE_COUNT]: count,
 							}
 						}
 					} else {
 						line_heights[name] = {
 							$value: line_height,
 							$extensions: {
-								[EXTENSION_AUTHORED_AS]: line_height
+								[EXTENSION_AUTHORED_AS]: line_height,
+								[EXTENSION_USAGE_COUNT]: count,
 							}
 						}
 					}
@@ -185,6 +204,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					$value: gradient,
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: gradient,
+						[EXTENSION_USAGE_COUNT]: get_count(unique[gradient]!),
 					},
 				}
 			}
@@ -197,12 +217,14 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let box_shadow in unique) {
 				let name = `boxShadow-${hash(box_shadow)}`
 				let parsed = destructure_box_shadow(box_shadow)
+				let count = get_count(unique[box_shadow]!)
 
 				if (parsed === null) {
 					shadows[name] = {
 						$value: box_shadow,
 						$extensions: {
 							[EXTENSION_AUTHORED_AS]: box_shadow,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else {
@@ -211,6 +233,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						$value: parsed.length === 1 ? parsed[0]! : parsed,
 						$extensions: {
 							[EXTENSION_AUTHORED_AS]: box_shadow,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				}
@@ -227,6 +250,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					$value: radius,
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: radius,
+						[EXTENSION_USAGE_COUNT]: get_count(unique[radius]!),
 					},
 				}
 			}
@@ -240,6 +264,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				let parsed = convert_duration(duration)
 				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
 				let name = hash(parsed.toString())
+				let count = get_count(unique[duration]!)
+
 				if (is_valid) {
 					durations[`duration-${name}`] = {
 						$type: 'duration',
@@ -248,14 +274,16 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							unit: 'ms'
 						},
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: duration
+							[EXTENSION_AUTHORED_AS]: duration,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else {
 					durations[`duration-${name}`] = {
 						$value: duration,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: duration
+							[EXTENSION_AUTHORED_AS]: duration,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				}
@@ -269,19 +297,23 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let easing in unique) {
 				let name = `easing-${hash(easing)}`
 				let value = destructure_easing(easing)
-				if (value) {
+				let count = get_count(unique[easing]!)
+
+				if (value !== null) {
 					easings[name] = {
 						$value: value,
 						$type: 'cubicBezier',
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: easing
+							[EXTENSION_AUTHORED_AS]: easing,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				} else {
 					easings[name] = {
 						$value: easing,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: easing
+							[EXTENSION_AUTHORED_AS]: easing,
+							[EXTENSION_USAGE_COUNT]: count,
 						}
 					}
 				}

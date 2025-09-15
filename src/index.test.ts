@@ -1,6 +1,6 @@
 import { test, expect, describe } from 'vitest'
 import { analysis_to_tokens, css_to_tokens } from './index.js'
-import { EXTENSION_AUTHORED_AS } from './types.js'
+import { EXTENSION_AUTHORED_AS, EXTENSION_USAGE_COUNT } from './types.js'
 import { analyze } from '@projectwallace/css-analyzer'
 
 describe('analysis_to_tokens', () => {
@@ -25,7 +25,8 @@ describe('analysis_to_tokens', () => {
 					alpha: 1,
 				},
 				$extensions: {
-					[EXTENSION_AUTHORED_AS]: 'green'
+					[EXTENSION_AUTHORED_AS]: 'green',
+					[EXTENSION_USAGE_COUNT]: 1,
 				}
 			},
 		},
@@ -37,7 +38,8 @@ describe('analysis_to_tokens', () => {
 					unit: 'px'
 				},
 				$extensions: {
-					[EXTENSION_AUTHORED_AS]: '16px'
+					[EXTENSION_AUTHORED_AS]: '16px',
+					[EXTENSION_USAGE_COUNT]: 1,
 				}
 			},
 		},
@@ -89,7 +91,8 @@ describe('css_to_tokens', () => {
 						alpha: 1,
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'green'
+						[EXTENSION_AUTHORED_AS]: 'green',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 				'grey-8139d9b': {
@@ -100,7 +103,8 @@ describe('css_to_tokens', () => {
 						alpha: 0.2,
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'rgb(100 100 100 / 20%)'
+						[EXTENSION_AUTHORED_AS]: 'rgb(100 100 100 / 20%)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					},
 				}
 			})
@@ -130,7 +134,8 @@ describe('css_to_tokens', () => {
 						alpha: 0,
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'transparent'
+						[EXTENSION_AUTHORED_AS]: 'transparent',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -162,7 +167,8 @@ describe('css_to_tokens', () => {
 						unit: 'px'
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '16px'
+						[EXTENSION_AUTHORED_AS]: '16px',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -178,7 +184,8 @@ describe('css_to_tokens', () => {
 				'fontSize-582e015a': {
 					$value: '20vmin',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '20vmin'
+						[EXTENSION_AUTHORED_AS]: '20vmin',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -194,7 +201,8 @@ describe('css_to_tokens', () => {
 				'fontSize-f25d5b4b': {
 					$value: 'var(--font-size)',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'var(--font-size)'
+						[EXTENSION_AUTHORED_AS]: 'var(--font-size)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -210,7 +218,8 @@ describe('css_to_tokens', () => {
 				'fontSize-804e5477': {
 					$value: 'calc(16px + 20%)',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'calc(16px + 20%)'
+						[EXTENSION_AUTHORED_AS]: 'calc(16px + 20%)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -229,7 +238,8 @@ describe('css_to_tokens', () => {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: "'Inter', sans-serif"
+						[EXTENSION_AUTHORED_AS]: "'Inter', sans-serif",
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -251,7 +261,8 @@ describe('css_to_tokens', () => {
 						unit: 'rem'
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '1.5rem'
+						[EXTENSION_AUTHORED_AS]: '1.5rem',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				}
 			})
@@ -268,7 +279,8 @@ describe('css_to_tokens', () => {
 					$type: 'number',
 					$value: 1.5,
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '1.5'
+						[EXTENSION_AUTHORED_AS]: '1.5',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				}
 			})
@@ -284,7 +296,8 @@ describe('css_to_tokens', () => {
 				'lineHeight-582e015a': {
 					$value: '20vmin',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '20vmin'
+						[EXTENSION_AUTHORED_AS]: '20vmin',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				}
 			})
@@ -303,6 +316,7 @@ describe('css_to_tokens', () => {
 					$value: 'linear-gradient(to right, red, blue)',
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'linear-gradient(to right, red, blue)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -344,7 +358,8 @@ describe('css_to_tokens', () => {
 						},
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5)'
+						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -410,7 +425,8 @@ describe('css_to_tokens', () => {
 						}
 					],
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5), 0 0 10px 0 rgba(0, 0, 0, 0.5)'
+						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5), 0 0 10px 0 rgba(0, 0, 0, 0.5)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -429,6 +445,7 @@ describe('css_to_tokens', () => {
 					$value: '10px',
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '10px',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -450,7 +467,8 @@ describe('css_to_tokens', () => {
 						unit: 'ms'
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '1s'
+						[EXTENSION_AUTHORED_AS]: '1s',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -466,7 +484,8 @@ describe('css_to_tokens', () => {
 				'duration-452f2b3b': {
 					$value: 'var(--test)',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'var(--test)'
+						[EXTENSION_AUTHORED_AS]: 'var(--test)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -490,7 +509,8 @@ describe('css_to_tokens', () => {
 						1
 					],
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'ease-in-out'
+						[EXTENSION_AUTHORED_AS]: 'ease-in-out',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -512,7 +532,8 @@ describe('css_to_tokens', () => {
 						0.8
 					],
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'cubic-bezier(0, 0, 0.5, .8)'
+						[EXTENSION_AUTHORED_AS]: 'cubic-bezier(0, 0, 0.5, .8)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})
@@ -528,7 +549,8 @@ describe('css_to_tokens', () => {
 				'easing-12bb7f36': {
 					$value: 'var(--test)',
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'var(--test)'
+						[EXTENSION_AUTHORED_AS]: 'var(--test)',
+						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
 			})

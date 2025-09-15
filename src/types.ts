@@ -11,7 +11,7 @@ export type Easing = [number, number, number, number]
 export type BaseToken = {
 	$extensions: {
 		[EXTENSION_AUTHORED_AS]: string,
-		[EXTENSION_USAGE_COUNT]?: number
+		[EXTENSION_USAGE_COUNT]: number
 	}
 }
 
@@ -29,6 +29,7 @@ export type UnparsedToken = BaseToken & {
 }
 
 type ColorSpace = string | 'srgb' | 'display-p3' | 'hsl' | 'hwb' | 'lab' | 'lch' | 'oklab' | 'oklch' | 'display-p3' | 'a98-rgb' | 'prophoto-rgb' | 'rec2020' | 'xyz-d65' | 'xyz-d50'
+
 export type ColorComponent = number | 'none'
 
 export type ColorValue = {
