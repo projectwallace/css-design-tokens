@@ -15,12 +15,14 @@ export type BaseToken = {
 	}
 }
 
+type DurationValue = {
+	value: number
+	unit: 'ms'
+}
+
 export type DurationToken = BaseToken & {
 	$type: 'duration'
-	$value: {
-		value: number
-		unit: 'ms'
-	}
+	$value: DurationValue
 }
 
 export type UnparsedToken = BaseToken & {
@@ -42,9 +44,6 @@ export type ColorValue = {
 export type ColorToken = BaseToken & {
 	$type: 'color'
 	$value: ColorValue
-	$extensions: {
-		[EXTENSION_AUTHORED_AS]: string
-	}
 }
 
 export type DimensionValue = {

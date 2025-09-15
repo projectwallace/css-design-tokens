@@ -105,24 +105,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let font_size in unique) {
 				let name = `fontSize-${hash(font_size)}`
 				let parsed = parse_length(font_size)
-				let count = get_count(unique[font_size]!)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: font_size,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[font_size]!),
+				}
 
 				if (parsed === null) {
 					font_sizes[name] = {
 						$value: font_size,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: font_size,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else {
 					font_sizes[name] = {
 						$type: 'dimension',
 						$value: parsed,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: font_size,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				}
 			}
@@ -153,42 +150,33 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let line_height in unique) {
 				let name = `lineHeight-${hash(line_height)}`
 				let parsed = destructure_line_height(line_height)
-				let count = get_count(unique[line_height]!)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: line_height,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[line_height]!),
+				}
 
 				if (parsed === null) {
 					line_heights[name] = {
 						$value: line_height,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: line_height,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else if (typeof parsed === 'number') {
 					line_heights[name] = {
 						$type: 'number',
 						$value: parsed,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: line_height,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else if (typeof parsed === 'object') {
 					if (parsed.unit === 'px' || parsed.unit === 'rem') {
 						line_heights[name] = {
 							$type: 'dimension',
 							$value: parsed,
-							$extensions: {
-								[EXTENSION_AUTHORED_AS]: line_height,
-								[EXTENSION_USAGE_COUNT]: count,
-							}
+							$extensions: extensions,
 						}
 					} else {
 						line_heights[name] = {
 							$value: line_height,
-							$extensions: {
-								[EXTENSION_AUTHORED_AS]: line_height,
-								[EXTENSION_USAGE_COUNT]: count,
-							}
+							$extensions: extensions,
 						}
 					}
 				}
@@ -217,24 +205,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let box_shadow in unique) {
 				let name = `boxShadow-${hash(box_shadow)}`
 				let parsed = destructure_box_shadow(box_shadow)
-				let count = get_count(unique[box_shadow]!)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: box_shadow,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[box_shadow]!),
+				}
 
 				if (parsed === null) {
 					shadows[name] = {
 						$value: box_shadow,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: box_shadow,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else {
 					shadows[name] = {
 						$type: 'shadow',
 						$value: parsed.length === 1 ? parsed[0]! : parsed,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: box_shadow,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				}
 			}
@@ -264,7 +249,10 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				let parsed = convert_duration(duration)
 				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
 				let name = hash(parsed.toString())
-				let count = get_count(unique[duration]!)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: duration,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[duration]!),
+				}
 
 				if (is_valid) {
 					durations[`duration-${name}`] = {
@@ -273,18 +261,12 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							value: parsed,
 							unit: 'ms'
 						},
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: duration,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else {
 					durations[`duration-${name}`] = {
 						$value: duration,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: duration,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				}
 			}
@@ -297,24 +279,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let easing in unique) {
 				let name = `easing-${hash(easing)}`
 				let value = destructure_easing(easing)
-				let count = get_count(unique[easing]!)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: easing,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[easing]!),
+				}
 
 				if (value !== null) {
 					easings[name] = {
 						$value: value,
 						$type: 'cubicBezier',
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: easing,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				} else {
 					easings[name] = {
 						$value: easing,
-						$extensions: {
-							[EXTENSION_AUTHORED_AS]: easing,
-							[EXTENSION_USAGE_COUNT]: count,
-						}
+						$extensions: extensions,
 					}
 				}
 			}
