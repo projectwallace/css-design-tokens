@@ -5,6 +5,7 @@ export type CssAnalysis = ReturnType<typeof analyze>
 
 export const EXTENSION_AUTHORED_AS = 'com.projectwallace.css-authored-as'
 export const EXTENSION_USAGE_COUNT = 'com.projectwallace.usage-count'
+export const EXTENSION_CSS_PROPERTIES = 'com.projectwallace.css-properties'
 
 export type Easing = [number, number, number, number]
 
@@ -43,7 +44,10 @@ export type ColorValue = {
 
 export type ColorToken = BaseToken & {
 	$type: 'color'
-	$value: ColorValue
+	$value: ColorValue,
+	$extensions: {
+		[EXTENSION_CSS_PROPERTIES]: Array<string>
+	}
 }
 
 export type DimensionValue = {

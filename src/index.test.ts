@@ -1,6 +1,6 @@
 import { test, expect, describe } from 'vitest'
 import { analysis_to_tokens, css_to_tokens } from './index.js'
-import { EXTENSION_AUTHORED_AS, EXTENSION_USAGE_COUNT } from './types.js'
+import { EXTENSION_AUTHORED_AS, EXTENSION_CSS_PROPERTIES, EXTENSION_USAGE_COUNT } from './types.js'
 import { analyze } from '@projectwallace/css-analyzer'
 
 describe('analysis_to_tokens', () => {
@@ -27,6 +27,7 @@ describe('analysis_to_tokens', () => {
 				$extensions: {
 					[EXTENSION_AUTHORED_AS]: 'green',
 					[EXTENSION_USAGE_COUNT]: 1,
+					[EXTENSION_CSS_PROPERTIES]: ['color']
 				}
 			},
 		},
@@ -79,7 +80,8 @@ describe('css_to_tokens', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				color: green;
-				color: rgb(100 100 100 / 20%);
+				background-color: rgb(100 100 100 / 20%);
+				border-color: green;
 			}
 		`)
 			expect(actual.color).toEqual({
@@ -92,7 +94,8 @@ describe('css_to_tokens', () => {
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'green',
-						[EXTENSION_USAGE_COUNT]: 1,
+						[EXTENSION_USAGE_COUNT]: 2,
+						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color'],
 					}
 				},
 				'grey-8139d9b': {
@@ -105,6 +108,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'rgb(100 100 100 / 20%)',
 						[EXTENSION_USAGE_COUNT]: 1,
+						[EXTENSION_CSS_PROPERTIES]: ['background-color'],
 					},
 				}
 			})
@@ -136,6 +140,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'transparent',
 						[EXTENSION_USAGE_COUNT]: 1,
+						[EXTENSION_CSS_PROPERTIES]: ['color'],
 					}
 				},
 			})
