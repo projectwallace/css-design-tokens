@@ -77,7 +77,13 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					let color_token = color_to_token(color)
 					if (color_token !== null) {
 						let name = `${color_dict.get(group)}-${hash(color)}`
-						colors[name] = color_token
+						colors[name] = {
+							$type: 'color',
+							$value: color_token,
+							$extensions: {
+								[EXTENSION_AUTHORED_AS]: color
+							}
+						}
 					}
 				}
 			}
@@ -195,13 +201,16 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				if (parsed === null) {
 					shadows[name] = {
 						$value: box_shadow,
+						$extensions: {
+							[EXTENSION_AUTHORED_AS]: box_shadow,
+						}
 					}
 				} else {
 					shadows[name] = {
 						$type: 'shadow',
 						$value: parsed.length === 1 ? parsed[0]! : parsed,
 						$extensions: {
-							[EXTENSION_AUTHORED_AS]: box_shadow
+							[EXTENSION_AUTHORED_AS]: box_shadow,
 						}
 					}
 				}

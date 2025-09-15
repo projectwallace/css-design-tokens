@@ -1,5 +1,5 @@
 import { colorKeywords as color_keywords, cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
-import { EXTENSION_AUTHORED_AS, type ColorToken, type UnparsedToken } from './types.js'
+import { EXTENSION_AUTHORED_AS, type ColorToken, type ColorValue, type UnparsedToken } from './types.js'
 import {
 	parse,
 	ColorSpace,
@@ -51,22 +51,16 @@ ColorSpace.register(OKLab)
 ColorSpace.register(OKLCH)
 ColorSpace.register(OKLrab)
 
-export function color_to_token(color: string): ColorToken | UnparsedToken | null {
+export function color_to_token(color: string): ColorValue | null {
 	let lowercased = color.toLowerCase()
 
 	// The keyword "transparent" specifies a transparent black.
 	// > https://drafts.csswg.org/css-color-4/#transparent-color
 	if (lowercased === 'transparent') {
 		return {
-			$type: 'color',
-			$value: {
-				colorSpace: 'srgb',
-				components: [0, 0, 0],
-				alpha: 0,
-			},
-			$extensions: {
-				[EXTENSION_AUTHORED_AS]: color
-			}
+			colorSpace: 'srgb',
+			components: [0, 0, 0],
+			alpha: 0,
 		}
 	}
 
@@ -83,27 +77,16 @@ export function color_to_token(color: string): ColorToken | UnparsedToken | null
 		let [component_a, component_b, component_c] = parsed_color.coords
 
 		return {
-			$type: 'color',
-			$value: {
-				colorSpace: parsed_color.spaceId,
-				components: [
-					component_a ?? 'none',
-					component_b ?? 'none',
-					component_c ?? 'none',
-				],
-				alpha: parsed_color.alpha ?? 0,
-			},
-			$extensions: {
-				[EXTENSION_AUTHORED_AS]: color
-			}
+			colorSpace: parsed_color.spaceId,
+			components: [
+				component_a ?? 'none',
+				component_b ?? 'none',
+				component_c ?? 'none',
+			],
+			alpha: parsed_color.alpha ?? 0,
 		}
 	} catch (error) {
 		// A catch for edge cases that we don't support yet.
-		return {
-			$value: color,
-			$extensions: {
-				[EXTENSION_AUTHORED_AS]: color
-			}
-		}
+		return null
 	}
 }

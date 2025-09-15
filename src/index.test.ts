@@ -301,6 +301,9 @@ describe('css_to_tokens', () => {
 			expect(actual.gradient).toEqual({
 				'gradient-2aec04e5': {
 					$value: 'linear-gradient(to right, red, blue)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'linear-gradient(to right, red, blue)',
+					}
 				},
 			})
 		})
@@ -424,6 +427,9 @@ describe('css_to_tokens', () => {
 			expect(actual.radius).toEqual({
 				'radius-170867': {
 					$value: '10px',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '10px',
+					}
 				},
 			})
 		})

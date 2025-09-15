@@ -142,7 +142,7 @@ test('multiple shadows', () => {
 			inset: false
 		},
 		{
-			color: color_to_token('#fff')?.$value,
+			color: color_to_token('#fff'),
 			offsetX: create_px_length(0),
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
@@ -165,7 +165,7 @@ describe('color formats', () => {
 		test(`1px ${color}`, () => {
 			expect(destructure_box_shadow(`1px ${color}`)).toEqual([
 				{
-					color: color_to_token(color)?.$value,
+					color: color_to_token(color),
 					offsetX: create_px_length(1),
 					offsetY: create_px_length(0),
 					blur: create_px_length(0),
