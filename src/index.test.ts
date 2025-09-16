@@ -155,6 +155,13 @@ describe('css_to_tokens', () => {
 		`)
 			expect(actual.color).toEqual({})
 		})
+
+		test('extensions[css-properties] does not yield a type error', () => {
+			let actual = css_to_tokens('a { color: green; }')
+			// Not so much interested in the test result, more looking that this isn't giving a type error
+			let properties = actual.color['green-5e0cf03']!['$extensions'][EXTENSION_CSS_PROPERTIES]
+			expect(properties).toEqual(['color'])
+		})
 	})
 
 	describe('font sizes', () => {

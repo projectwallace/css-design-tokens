@@ -50,7 +50,7 @@ type ItemsPerContext = Record<string, {
 type TokenID = string
 
 type Tokens = {
-	color: Record<TokenID, ColorToken | UnparsedToken>
+	color: Record<TokenID, ColorToken>
 	font_size: Record<TokenID, UnparsedToken | DimensionToken>
 	font_family: Record<TokenID, FontFamilyToken>
 	line_height: Record<TokenID, UnparsedToken | DimensionToken | NumberToken>
@@ -86,7 +86,7 @@ function get_count(collection_item: number | CssLocation[]) {
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<TokenID, ColorToken | UnparsedToken>
+			let colors = Object.create(null) as Record<TokenID, ColorToken>
 			let unique = get_unique(analysis.values.colors)
 			let color_groups = group_colors(unique)
 
