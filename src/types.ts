@@ -45,7 +45,7 @@ export type ColorValue = {
 export type ColorToken = BaseToken & {
 	$type: 'color'
 	$value: ColorValue,
-	$extensions: BaseToken['$extensions'] & {
+	$extensions: {
 		[EXTENSION_CSS_PROPERTIES]: Array<string>
 	}
 }
