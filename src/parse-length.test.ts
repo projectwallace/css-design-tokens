@@ -26,6 +26,12 @@ test('absolute size keywords', () => {
 	expect.soft(parse_length('xxx-large')).toEqual({ value: 3, unit: 'rem' })
 })
 
+test('unitless 0', () => {
+	expect.soft(parse_length('0')).toEqual({ value: 0, unit: 'px' })
+	expect.soft(parse_length('0.0')).toEqual({ value: 0, unit: 'px' })
+	expect.soft(parse_length('+0')).toEqual({ value: 0, unit: 'px' })
+})
+
 test('invalid values', () => {
 	expect.soft(parse_length('')).toBeNull()
 	expect.soft(parse_length('1')).toBeNull()

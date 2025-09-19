@@ -124,7 +124,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.fontSizes)
 
 			for (let font_size in unique) {
-				let name = `fontSize-${hash(font_size)}`
 				let parsed = parse_length(font_size)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: font_size,
@@ -132,11 +131,13 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
+					let name = `fontSize-${hash(font_size)}`
 					font_sizes[name] = {
 						$value: font_size,
 						$extensions: extensions,
 					}
 				} else {
+					let name = `fontSize-${hash(parsed.value.toString() + parsed.unit)}`
 					font_sizes[name] = {
 						$type: 'dimension',
 						$value: parsed,

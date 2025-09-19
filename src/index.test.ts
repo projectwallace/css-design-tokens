@@ -185,6 +185,26 @@ describe('css_to_tokens', () => {
 				},
 			})
 		})
+		test('handles `0`', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: 0;
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-c238': {
+					$type: 'dimension',
+					$value: {
+						value: 0,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+			})
+		})
 
 		test('outputs a value type when not using rem or px', () => {
 			let actual = css_to_tokens(`
@@ -233,6 +253,58 @@ describe('css_to_tokens', () => {
 						[EXTENSION_AUTHORED_AS]: 'calc(16px + 20%)',
 						[EXTENSION_USAGE_COUNT]: 1,
 					}
+				},
+			})
+		})
+
+		test('dedupes identical sizes', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: 16px;
+				font-size: 16.0PX;
+
+				font-size: 0.5rem;
+				font-size: .5rem;
+
+				font-size: 0;
+				font-size: 0px;
+				font-size: 0rem;
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-171eed': {
+					$type: 'dimension',
+					$value: {
+						value: 16,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '16.0PX',
+						// Count is still 1 because we look at the last dicovered value
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+				'fontSize-548aa743': {
+					$type: 'dimension',
+					$value: {
+						unit: 'rem',
+						value: 0.5,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '.5rem',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+				'fontSize-c238': {
+					$type: 'dimension',
+					$value: {
+						unit: 'px',
+						value: 0,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0rem',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
 				},
 			})
 		})
