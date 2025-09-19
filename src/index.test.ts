@@ -352,6 +352,64 @@ describe('css_to_tokens', () => {
 			})
 		})
 
+		test('dedupes line heights', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					line-height: 1;
+					line-height: 1.0;
+
+					line-height: 1rem;
+					line-height: 1.0rem;
+
+					line-height: 1px;
+					line-height: 1.0px;
+
+					line-height: 0;
+					line-height: 0.0;
+				}
+			`)
+			expect(actual.line_height).toEqual({
+				'lineHeight-31': {
+					$type: 'number',
+					$value: 1,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1.0',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+				'lineHeight-17fec9': {
+					$type: 'dimension',
+					$value: {
+						value: 1,
+						unit: 'rem'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1.0rem',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+				'lineHeight-c5f9': {
+					$type: 'dimension',
+					$value: {
+						value: 1,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1.0px',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+				'lineHeight-30': {
+					$type: 'number',
+					$value: 0,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0.0',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+			})
+		})
+
 		test('outputs a number type when using a number', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {

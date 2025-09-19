@@ -170,7 +170,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.lineHeights)
 
 			for (let line_height in unique) {
-				let name = `lineHeight-${hash(line_height)}`
 				let parsed = destructure_line_height(line_height)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: line_height,
@@ -178,11 +177,13 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
+					let name = `lineHeight-${hash(line_height)}`
 					line_heights[name] = {
 						$value: line_height,
 						$extensions: extensions,
 					}
 				} else if (typeof parsed === 'number') {
+					let name = `lineHeight-${hash(parsed)}`
 					line_heights[name] = {
 						$type: 'number',
 						$value: parsed,
@@ -190,12 +191,14 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					}
 				} else if (typeof parsed === 'object') {
 					if (parsed.unit === 'px' || parsed.unit === 'rem') {
+						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
 						line_heights[name] = {
 							$type: 'dimension',
 							$value: parsed,
 							$extensions: extensions,
 						}
 					} else {
+						let name = `lineHeight-${hash(line_height)}`
 						line_heights[name] = {
 							$value: line_height,
 							$extensions: extensions,

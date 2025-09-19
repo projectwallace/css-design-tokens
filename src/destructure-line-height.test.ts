@@ -36,6 +36,12 @@ test('length', () => {
 	expect.soft(destructure_line_height('1e2em')).toEqual({ value: 100, unit: 'em' })
 })
 
+test('zero', () => {
+	expect.soft(destructure_line_height('0%')).toEqual(0)
+	expect.soft(destructure_line_height('0px')).toEqual(0)
+	expect.soft(destructure_line_height('0')).toEqual(0)
+})
+
 test('unprocessable values', () => {
 	expect.soft(destructure_line_height('var(--my-line-height)')).toEqual(null)
 	expect.soft(destructure_line_height('var(--my-line-height, 1.2)')).toEqual(null)
