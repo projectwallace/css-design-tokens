@@ -52,3 +52,17 @@ jobs:
         run: npm run build
       - name: Lint package
         run: npx publint
+
+  npm-audit:
+    name: Audit packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version: 22
+      - name: npm audit
+        run: npm audit --audit-level=high
