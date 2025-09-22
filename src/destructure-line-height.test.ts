@@ -22,6 +22,7 @@ test('percentage', () => {
 
 test('number', () => {
 	expect.soft(destructure_line_height('1')).toEqual(1)
+	expect.soft(destructure_line_height('1.0')).toEqual(1)
 	expect.soft(destructure_line_height('1.1')).toEqual(1.1)
 	expect.soft(destructure_line_height('1e2')).toEqual(100)
 })
