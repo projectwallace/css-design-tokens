@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm test
 
@@ -31,6 +32,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm run check
 
@@ -44,6 +46,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - name: Build package
         run: npm run build
