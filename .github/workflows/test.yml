@@ -20,7 +20,7 @@ jobs:
         with:
           cache: "npm"
           node-version: 22
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm test
 
   check:
@@ -33,7 +33,7 @@ jobs:
         with:
           cache: "npm"
           node-version: 22
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run check
 
   lint-package:
@@ -47,7 +47,7 @@ jobs:
         with:
           cache: "npm"
           node-version: 22
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build package
         run: npm run build
       - name: Lint package
