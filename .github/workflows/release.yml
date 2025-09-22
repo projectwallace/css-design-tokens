@@ -11,21 +11,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          cache: "npm"
+          node-version: 22
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm test
 
   publish-npm:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          cache: 'npm'
+          node-version: 22
+          cache: "npm"
           registry-url: https://registry.npmjs.org/
-      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run build
       - run: npm publish --public
         env:

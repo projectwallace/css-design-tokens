@@ -14,11 +14,12 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm test
 
@@ -26,11 +27,12 @@ jobs:
     name: Check types
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - run: npm run check
 
@@ -39,11 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache: "npm"
+          node-version: 22
       - run: npm install --ignore-scripts --no-audit --no-fund
       - name: Build package
         run: npm run build

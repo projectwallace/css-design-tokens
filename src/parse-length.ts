@@ -32,10 +32,19 @@ export function parse_length(value: string): DesignTokenLength | null {
 
 	switch (maybe_length.type) {
 		case 'Dimension': {
-			if (maybe_length.unit === 'px' || maybe_length.unit === 'rem') {
+			let unit = maybe_length.unit.toLowerCase()
+			if (unit === 'px' || unit === 'rem') {
+				let value = Number(maybe_length.value)
+				// Always return `0px`, `0`, or `0rem` as `0px`
+				if (value === 0) {
+					return {
+						value: 0,
+						unit: 'px',
+					}
+				}
 				return {
-					value: Number(maybe_length.value),
-					unit: maybe_length.unit
+					value: value,
+					unit,
 				}
 			}
 			break
@@ -51,6 +60,16 @@ export function parse_length(value: string): DesignTokenLength | null {
 					unit: 'rem'
 				}
 			}
+			break
+		}
+		case 'Number': {
+			if (Number(maybe_length.value) === 0) {
+				return {
+					value: 0,
+					unit: 'px',
+				}
+			}
+			break
 		}
 	}
 

@@ -17,7 +17,7 @@ describe('analysis_to_tokens', () => {
 
 	let expected = {
 		color: {
-			'green-5e0cf03': {
+			'green-3fc58faf': {
 				$type: 'color',
 				$value: {
 					colorSpace: 'srgb',
@@ -85,7 +85,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'green-5e0cf03': {
+				'green-3fc58faf': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -98,7 +98,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color'],
 					}
 				},
-				'grey-8139d9b': {
+				'grey-d68e53e4': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -130,7 +130,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'black-991c5d52': {
+				'black-edec3e7a': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -159,8 +159,51 @@ describe('css_to_tokens', () => {
 		test('extensions[css-properties] does not yield a type error', () => {
 			let actual = css_to_tokens('a { color: green; }')
 			// Not so much interested in the test result, more looking that this isn't giving a type error
-			let properties = actual.color['green-5e0cf03']!['$extensions'][EXTENSION_CSS_PROPERTIES]
+			let properties = actual.color['green-3fc58faf']!['$extensions'][EXTENSION_CSS_PROPERTIES]
 			expect(properties).toEqual(['color'])
+		})
+
+		test('deduplicates colors', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					color: green;
+					border-color: rgb(0, 128, 0);
+					background-color: #008000;
+					color: #008000;
+				}
+				.alpha {
+					border-color: rgb(0 128 0 / 0.5);
+					border-color: rgb(0 128 0 / .5);
+				}
+		`)
+			expect(actual.color).toEqual({
+				'green-3fc58faf': {
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0, 0.5019607843137255, 0],
+						alpha: 1,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'green',
+						[EXTENSION_USAGE_COUNT]: 4,
+						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color', 'background-color'],
+					}
+				},
+				'green-64a061f5': {
+					$type: 'color',
+					$value: {
+						colorSpace: 'srgb',
+						components: [0, 0.5019607843137255, 0],
+						alpha: 0.5,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'rgb(0 128 0 / 0.5)',
+						[EXTENSION_USAGE_COUNT]: 2,
+						[EXTENSION_CSS_PROPERTIES]: ['border-color'],
+					}
+				},
+			})
 		})
 	})
 
@@ -180,6 +223,26 @@ describe('css_to_tokens', () => {
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '16px',
+						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+			})
+		})
+		test('handles `0`', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: 0;
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-c238': {
+					$type: 'dimension',
+					$value: {
+						value: 0,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0',
 						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				},
@@ -236,6 +299,57 @@ describe('css_to_tokens', () => {
 				},
 			})
 		})
+
+		test('dedupes identical sizes', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-size: 16px;
+				font-size: 16.0PX;
+
+				font-size: 0.5rem;
+				font-size: .5rem;
+
+				font-size: 0;
+				font-size: 0px;
+				font-size: 0rem;
+			}
+		`)
+			expect(actual.font_size).toEqual({
+				'fontSize-171eed': {
+					$type: 'dimension',
+					$value: {
+						value: 16,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '16px',
+						[EXTENSION_USAGE_COUNT]: 2,
+					}
+				},
+				'fontSize-548aa743': {
+					$type: 'dimension',
+					$value: {
+						unit: 'rem',
+						value: 0.5,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0.5rem',
+						[EXTENSION_USAGE_COUNT]: 2,
+					},
+				},
+				'fontSize-c238': {
+					$type: 'dimension',
+					$value: {
+						unit: 'px',
+						value: 0,
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0',
+						[EXTENSION_USAGE_COUNT]: 3,
+					},
+				},
+			})
+		})
 	})
 
 	describe('font families', () => {
@@ -277,6 +391,64 @@ describe('css_to_tokens', () => {
 						[EXTENSION_USAGE_COUNT]: 1,
 					}
 				}
+			})
+		})
+
+		test('dedupes line heights', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					line-height: 1;
+					line-height: 1.0;
+
+					line-height: 1rem;
+					line-height: 1.0rem;
+
+					line-height: 1px;
+					line-height: 1.0px;
+
+					line-height: 0;
+					line-height: 0.0;
+				}
+			`)
+			expect(actual.line_height).toEqual({
+				'lineHeight-31': {
+					$type: 'number',
+					$value: 1,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1',
+						[EXTENSION_USAGE_COUNT]: 2,
+					}
+				},
+				'lineHeight-17fec9': {
+					$type: 'dimension',
+					$value: {
+						value: 1,
+						unit: 'rem'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1rem',
+						[EXTENSION_USAGE_COUNT]: 2,
+					}
+				},
+				'lineHeight-c5f9': {
+					$type: 'dimension',
+					$value: {
+						value: 1,
+						unit: 'px'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1px',
+						[EXTENSION_USAGE_COUNT]: 2,
+					}
+				},
+				'lineHeight-30': {
+					$type: 'number',
+					$value: 0,
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '0',
+						[EXTENSION_USAGE_COUNT]: 2,
+					}
+				},
 			})
 		})
 
@@ -467,10 +639,10 @@ describe('css_to_tokens', () => {
 	describe('duration', () => {
 		test('outputs a token when using a valid duration', () => {
 			let actual = css_to_tokens(`
-			.my-design-system {
-				animation-duration: 1s;
-			}
-		`)
+				.my-design-system {
+					animation-duration: 1s;
+				}
+			`)
 			expect(actual.duration).toEqual({
 				'duration-17005f': {
 					$type: 'duration',
@@ -488,16 +660,53 @@ describe('css_to_tokens', () => {
 
 		test('outputs an unparsed token when using an invalid duration', () => {
 			let actual = css_to_tokens(`
-			.my-design-system {
-				animation-duration: var(--test);
-			}
-		`)
+				.my-design-system {
+					animation-duration: var(--test);
+				}
+			`)
 			expect(actual.duration).toEqual({
-				'duration-452f2b3b': {
+				'duration-f9e24f32': {
 					$value: 'var(--test)',
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'var(--test)',
 						[EXTENSION_USAGE_COUNT]: 1,
+					}
+				},
+			})
+		})
+
+		test('dedupes values', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					animation-duration: 100ms;
+					animation-duration: 0.1s;
+					animation-duration: .1s;
+
+					animation-duration: 1S;
+					animation-duration: 1000MS;
+				}
+			`)
+			expect(actual.duration).toEqual({
+				'duration-bdf1': {
+					$type: 'duration',
+					$value: {
+						value: 100,
+						unit: 'ms'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '100ms',
+						[EXTENSION_USAGE_COUNT]: 3,
+					}
+				},
+				'duration-17005f': {
+					$type: 'duration',
+					$value: {
+						value: 1000,
+						unit: 'ms'
+					},
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: '1S',
+						[EXTENSION_USAGE_COUNT]: 2,
 					}
 				},
 			})

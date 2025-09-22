@@ -93,25 +93,37 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
+					let count = get_count(unique[color]!)
 
 					if (color_token !== null) {
-						let name = `${color_dict.get(group)}-${hash(color)}`
+						let { colorSpace, components, alpha } = color_token
+						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(''))}`
 
 						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-						let properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
-							if (color in collection.unique || (collection.uniqueWithLocations && color in collection.uniqueWithLocations)) {
-								acc.push(property)
+						let new_properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
+							if (color in collection.unique) {
+								return acc.add(property)
+							}
+							if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
+								return acc.add(property)
 							}
 							return acc
-						}, [] as Array<string>)
+						}, new Set() as Set<string>)
 
-						colors[name] = {
-							$type: 'color',
-							$value: color_token,
-							$extensions: {
-								[EXTENSION_AUTHORED_AS]: color,
-								[EXTENSION_USAGE_COUNT]: get_count(unique[color]!),
-								[EXTENSION_CSS_PROPERTIES]: properties,
+						if (colors[name]) {
+							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
+							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(new Set(old_properties).union(new_properties))
+							colors[name].$extensions[EXTENSION_USAGE_COUNT] += count
+						}
+						else {
+							colors[name] = {
+								$type: 'color',
+								$value: color_token,
+								$extensions: {
+									[EXTENSION_AUTHORED_AS]: color,
+									[EXTENSION_USAGE_COUNT]: count,
+									[EXTENSION_CSS_PROPERTIES]: Array.from(new_properties),
+								}
 							}
 						}
 					}
@@ -124,7 +136,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.fontSizes)
 
 			for (let font_size in unique) {
-				let name = `fontSize-${hash(font_size)}`
 				let parsed = parse_length(font_size)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: font_size,
@@ -132,15 +143,23 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
+					let name = `fontSize-${hash(font_size)}`
 					font_sizes[name] = {
 						$value: font_size,
 						$extensions: extensions,
 					}
-				} else {
-					font_sizes[name] = {
-						$type: 'dimension',
-						$value: parsed,
-						$extensions: extensions,
+				}
+				else {
+					let name = `fontSize-${hash(parsed.value.toString() + parsed.unit)}`
+					if (font_sizes[name]) {
+						font_sizes[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+					}
+					else {
+						font_sizes[name] = {
+							$type: 'dimension',
+							$value: parsed,
+							$extensions: extensions,
+						}
 					}
 				}
 			}
@@ -169,7 +188,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.lineHeights)
 
 			for (let line_height in unique) {
-				let name = `lineHeight-${hash(line_height)}`
 				let parsed = destructure_line_height(line_height)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: line_height,
@@ -177,24 +195,41 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
+					let name = `lineHeight-${hash(line_height)}`
 					line_heights[name] = {
 						$value: line_height,
 						$extensions: extensions,
 					}
-				} else if (typeof parsed === 'number') {
-					line_heights[name] = {
-						$type: 'number',
-						$value: parsed,
-						$extensions: extensions,
+				}
+				else if (typeof parsed === 'number') {
+					let name = `lineHeight-${hash(parsed)}`
+					if (line_heights[name]) {
+						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 					}
-				} else if (typeof parsed === 'object') {
-					if (parsed.unit === 'px' || parsed.unit === 'rem') {
+					else {
 						line_heights[name] = {
-							$type: 'dimension',
+							$type: 'number',
 							$value: parsed,
 							$extensions: extensions,
 						}
-					} else {
+					}
+				}
+				else if (typeof parsed === 'object') {
+					if (parsed.unit === 'px' || parsed.unit === 'rem') {
+						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
+						if (line_heights[name]) {
+							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+						}
+						else {
+							line_heights[name] = {
+								$type: 'dimension',
+								$value: parsed,
+								$extensions: extensions,
+							}
+						}
+					}
+					else {
+						let name = `lineHeight-${hash(line_height)}`
 						line_heights[name] = {
 							$value: line_height,
 							$extensions: extensions,
@@ -269,23 +304,29 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let duration in unique) {
 				let parsed = convert_duration(duration)
 				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
-				let name = hash(parsed.toString())
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: duration,
 					[EXTENSION_USAGE_COUNT]: get_count(unique[duration]!),
 				}
 
 				if (is_valid) {
-					durations[`duration-${name}`] = {
-						$type: 'duration',
-						$value: {
-							value: parsed,
-							unit: 'ms'
-						},
-						$extensions: extensions,
+					let name = `duration-${hash(parsed.toString())}`
+					if (durations[name]) {
+						durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+					}
+					else {
+						durations[name] = {
+							$type: 'duration',
+							$value: {
+								value: parsed,
+								unit: 'ms'
+							},
+							$extensions: extensions,
+						}
 					}
 				} else {
-					durations[`duration-${name}`] = {
+					let name = `duration-${hash('invalid' + parsed.toString())}`
+					durations[name] = {
 						$value: duration,
 						$extensions: extensions,
 					}

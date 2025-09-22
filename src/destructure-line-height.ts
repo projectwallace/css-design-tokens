@@ -21,8 +21,12 @@ export function destructure_line_height(value: string): Length | number | null {
 
 	switch (maybe_dimension.type) {
 		case 'Dimension': {
+			let value = Number(maybe_dimension.value)
+			if (value === 0) {
+				return 0
+			}
 			return {
-				value: Number(maybe_dimension.value),
+				value,
 				unit: maybe_dimension.unit
 			}
 		}
