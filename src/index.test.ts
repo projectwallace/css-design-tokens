@@ -323,7 +323,6 @@ describe('css_to_tokens', () => {
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '16px',
-						// Count is still 1 because we look at the last dicovered value
 						[EXTENSION_USAGE_COUNT]: 2,
 					}
 				},
@@ -640,10 +639,10 @@ describe('css_to_tokens', () => {
 	describe('duration', () => {
 		test('outputs a token when using a valid duration', () => {
 			let actual = css_to_tokens(`
-			.my-design-system {
-				animation-duration: 1s;
-			}
-		`)
+				.my-design-system {
+					animation-duration: 1s;
+				}
+			`)
 			expect(actual.duration).toEqual({
 				'duration-17005f': {
 					$type: 'duration',
@@ -661,10 +660,10 @@ describe('css_to_tokens', () => {
 
 		test('outputs an unparsed token when using an invalid duration', () => {
 			let actual = css_to_tokens(`
-			.my-design-system {
-				animation-duration: var(--test);
-			}
-		`)
+				.my-design-system {
+					animation-duration: var(--test);
+				}
+			`)
 			expect(actual.duration).toEqual({
 				'duration-f9e24f32': {
 					$value: 'var(--test)',
@@ -678,15 +677,15 @@ describe('css_to_tokens', () => {
 
 		test('dedupes values', () => {
 			let actual = css_to_tokens(`
-			.my-design-system {
-				animation-duration: 100ms;
-				animation-duration: 0.1s;
-				animation-duration: .1s;
+				.my-design-system {
+					animation-duration: 100ms;
+					animation-duration: 0.1s;
+					animation-duration: .1s;
 
-				animation-duration: 1S;
-				animation-duration: 1000MS;
-			}
-		`)
+					animation-duration: 1S;
+					animation-duration: 1000MS;
+				}
+			`)
 			expect(actual.duration).toEqual({
 				'duration-bdf1': {
 					$type: 'duration',

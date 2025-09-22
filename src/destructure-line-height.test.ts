@@ -39,8 +39,11 @@ test('length', () => {
 
 test('zero', () => {
 	expect.soft(destructure_line_height('0%')).toEqual(0)
+	expect.soft(destructure_line_height('0.0%')).toEqual(0)
 	expect.soft(destructure_line_height('0px')).toEqual(0)
+	expect.soft(destructure_line_height('0.0px')).toEqual(0)
 	expect.soft(destructure_line_height('0')).toEqual(0)
+	expect.soft(destructure_line_height('0.0')).toEqual(0)
 })
 
 test('unprocessable values', () => {

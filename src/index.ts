@@ -93,27 +93,27 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
+					let count = get_count(unique[color]!)
 
 					if (color_token !== null) {
-						let name = `${color_dict.get(group)}-${hash([
-							color_token.colorSpace,
-							...color_token.components,
-							color_token.alpha,
-						].join(''))}`
+						let { colorSpace, components, alpha } = color_token
+						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(''))}`
 
 						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-						let properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
-							if (color in collection.unique || (collection.uniqueWithLocations && color in collection.uniqueWithLocations)) {
-								acc.add(property)
+						let new_properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
+							if (color in collection.unique) {
+								return acc.add(property)
+							}
+							if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
+								return acc.add(property)
 							}
 							return acc
 						}, new Set() as Set<string>)
 
 						if (colors[name]) {
-							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(
-								new Set([...colors[name].$extensions[EXTENSION_CSS_PROPERTIES], ...properties])
-							)
-							colors[name].$extensions[EXTENSION_USAGE_COUNT] += get_count(unique[color!]!)
+							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
+							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(new Set(old_properties).union(new_properties))
+							colors[name].$extensions[EXTENSION_USAGE_COUNT] += count
 						}
 						else {
 							colors[name] = {
@@ -121,8 +121,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 								$value: color_token,
 								$extensions: {
 									[EXTENSION_AUTHORED_AS]: color,
-									[EXTENSION_USAGE_COUNT]: get_count(unique[color]!),
-									[EXTENSION_CSS_PROPERTIES]: Array.from(properties),
+									[EXTENSION_USAGE_COUNT]: count,
+									[EXTENSION_CSS_PROPERTIES]: Array.from(new_properties),
 								}
 							}
 						}

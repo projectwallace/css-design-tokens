@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		// Base options:
 		"skipLibCheck": true,
-		"target": "es2022",
+		"target": "esnext",
 		"verbatimModuleSyntax": true,
 		"allowJs": true,
 		"checkJs": true,
@@ -17,7 +17,7 @@
 		"noEmit": true,
 		// Code runs in the DOM
 		"lib": [
-			"ES2022",
+			"esnext",
 			"DOM",
 			"DOM.Iterable"
 		],
