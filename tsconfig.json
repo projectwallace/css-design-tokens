@@ -15,11 +15,8 @@
 		"moduleResolution": "bundler",
 		"allowSyntheticDefaultImports": true,
 		"noEmit": true,
-		// Code runs in the DOM
 		"lib": [
 			"esnext",
-			"DOM",
-			"DOM.Iterable"
 		],
 	},
 	"include": [
