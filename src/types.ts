@@ -1,5 +1,5 @@
 import type { analyze } from '@projectwallace/css-analyzer'
-import type { DestructuredShadow } from './destructure-box-shadow'
+import type { ShadowValue } from './destructure-box-shadow'
 
 export type CssAnalysis = ReturnType<typeof analyze>
 
@@ -11,12 +11,12 @@ export type Easing = [number, number, number, number]
 
 export type BaseToken = {
 	$extensions: {
-		[EXTENSION_AUTHORED_AS]: string,
+		[EXTENSION_AUTHORED_AS]: string
 		[EXTENSION_USAGE_COUNT]: number
 	}
 }
 
-type DurationValue = {
+export type DurationValue = {
 	value: number
 	unit: 'ms'
 }
@@ -31,7 +31,22 @@ export type UnparsedToken = BaseToken & {
 	$type?: never
 }
 
-type ColorSpace = string | 'srgb' | 'display-p3' | 'hsl' | 'hwb' | 'lab' | 'lch' | 'oklab' | 'oklch' | 'display-p3' | 'a98-rgb' | 'prophoto-rgb' | 'rec2020' | 'xyz-d65' | 'xyz-d50'
+export type ColorSpace =
+	| string
+	| 'srgb'
+	| 'display-p3'
+	| 'hsl'
+	| 'hwb'
+	| 'lab'
+	| 'lch'
+	| 'oklab'
+	| 'oklch'
+	| 'display-p3'
+	| 'a98-rgb'
+	| 'prophoto-rgb'
+	| 'rec2020'
+	| 'xyz-d65'
+	| 'xyz-d50'
 
 export type ColorComponent = number | 'none'
 
@@ -44,7 +59,7 @@ export type ColorValue = {
 
 export type ColorToken = BaseToken & {
 	$type: 'color'
-	$value: ColorValue,
+	$value: ColorValue
 	$extensions: {
 		[EXTENSION_CSS_PROPERTIES]: Array<string>
 	}
@@ -70,12 +85,14 @@ export type CubicBezierToken = BaseToken & {
 	$value: Easing
 }
 
+export type FontFamilyValue = string[]
+
 export type FontFamilyToken = BaseToken & {
 	$type: 'fontFamily'
-	$value: string[]
+	$value: FontFamilyValue
 }
 
 export type ShadowToken = BaseToken & {
 	$type: 'shadow'
-	$value: DestructuredShadow | DestructuredShadow[]
+	$value: ShadowValue | ShadowValue[]
 }

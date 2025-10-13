@@ -1,7 +1,8 @@
 import { parse, type Value, type CssNode } from 'css-tree'
 import { unquote } from './unquote.js'
+import type { FontFamilyValue } from './types.js'
 
-export function destructure_font_family(value: string): string[] | undefined {
+export function destructure_font_family(value: string): FontFamilyValue | undefined {
 	if (value.toLowerCase().includes('var(')) {
 		return undefined
 	}
