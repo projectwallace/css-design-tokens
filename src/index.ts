@@ -23,6 +23,28 @@ import {
 } from './types.js'
 import { color_to_token } from './colors.js'
 
+export {
+	EXTENSION_AUTHORED_AS,
+	EXTENSION_USAGE_COUNT,
+	EXTENSION_CSS_PROPERTIES,
+	type Easing,
+	type CubicBezierToken,
+	type DimensionValue,
+	type DimensionToken,
+	type DurationToken,
+	type DurationValue,
+	type FontFamilyToken,
+	type NumberToken,
+	type UnparsedToken,
+	type CssAnalysis,
+	type ShadowToken,
+	type ColorSpace,
+	type ColorToken,
+	type ColorValue,
+	type ColorComponent,
+} from './types.js'
+export type { CssLength, ShadowValue } from './destructure-box-shadow.js'
+
 export function css_to_tokens(css: string) {
 	let analysis = analyze(css)
 	return analysis_to_tokens(analysis)
