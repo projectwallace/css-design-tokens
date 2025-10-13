@@ -169,6 +169,7 @@ let font_family = {
     }
   },
   'fontFamily-582e015a': {
+    $type: 'fontFamily',
     $value: ['Arial Black', 'sans-serif'],
     $extensions: {
       'com.projectwallace.css-authored-as': 'Arial Black, sans-serif',
