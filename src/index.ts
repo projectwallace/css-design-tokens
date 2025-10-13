@@ -56,14 +56,14 @@ type TokenID = string
 
 export type Tokens = {
 	color: Record<TokenID, ColorToken>
-	font_size: Record<TokenID, UnparsedToken | DimensionToken>
-	font_family: Record<TokenID, FontFamilyToken>
-	line_height: Record<TokenID, UnparsedToken | DimensionToken | NumberToken>
+	font_size: Record<TokenID, DimensionToken | UnparsedToken>
+	font_family: Record<TokenID, FontFamilyToken | UnparsedToken>
+	line_height: Record<TokenID, DimensionToken | NumberToken | UnparsedToken>
 	gradient: Record<TokenID, UnparsedToken>
 	box_shadow: Record<TokenID, ShadowToken | UnparsedToken>
 	radius: Record<TokenID, UnparsedToken>
 	duration: Record<TokenID, DurationToken | UnparsedToken>
-	easing: Record<TokenID, UnparsedToken | CubicBezierToken>
+	easing: Record<TokenID, CubicBezierToken | UnparsedToken>
 }
 
 /**
@@ -168,19 +168,28 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return font_sizes
 		})(),
 		font_family: (() => {
-			let families = Object.create(null) as Record<TokenID, FontFamilyToken>
+			let families = Object.create(null) as Record<TokenID, FontFamilyToken | UnparsedToken>
 			let unique = get_unique(analysis.values.fontFamilies)
 
 			for (let font_family in unique) {
 				let parsed = destructure_font_family(font_family)
 				let name = `fontFamily-${hash(font_family)}`
-				families[name] = {
-					$type: 'fontFamily',
-					$value: parsed,
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: font_family,
-						[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
-					},
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: font_family,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
+				}
+
+				if (parsed === undefined) {
+					families[name] = {
+						$value: font_family,
+						$extensions: extensions,
+					}
+				} else {
+					families[name] = {
+						$type: 'fontFamily',
+						$value: parsed,
+						$extensions: extensions,
+					}
 				}
 			}
 			return families

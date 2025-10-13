@@ -1,10 +1,14 @@
 import { parse, type Value, type CssNode } from 'css-tree'
 import { unquote } from './unquote.js'
 
-export function destructure_font_family(value: string): string[] {
+export function destructure_font_family(value: string): string[] | undefined {
+	if (value.toLowerCase().includes('var(')) {
+		return undefined
+	}
+
 	let ast = parse(value, {
 		context: 'value',
-		positions: true
+		positions: true,
 	}) as Value
 
 	function generate(node: CssNode) {

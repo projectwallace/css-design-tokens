@@ -27,8 +27,8 @@ describe('analysis_to_tokens', () => {
 				$extensions: {
 					[EXTENSION_AUTHORED_AS]: 'green',
 					[EXTENSION_USAGE_COUNT]: 1,
-					[EXTENSION_CSS_PROPERTIES]: ['color']
-				}
+					[EXTENSION_CSS_PROPERTIES]: ['color'],
+				},
 			},
 		},
 		font_size: {
@@ -36,12 +36,12 @@ describe('analysis_to_tokens', () => {
 				$type: 'dimension',
 				$value: {
 					value: 16,
-					unit: 'px'
+					unit: 'px',
 				},
 				$extensions: {
 					[EXTENSION_AUTHORED_AS]: '16px',
 					[EXTENSION_USAGE_COUNT]: 1,
-				}
+				},
 			},
 		},
 		font_family: {},
@@ -96,7 +96,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_AUTHORED_AS]: 'green',
 						[EXTENSION_USAGE_COUNT]: 2,
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color'],
-					}
+					},
 				},
 				'grey-d68e53e4': {
 					$type: 'color',
@@ -110,7 +110,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_USAGE_COUNT]: 1,
 						[EXTENSION_CSS_PROPERTIES]: ['background-color'],
 					},
-				}
+				},
 			})
 		})
 
@@ -141,7 +141,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_AUTHORED_AS]: 'transparent',
 						[EXTENSION_USAGE_COUNT]: 1,
 						[EXTENSION_CSS_PROPERTIES]: ['color'],
-					}
+					},
 				},
 			})
 		})
@@ -188,7 +188,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_AUTHORED_AS]: 'green',
 						[EXTENSION_USAGE_COUNT]: 4,
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color', 'background-color'],
-					}
+					},
 				},
 				'green-64a061f5': {
 					$type: 'color',
@@ -201,7 +201,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_AUTHORED_AS]: 'rgb(0 128 0 / 0.5)',
 						[EXTENSION_USAGE_COUNT]: 2,
 						[EXTENSION_CSS_PROPERTIES]: ['border-color'],
-					}
+					},
 				},
 			})
 		})
@@ -219,12 +219,12 @@ describe('css_to_tokens', () => {
 					$type: 'dimension',
 					$value: {
 						value: 16,
-						unit: 'px'
+						unit: 'px',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '16px',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -239,12 +239,12 @@ describe('css_to_tokens', () => {
 					$type: 'dimension',
 					$value: {
 						value: 0,
-						unit: 'px'
+						unit: 'px',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '0',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -261,7 +261,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '20vmin',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -278,7 +278,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'var(--font-size)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -295,7 +295,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'calc(16px + 20%)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -319,12 +319,12 @@ describe('css_to_tokens', () => {
 					$type: 'dimension',
 					$value: {
 						value: 16,
-						unit: 'px'
+						unit: 'px',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '16px',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 				'fontSize-548aa743': {
 					$type: 'dimension',
@@ -366,7 +366,50 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: "'Inter', sans-serif",
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
+				},
+			})
+		})
+
+		test('Always returns an array as value', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-family: 'Inter';
+			}
+		`)
+			expect(actual.font_family).toEqual({
+				'fontFamily-91e929d2': {
+					$type: 'fontFamily',
+					$value: ['Inter'],
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: "'Inter'",
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+			})
+		})
+
+		test('does not mark var() as a fontFamily token', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-family: var(--body-font);
+				font-family: Arial, sans-serif, var(--fallback-font);
+			}
+		`)
+			expect(actual.font_family).toEqual({
+				'fontFamily-1a365bd0': {
+					$extensions: {
+						'com.projectwallace.css-authored-as': 'var(--body-font)',
+						'com.projectwallace.usage-count': 1,
+					},
+					$value: 'var(--body-font)',
+				},
+				'fontFamily-5bd6f89e': {
+					$extensions: {
+						'com.projectwallace.css-authored-as': 'Arial, sans-serif, var(--fallback-font)',
+						'com.projectwallace.usage-count': 1,
+					},
+					$value: 'Arial, sans-serif, var(--fallback-font)',
 				},
 			})
 		})
@@ -384,13 +427,13 @@ describe('css_to_tokens', () => {
 					$type: 'dimension',
 					$value: {
 						value: 1.5,
-						unit: 'rem'
+						unit: 'rem',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1.5rem',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
-				}
+					},
+				},
 			})
 		})
 
@@ -417,29 +460,29 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 				'lineHeight-17fec9': {
 					$type: 'dimension',
 					$value: {
 						value: 1,
-						unit: 'rem'
+						unit: 'rem',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1rem',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 				'lineHeight-c5f9': {
 					$type: 'dimension',
 					$value: {
 						value: 1,
-						unit: 'px'
+						unit: 'px',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1px',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 				'lineHeight-30': {
 					$type: 'number',
@@ -447,7 +490,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '0',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 			})
 		})
@@ -465,8 +508,8 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1.5',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
-				}
+					},
+				},
 			})
 		})
 
@@ -482,8 +525,8 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '20vmin',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
-				}
+					},
+				},
 			})
 		})
 	})
@@ -501,7 +544,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'linear-gradient(to right, red, blue)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -520,19 +563,19 @@ describe('css_to_tokens', () => {
 					$value: {
 						offsetX: {
 							value: 0,
-							unit: 'px'
+							unit: 'px',
 						},
 						offsetY: {
 							value: 0,
-							unit: 'px'
+							unit: 'px',
 						},
 						blur: {
 							value: 10,
-							unit: 'px'
+							unit: 'px',
 						},
 						spread: {
 							value: 0,
-							unit: 'px'
+							unit: 'px',
 						},
 						inset: false,
 						color: {
@@ -544,7 +587,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -562,19 +605,19 @@ describe('css_to_tokens', () => {
 						{
 							offsetX: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							offsetY: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							blur: {
 								value: 10,
-								unit: 'px'
+								unit: 'px',
 							},
 							spread: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							inset: false,
 							color: {
@@ -586,19 +629,19 @@ describe('css_to_tokens', () => {
 						{
 							offsetX: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							offsetY: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							blur: {
 								value: 10,
-								unit: 'px'
+								unit: 'px',
 							},
 							spread: {
 								value: 0,
-								unit: 'px'
+								unit: 'px',
 							},
 							inset: false,
 							color: {
@@ -606,12 +649,12 @@ describe('css_to_tokens', () => {
 								components: [0, 0, 0],
 								alpha: 0.5,
 							},
-						}
+						},
 					],
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '0 0 10px 0 rgba(0, 0, 0, 0.5), 0 0 10px 0 rgba(0, 0, 0, 0.5)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -630,7 +673,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '10px',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -648,12 +691,12 @@ describe('css_to_tokens', () => {
 					$type: 'duration',
 					$value: {
 						value: 1000,
-						unit: 'ms'
+						unit: 'ms',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1s',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -670,7 +713,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'var(--test)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -691,23 +734,23 @@ describe('css_to_tokens', () => {
 					$type: 'duration',
 					$value: {
 						value: 100,
-						unit: 'ms'
+						unit: 'ms',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '100ms',
 						[EXTENSION_USAGE_COUNT]: 3,
-					}
+					},
 				},
 				'duration-17005f': {
 					$type: 'duration',
 					$value: {
 						value: 1000,
-						unit: 'ms'
+						unit: 'ms',
 					},
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: '1S',
 						[EXTENSION_USAGE_COUNT]: 2,
-					}
+					},
 				},
 			})
 		})
@@ -723,16 +766,11 @@ describe('css_to_tokens', () => {
 			expect(actual.easing).toEqual({
 				'easing-ea6c7565': {
 					$type: 'cubicBezier',
-					$value: [
-						0.42,
-						0,
-						0.58,
-						1
-					],
+					$value: [0.42, 0, 0.58, 1],
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'ease-in-out',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -746,16 +784,11 @@ describe('css_to_tokens', () => {
 			expect(actual.easing).toEqual({
 				'easing-90111eba': {
 					$type: 'cubicBezier',
-					$value: [
-						0,
-						0,
-						0.5,
-						0.8
-					],
+					$value: [0, 0, 0.5, 0.8],
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'cubic-bezier(0, 0, 0.5, .8)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
@@ -772,7 +805,7 @@ describe('css_to_tokens', () => {
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: 'var(--test)',
 						[EXTENSION_USAGE_COUNT]: 1,
-					}
+					},
 				},
 			})
 		})
