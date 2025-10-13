@@ -37,19 +37,24 @@ type CssLocation = {
 	length: number
 }
 type UniqueWithLocations = Record<string, CssLocation[]>
-type Collection = {
-	unique: UniqueCount
-} | {
-	uniqueWithLocations: UniqueWithLocations
-}
-type ItemsPerContext = Record<string, {
-	unique: Record<string, number>,
-	uniqueWithLocations?: UniqueWithLocations,
-}>
+type Collection =
+	| {
+			unique: UniqueCount
+	  }
+	| {
+			uniqueWithLocations: UniqueWithLocations
+	  }
+type ItemsPerContext = Record<
+	string,
+	{
+		unique: Record<string, number>
+		uniqueWithLocations?: UniqueWithLocations
+	}
+>
 
 type TokenID = string
 
-type Tokens = {
+export type Tokens = {
 	color: Record<TokenID, ColorToken>
 	font_size: Record<TokenID, UnparsedToken | DimensionToken>
 	font_family: Record<TokenID, FontFamilyToken>
@@ -114,8 +119,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
 							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(new Set(old_properties).union(new_properties))
 							colors[name].$extensions[EXTENSION_USAGE_COUNT] += count
-						}
-						else {
+						} else {
 							colors[name] = {
 								$type: 'color',
 								$value: color_token,
@@ -123,7 +127,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 									[EXTENSION_AUTHORED_AS]: color,
 									[EXTENSION_USAGE_COUNT]: count,
 									[EXTENSION_CSS_PROPERTIES]: Array.from(new_properties),
-								}
+								},
 							}
 						}
 					}
@@ -148,13 +152,11 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						$value: font_size,
 						$extensions: extensions,
 					}
-				}
-				else {
+				} else {
 					let name = `fontSize-${hash(parsed.value.toString() + parsed.unit)}`
 					if (font_sizes[name]) {
 						font_sizes[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					}
-					else {
+					} else {
 						font_sizes[name] = {
 							$type: 'dimension',
 							$value: parsed,
@@ -177,8 +179,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					$value: parsed,
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: font_family,
-						[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!)
-					}
+						[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
+					},
 				}
 			}
 			return families
@@ -200,35 +202,30 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						$value: line_height,
 						$extensions: extensions,
 					}
-				}
-				else if (typeof parsed === 'number') {
+				} else if (typeof parsed === 'number') {
 					let name = `lineHeight-${hash(parsed)}`
 					if (line_heights[name]) {
 						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					}
-					else {
+					} else {
 						line_heights[name] = {
 							$type: 'number',
 							$value: parsed,
 							$extensions: extensions,
 						}
 					}
-				}
-				else if (typeof parsed === 'object') {
+				} else if (typeof parsed === 'object') {
 					if (parsed.unit === 'px' || parsed.unit === 'rem') {
 						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
 						if (line_heights[name]) {
 							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-						}
-						else {
+						} else {
 							line_heights[name] = {
 								$type: 'dimension',
 								$value: parsed,
 								$extensions: extensions,
 							}
 						}
-					}
-					else {
+					} else {
 						let name = `lineHeight-${hash(line_height)}`
 						line_heights[name] = {
 							$value: line_height,
@@ -313,13 +310,12 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					let name = `duration-${hash(parsed.toString())}`
 					if (durations[name]) {
 						durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					}
-					else {
+					} else {
 						durations[name] = {
 							$type: 'duration',
 							$value: {
 								value: parsed,
-								unit: 'ms'
+								unit: 'ms',
 							},
 							$extensions: extensions,
 						}
