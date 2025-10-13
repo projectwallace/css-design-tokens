@@ -1,49 +1,49 @@
 {
-  "name": "@projectwallace/css-design-tokens",
-  "description": "Generate spec-compliant Design Tokens from CSS.",
-  "version": "0.8.0",
-  "license": "EUPL-1.2",
-  "author": "Bart Veneman <bart@projectwallace.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/projectwallace/css-design-tokens.git"
-  },
-  "homepage": "https://github.com/projectwallace/css-design-tokens",
-  "issues": "https://github.com/projectwallace/css-design-tokens/issues",
-  "keywords": [
-    "css",
-    "design-tokens",
-    "spec"
-  ],
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "dist/css-design-tokens.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "default": "./dist/css-design-tokens.js"
-  },
-  "engines": {
-    "node": ">=22"
-  },
-  "scripts": {
-    "test": "vitest run",
-    "build": "vite build",
-    "check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@projectwallace/css-analyzer": "^7.6.0",
-    "color-sorter": "^7.0.0",
-    "colorjs.io": "^0.6.0-alpha.1",
-    "css-time-sort": "^3.0.0",
-    "css-tree": "^3.1.0"
-  },
-  "devDependencies": {
-    "@types/css-tree": "^2.3.10",
-    "vite": "^7.0.4",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.2.4"
-  }
+	"name": "@projectwallace/css-design-tokens",
+	"description": "Generate spec-compliant Design Tokens from CSS.",
+	"version": "0.8.1",
+	"license": "EUPL-1.2",
+	"author": "Bart Veneman <bart@projectwallace.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/projectwallace/css-design-tokens.git"
+	},
+	"homepage": "https://github.com/projectwallace/css-design-tokens",
+	"issues": "https://github.com/projectwallace/css-design-tokens/issues",
+	"keywords": [
+		"css",
+		"design-tokens",
+		"spec"
+	],
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/css-design-tokens.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"default": "./dist/css-design-tokens.js"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"test": "vitest run",
+		"build": "vite build",
+		"check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@projectwallace/css-analyzer": "^7.6.0",
+		"color-sorter": "^7.0.0",
+		"colorjs.io": "^0.6.0-alpha.1",
+		"css-time-sort": "^3.0.0",
+		"css-tree": "^3.1.0"
+	},
+	"devDependencies": {
+		"@types/css-tree": "^2.3.10",
+		"vite": "^7.0.4",
+		"vite-plugin-dts": "^4.5.4",
+		"vitest": "^3.2.4"
+	}
 }
