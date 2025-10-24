@@ -1,7 +1,7 @@
 {
 	"name": "@projectwallace/css-design-tokens",
 	"description": "Generate spec-compliant Design Tokens from CSS.",
-	"version": "0.9.0",
+	"version": "0.10.0",
 	"license": "EUPL-1.2",
 	"author": "Bart Veneman <bart@projectwallace.com>",
 	"repository": {
