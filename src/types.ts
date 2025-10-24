@@ -16,6 +16,13 @@ export type BaseToken = {
 	}
 }
 
+export type Unit = 'rem' | 'px'
+
+export type Length = {
+	value: number
+	unit: Unit
+}
+
 export type DurationValue = {
 	value: number
 	unit: 'ms'
@@ -32,7 +39,6 @@ export type UnparsedToken = BaseToken & {
 }
 
 export type ColorSpace =
-	| string
 	| 'srgb'
 	| 'display-p3'
 	| 'hsl'
@@ -67,7 +73,7 @@ export type ColorToken = BaseToken & {
 
 export type DimensionValue = {
 	value: number
-	unit: string
+	unit: Unit
 }
 
 export type DimensionToken = BaseToken & {
