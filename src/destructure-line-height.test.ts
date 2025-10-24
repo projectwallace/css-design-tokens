@@ -33,6 +33,8 @@ test('lengths with spec-compliant units', () => {
 	expect.soft(destructure_line_height('1.1px')).toEqual({ value: 1.1, unit: 'px' })
 	expect.soft(destructure_line_height('100px')).toEqual({ value: 100, unit: 'px' })
 	expect.soft(destructure_line_height('1e2rem')).toEqual({ value: 100, unit: 'rem' })
+	expect.soft(destructure_line_height('1REM')).toEqual({ value: 1, unit: 'rem' })
+	expect.soft(destructure_line_height('1PX')).toEqual({ value: 1, unit: 'px' })
 })
 
 test('lenghts with unsupported units', () => {

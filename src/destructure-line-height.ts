@@ -23,10 +23,11 @@ export function destructure_line_height(value: string): Length | number | null {
 			if (value === 0) {
 				return 0
 			}
-			if (ALLOWED_UNITS.has(maybe_dimension.unit)) {
+			let unit = maybe_dimension.unit.toLowerCase()
+			if (ALLOWED_UNITS.has(unit)) {
 				return {
 					value,
-					unit: maybe_dimension.unit as Unit,
+					unit: unit as Unit,
 				}
 			}
 			return null
