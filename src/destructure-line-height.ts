@@ -1,9 +1,7 @@
 import { parse, type Value } from 'css-tree'
+import { type Length, type Unit } from './types'
 
-type Length = {
-	value: number
-	unit: string
-}
+const ALLOWED_UNITS = new Set(['px', 'rem'])
 
 /**
  * @description Destructure a line-height from a string
@@ -25,10 +23,14 @@ export function destructure_line_height(value: string): Length | number | null {
 			if (value === 0) {
 				return 0
 			}
-			return {
-				value,
-				unit: maybe_dimension.unit
+			let unit = maybe_dimension.unit.toLowerCase()
+			if (ALLOWED_UNITS.has(unit)) {
+				return {
+					value,
+					unit: unit as Unit,
+				}
 			}
+			return null
 		}
 		case 'Number': {
 			return Number(maybe_dimension.value)

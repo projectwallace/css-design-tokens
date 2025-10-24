@@ -22,6 +22,7 @@ import {
 	type ShadowToken,
 } from './types.js'
 import { color_to_token } from './colors.js'
+export { color_to_token } from './colors.js'
 
 export {
 	EXTENSION_AUTHORED_AS,

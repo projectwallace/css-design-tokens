@@ -1,5 +1,5 @@
 import { colorKeywords as color_keywords, cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
-import { EXTENSION_AUTHORED_AS, type ColorToken, type ColorValue, type UnparsedToken } from './types.js'
+import { type ColorValue, type ColorSpace as tColorSpace } from './types.js'
 import {
 	parse,
 	ColorSpace,
@@ -25,7 +25,7 @@ import {
 	OKLab,
 	OKLCH,
 	OKLrab,
-} from "colorjs.io/fn"
+} from 'colorjs.io/fn'
 
 // Register color spaces for parsing and converting
 ColorSpace.register(sRGB) // Parses keywords and hex colors
@@ -77,13 +77,9 @@ export function color_to_token(color: string): ColorValue | null {
 		let [component_a, component_b, component_c] = parsed_color.coords
 
 		return {
-			colorSpace: parsed_color.spaceId,
-			components: [
-				component_a ?? 'none',
-				component_b ?? 'none',
-				component_c ?? 'none',
-			],
-			alpha: parsed_color.alpha ?? 0,
+			colorSpace: parsed_color.spaceId as tColorSpace,
+			components: [component_a ?? 'none', component_b ?? 'none', component_c ?? 'none'],
+			alpha: parsed_color.alpha ?? 1,
 		}
 	} catch (error) {
 		// A catch for edge cases that we don't support yet.
