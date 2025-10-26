@@ -1,7 +1,7 @@
 import { colorKeywords as color_keywords, cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
 import { type ColorValue, type ColorSpace as tColorSpace } from './types.js'
 import {
-	parse,
+	tryColor,
 	ColorSpace,
 	XYZ_D65,
 	XYZ_D50,
@@ -72,17 +72,14 @@ export function color_to_token(color: string): ColorValue | null {
 		return null
 	}
 
-	try {
-		let parsed_color = parse(color)
-		let [component_a, component_b, component_c] = parsed_color.coords
+	let parsed_color = tryColor(color)
 
-		return {
-			colorSpace: parsed_color.spaceId as tColorSpace,
-			components: [component_a ?? 'none', component_b ?? 'none', component_c ?? 'none'],
-			alpha: parsed_color.alpha ?? 1,
-		}
-	} catch (error) {
-		// A catch for edge cases that we don't support yet.
-		return null
+	if (parsed_color === null) return null
+	let [component_a, component_b, component_c] = parsed_color.coords
+
+	return {
+		colorSpace: parsed_color.space.id as tColorSpace,
+		components: [component_a ?? 'none', component_b ?? 'none', component_c ?? 'none'],
+		alpha: parsed_color.alpha ?? 1,
 	}
 }
