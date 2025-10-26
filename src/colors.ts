@@ -28,6 +28,8 @@ import {
 } from 'colorjs.io/fn'
 
 // Register color spaces for parsing and converting
+// TODO: According to the changelog we should be able to import
+// and register all spaces in one go but it doesn't seem to work
 ColorSpace.register(sRGB) // Parses keywords and hex colors
 ColorSpace.register(XYZ_D65)
 ColorSpace.register(XYZ_D50)
