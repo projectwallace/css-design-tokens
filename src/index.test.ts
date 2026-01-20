@@ -56,7 +56,7 @@ describe('analysis_to_tokens', () => {
 		let analysis = analyze(css, {
 			useLocations: false,
 		})
-		let actual = analysis_to_tokens(analysis)
+		let actual = analysis_to_tokens(analysis as any)
 		expect(actual).toEqual(expected)
 	})
 
@@ -64,7 +64,7 @@ describe('analysis_to_tokens', () => {
 		let analysis = analyze(css, {
 			useLocations: true,
 		})
-		let actual = analysis_to_tokens(analysis)
+		let actual = analysis_to_tokens(analysis as any)
 		expect(actual).toEqual(expected)
 	})
 })

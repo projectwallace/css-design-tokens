@@ -34,15 +34,14 @@
 		"check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@projectwallace/css-analyzer": "^7.6.0",
+		"@projectwallace/css-analyzer": "^8.0.2",
+		"@projectwallace/css-parser": "^0.12.3",
 		"color-sorter": "^7.0.0",
-		"colorjs.io": "^0.6.0-beta.1",
-		"css-time-sort": "^3.0.0",
-		"css-tree": "^3.1.0"
+		"colorjs.io": "^0.6.1",
+		"css-time-sort": "^3.0.0"
 	},
 	"devDependencies": {
-		"@types/css-tree": "^2.3.10",
-		"vite": "^7.0.4",
+		"vite": "^7.3.1",
 		"vite-plugin-dts": "^4.5.4",
 		"vitest": "^3.2.4"
 	}

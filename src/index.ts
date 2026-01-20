@@ -48,7 +48,7 @@ export type { CssLength, ShadowValue } from './destructure-box-shadow.js'
 
 export function css_to_tokens(css: string) {
 	let analysis = analyze(css)
-	return analysis_to_tokens(analysis)
+	return analysis_to_tokens(analysis as CssAnalysis)
 }
 
 // TODO: get @projectwallace/css-analyzer types in order
@@ -63,8 +63,10 @@ type UniqueWithLocations = Record<string, CssLocation[]>
 type Collection =
 	| {
 			unique: UniqueCount
+			uniqueWithLocations?: UniqueWithLocations | null
 	  }
 	| {
+			unique?: UniqueCount
 			uniqueWithLocations: UniqueWithLocations
 	  }
 type ItemsPerContext = Record<
@@ -93,11 +95,11 @@ export type Tokens = {
  * Function to get the unique values from a collection regardless of whether the analysis was run with
  * locations enabled or not.
  */
-function get_unique(collection: Collection) {
-	if ('uniqueWithLocations' in collection) {
+function get_unique(collection: Collection): UniqueCount | UniqueWithLocations {
+	if ('uniqueWithLocations' in collection && collection.uniqueWithLocations != null) {
 		return collection.uniqueWithLocations
 	}
-	return collection.unique
+	return collection.unique!
 }
 
 /**

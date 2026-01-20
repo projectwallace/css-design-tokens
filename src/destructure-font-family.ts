@@ -1,4 +1,5 @@
-import { parse, type Value, type CssNode } from 'css-tree'
+import type { CSSNode } from '@projectwallace/css-parser'
+import { parse_value } from '@projectwallace/css-parser/parse-value'
 import { unquote } from './unquote.js'
 import type { FontFamilyValue } from './types.js'
 
@@ -7,40 +8,31 @@ export function destructure_font_family(value: string): FontFamilyValue | undefi
 		return undefined
 	}
 
-	let ast = parse(value, {
-		context: 'value',
-		positions: true,
-	}) as Value
-
-	function generate(node: CssNode) {
-		if (node.loc) {
-			return value.slice(node.loc.start.offset, node.loc.end.offset)
-		}
-		return ''
-	}
+	let ast = parse_value(value)
 
 	let families: string[] = []
+	let { children, has_children } = ast
 
-	if (!ast.children || ast.children.size === 0) {
+	if (!has_children || children.length === 0) {
 		return families
 	}
 
 	let family_buffer = ''
-	let prev_type: CssNode['type'] | undefined
+	let prev_type: CSSNode['type_name'] | undefined
 
-	for (let child of ast.children) {
-		if (child.type === 'Operator' && child.value === ',') {
+	for (let child of children) {
+		if (child.type_name === 'Operator' && child.name === ',') {
 			families.push(unquote(family_buffer))
 			family_buffer = ''
-			prev_type = child.type
+			prev_type = child.type_name
 			continue
 		}
 		// Add space back between identifiers, like in `Arial Black`
-		if (prev_type === 'Identifier' && child.type === 'Identifier') {
+		if (prev_type === 'Identifier' && child.type_name === 'Identifier') {
 			family_buffer += ' '
 		}
-		family_buffer += generate(child)
-		prev_type = child.type
+		family_buffer += child.text
+		prev_type = child.type_name
 	}
 
 	families.push(unquote(family_buffer))

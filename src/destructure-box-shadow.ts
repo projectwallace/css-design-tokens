@@ -1,4 +1,4 @@
-import { parse, type CssNode, type Value } from 'css-tree'
+import { parse_value } from '@projectwallace/css-parser/parse-value'
 import { color_to_token } from './colors.js'
 import type { ColorValue } from './types.js'
 import { namedColors as named_colors, systemColors as system_colors, colorFunctions as color_functions } from '@projectwallace/css-analyzer'
@@ -29,47 +29,37 @@ function create_destructured(): ShadowValue {
 }
 
 export function destructure_box_shadow(value: string): null | ShadowValue[] {
-	let ast = parse(value, {
-		context: 'value',
-		positions: true,
-	}) as Value
-
-	function generate(node: CssNode) {
-		if (node.loc) {
-			return value.slice(node.loc.start.offset, node.loc.end.offset)
-		}
-		return ''
-	}
+	let ast = parse_value(value)
 
 	let current_shadow = create_destructured()
 	let destructured: ShadowValue[] = [current_shadow]
 
-	if (ast.children.size < 2) {
+	if (ast.children.length < 2) {
 		return null
 	}
 
-	ast.children.forEach((node: CssNode) => {
-		if (node.type === 'Identifier') {
+	for (let node of ast.children) {
+		if (node.type_name === 'Identifier') {
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
 			} else if (named_colors.has(node.name) || system_colors.has(node.name)) {
 				let color_token = color_to_token(node.name)
 				if (color_token === null) {
-					return
+					continue
 				}
 				current_shadow.color = color_token
 			}
-		} else if (node.type === 'Dimension' || (node.type === 'Number' && node.value === '0')) {
+		} else if (node.type_name === 'Dimension' || (node.type_name === 'Number' && node.value === 0)) {
 			let length =
-				node.type === 'Dimension'
+				node.type_name === 'Dimension'
 					? {
 							value: Number(node.value),
-							unit: node.unit,
-					  }
+							unit: node.unit!,
+						}
 					: {
 							value: 0,
 							unit: 'px',
-					  }
+						}
 
 			if (!current_shadow.offsetX) {
 				current_shadow.offsetX = length
@@ -80,33 +70,33 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 			} else if (!current_shadow.spread) {
 				current_shadow.spread = length
 			}
-		} else if (node.type === 'Function') {
+		} else if (node.type_name === 'Function') {
 			if (color_functions.has(node.name)) {
-				let color_token = color_to_token(generate(node))
+				let color_token = color_to_token(node.text)
 				if (color_token === null) {
-					return
+					continue
 				}
 				current_shadow.color = color_token
 			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
-				let color_token = color_to_token(generate(node))
+				let color_token = color_to_token(node.text)
 				if (color_token === null) {
-					return
+					continue
 				}
 				current_shadow.color = color_token
 			}
-		} else if (node.type === 'Hash') {
-			let color_token = color_to_token(generate(node))
+		} else if (node.type_name === 'Hash') {
+			let color_token = color_to_token(node.text)
 			if (color_token === null) {
-				return
+				continue
 			}
 			current_shadow.color = color_token
-		} else if (node.type === 'Operator' && node.value === ',') {
+		} else if (node.type_name === 'Operator' && node.name === ',') {
 			// Start a new shadow, but only after we've made sure that the current shadow is valid
 			complete_shadow_token(current_shadow)
 			current_shadow = create_destructured()
 			destructured.push(current_shadow)
 		}
-	})
+	}
 
 	complete_shadow_token(current_shadow)
 

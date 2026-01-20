@@ -1,6 +1,8 @@
 import type { analyze } from '@projectwallace/css-analyzer'
 import type { ShadowValue } from './destructure-box-shadow'
 
+// CssAnalysis represents the result of analyze() which can be called with or without useLocations
+// TypeScript infers this as the union of both overload return types
 export type CssAnalysis = ReturnType<typeof analyze>
 
 export const EXTENSION_AUTHORED_AS = 'com.projectwallace.css-authored-as'
