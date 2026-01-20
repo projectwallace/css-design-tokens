@@ -1,4 +1,4 @@
-import { parse, type Value } from 'css-tree'
+import { parse_value } from '@projectwallace/css-parser'
 
 type DesignTokenLength = {
 	value: number
@@ -14,7 +14,7 @@ let absolute_size_map = new Map([
 	['large', 1.2],
 	['x-large', 1.5],
 	['xx-large', 2],
-	['xxx-large', 3]
+	['xxx-large', 3],
 ])
 
 /**
@@ -25,14 +25,14 @@ let absolute_size_map = new Map([
  * - the keyword `normal`.
  */
 export function parse_length(value: string): DesignTokenLength | null {
-	let ast = parse(value, { context: 'value' }) as Value
-	if (ast.children === null) return null
-	if (ast.children.size !== 1) return null
-	let maybe_length = ast.children.first!
+	let ast = parse_value(value)
+	if (!ast.has_children) return null
+	if (ast.children.length !== 1) return null
+	let maybe_length = ast.first_child!
 
-	switch (maybe_length.type) {
+	switch (maybe_length.type_name) {
 		case 'Dimension': {
-			let unit = maybe_length.unit.toLowerCase()
+			let unit = maybe_length.unit!.toLowerCase()
 			if (unit === 'px' || unit === 'rem') {
 				let value = Number(maybe_length.value)
 				// Always return `0px`, `0`, or `0rem` as `0px`
@@ -57,7 +57,7 @@ export function parse_length(value: string): DesignTokenLength | null {
 			if (absolute_size_map.has(name)) {
 				return {
 					value: absolute_size_map.get(name)!,
-					unit: 'rem'
+					unit: 'rem',
 				}
 			}
 			break
