@@ -532,7 +532,6 @@ let properties = color['green-5e0cf03']['$extensions']['com.projectwallace.css-p
 
 ## Acknowledgements
 
-- [CSSTree](https://github.com/csstree/csstree) does all the heavy lifting of parsing CSS
 - [ColorJS.io](https://colorjs.io/) powers all color conversions necessary for grouping and sorting and converting into Color tokens
 
 ## Related projects
