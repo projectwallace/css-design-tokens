@@ -38,7 +38,7 @@
 	},
 	"dependencies": {
 		"@projectwallace/css-analyzer": "^9.3.0",
-		"@projectwallace/css-parser": "^0.12.3",
+		"@projectwallace/css-parser": "^0.13.5",
 		"color-sorter": "^7.0.0",
 		"colorjs.io": "^0.6.1",
 		"css-time-sort": "^3.0.0"
