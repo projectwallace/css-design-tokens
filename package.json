@@ -44,6 +44,7 @@
 		"css-time-sort": "^3.0.0"
 	},
 	"devDependencies": {
+		"publint": "^0.3.18",
 		"tsdown": "^0.21.1",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
