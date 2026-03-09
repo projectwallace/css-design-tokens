@@ -45,7 +45,7 @@ export function destructure_line_height(value: string): Length | number | null {
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
 			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
 			// depending on the element's font-family.
-			if (maybe_dimension.name.toLowerCase() === 'normal') {
+			if (maybe_dimension.name?.toLowerCase() === 'normal') {
 				return 1.2
 			}
 		}
