@@ -26,8 +26,9 @@ let absolute_size_map = new Map([
  */
 export function parse_length(value: string): DesignTokenLength | null {
 	let ast = parse_value(value)
-	if (!ast.has_children) return null
-	if (ast.children.length !== 1) return null
+	if (!ast.has_children || ast.children.length !== 1) {
+		return null
+	}
 	let maybe_length = ast.first_child!
 
 	switch (maybe_length.type_name) {
