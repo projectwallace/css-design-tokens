@@ -14,11 +14,15 @@ test('multiple font-family', () => {
 })
 
 test('multiple font-family with spaces', () => {
-	expect.soft(destructure_font_family('Arial Black, sans-serif')).toEqual(['Arial Black', 'sans-serif'])
+	expect
+		.soft(destructure_font_family('Arial Black, sans-serif'))
+		.toEqual(['Arial Black', 'sans-serif'])
 })
 
 test('multiple font-family with spaces and quotes', () => {
-	expect.soft(destructure_font_family('"Arial Black", sans-serif')).toEqual(['Arial Black', 'sans-serif'])
+	expect
+		.soft(destructure_font_family('"Arial Black", sans-serif'))
+		.toEqual(['Arial Black', 'sans-serif'])
 })
 
 test('with emoji name', () => {

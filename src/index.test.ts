@@ -1,5 +1,11 @@
 import { test, expect, describe } from 'vitest'
-import { analysis_to_tokens, css_to_tokens, EXTENSION_AUTHORED_AS, EXTENSION_CSS_PROPERTIES, EXTENSION_USAGE_COUNT } from './index.js'
+import {
+	analysis_to_tokens,
+	css_to_tokens,
+	EXTENSION_AUTHORED_AS,
+	EXTENSION_CSS_PROPERTIES,
+	EXTENSION_USAGE_COUNT,
+} from './index.js'
 import { analyze } from '@projectwallace/css-analyzer'
 
 describe('analysis_to_tokens', () => {

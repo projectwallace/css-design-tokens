@@ -3,10 +3,10 @@ import { destructure_box_shadow } from './destructure-box-shadow.js'
 import type { ColorValue } from './types.js'
 import { color_to_token } from './colors.js'
 
-function create_px_length(value: number): { value: number, unit: string } {
+function create_px_length(value: number): { value: number; unit: string } {
 	return {
 		value,
-		unit: 'px'
+		unit: 'px',
 	}
 }
 
@@ -35,8 +35,8 @@ test('0px 0px 0px 0px #000', () => {
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
 			spread: create_px_length(0),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -48,8 +48,8 @@ test('adds units when omitted: 0 0 0 0 #000', () => {
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
 			spread: create_px_length(0),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -61,8 +61,8 @@ test('offsetX and offsetY: 2px 4px #000', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(0),
 			spread: create_px_length(0),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -74,8 +74,8 @@ test('offsetX, offsetY and blur: 2px 4px 6px #000', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(0),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -87,8 +87,8 @@ test('offsetX, offsetY, blur and spread: 2px 4px 6px 8px #000', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(8),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -100,8 +100,8 @@ test('inset: 2px 4px 6px 8px #000 inset', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(8),
-			inset: true
-		}
+			inset: true,
+		},
 	])
 })
 
@@ -113,8 +113,8 @@ test('INSET: 2px 4px 6px 8px #000 inset', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(8),
-			inset: true
-		}
+			inset: true,
+		},
 	])
 })
 
@@ -126,8 +126,8 @@ test('color in a different order: #000 2px 4px 6px 8px', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(8),
-			inset: false
-		}
+			inset: false,
+		},
 	])
 })
 
@@ -139,7 +139,7 @@ test('multiple shadows', () => {
 			offsetY: create_px_length(4),
 			blur: create_px_length(6),
 			spread: create_px_length(8),
-			inset: false
+			inset: false,
 		},
 		{
 			color: color_to_token('#fff'),
@@ -147,8 +147,8 @@ test('multiple shadows', () => {
 			offsetY: create_px_length(0),
 			blur: create_px_length(0),
 			spread: create_px_length(0),
-			inset: true
-		}
+			inset: true,
+		},
 	])
 })
 
@@ -170,8 +170,8 @@ describe('color formats', () => {
 					offsetY: create_px_length(0),
 					blur: create_px_length(0),
 					spread: create_px_length(0),
-					inset: false
-				}
+					inset: false,
+				},
 			])
 		})
 	}

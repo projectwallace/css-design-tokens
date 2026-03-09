@@ -30,24 +30,15 @@ npm install @projectwallace/css-design-tokens
 ```js
 import { css_to_tokens } from '@projectwallace/css-design-tokens'
 
-let {
-  color,
-  font_size,
-  font_family,
-  line_height,
-  gradient,
-  box_shadow,
-  radius,
-  duration,
-  easing,
-} = css_to_tokens(`.my-design-system { color: green; }`)
+let { color, font_size, font_family, line_height, gradient, box_shadow, radius, duration, easing } =
+	css_to_tokens(`.my-design-system { color: green; }`)
 
 // Or if you already have done CSS analysis with @projectwallace/css-analyzer
 import { analyze } from '@projectwallace/css-analyzer'
 import { analysis_to_tokens } from '@projectwallace/css-design-tokens'
 
 let analysis = analyze(`.my-design-system { color: green; }`, {
-  useLocations: true // may be `true` or `false`, it works either way
+	useLocations: true, // may be `true` or `false`, it works either way
 })
 let tokens = analysis_to_tokens(analysis)
 ```
@@ -58,10 +49,10 @@ All tokens have a stabe unique ID using a very simple hashing algorithm. This is
 
 ```ts
 let { color } = css_to_tokens(
-  `.my-design-system {
+	`.my-design-system {
     color: green;
     color: rgb(100 100 100 / 20%);
-  }`
+  }`,
 )
 
 // {
@@ -92,19 +83,19 @@ Only fully compliant colors are listed. Colors that can't be parsed by [colorjs.
 let { color } = css_to_tokens(`.my-design-system { color: green; }`)
 
 let color = {
-  'green-5e0cf03': {
-    $type: 'color',
-    $value: {
-      colorSpace: 'srgb',
-      components: [0, 0.5019607843137255, 0],
-      alpha: 1,
-    },
-    $extensions: {
-      'com.projectwallace.css-authored-as': 'green',
-      'com.projectwallace.usage-count': 2,
-      'com.projectwallace.css-properties': ['color', 'border-color'],
-    }
-  }
+	'green-5e0cf03': {
+		$type: 'color',
+		$value: {
+			colorSpace: 'srgb',
+			components: [0, 0.5019607843137255, 0],
+			alpha: 1,
+		},
+		$extensions: {
+			'com.projectwallace.css-authored-as': 'green',
+			'com.projectwallace.usage-count': 2,
+			'com.projectwallace.css-properties': ['color', 'border-color'],
+		},
+	},
 }
 ```
 
@@ -124,24 +115,24 @@ let { font_size } = css_to_tokens(`.my-design-system {
 }`)
 
 let font_size = {
-  'fontSize-171eed': {
-    $type: 'dimension',
-    $value: {
-      value: 16,
-      unit: 'px'
-    },
-    $extensions: {
-      'com.projectwallace.css-authored-as': '16px',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
-  'fontSize-582e015a': {
-    $value: '20vmin',
-    $extensions: {
-      'com.projectwallace.css-authored-as': '20vmin',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
+	'fontSize-171eed': {
+		$type: 'dimension',
+		$value: {
+			value: 16,
+			unit: 'px',
+		},
+		$extensions: {
+			'com.projectwallace.css-authored-as': '16px',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
+	'fontSize-582e015a': {
+		$value: '20vmin',
+		$extensions: {
+			'com.projectwallace.css-authored-as': '20vmin',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -160,22 +151,22 @@ let { font_family } = css_to_tokens(`.my-design-system {
 }`)
 
 let font_family = {
-  'fontFamily-3375cf09': {
-    $type: 'fontFamily',
-    $value: ['\'Inter\''],
-    $extensions: {
-      'com.projectwallace.css-authored-as': '\'Inter\'',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
-  'fontFamily-582e015a': {
-    $type: 'fontFamily',
-    $value: ['Arial Black', 'sans-serif'],
-    $extensions: {
-      'com.projectwallace.css-authored-as': 'Arial Black, sans-serif',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
+	'fontFamily-3375cf09': {
+		$type: 'fontFamily',
+		$value: ["'Inter'"],
+		$extensions: {
+			'com.projectwallace.css-authored-as': "'Inter'",
+			'com.projectwallace.usage-count': 1,
+		},
+	},
+	'fontFamily-582e015a': {
+		$type: 'fontFamily',
+		$value: ['Arial Black', 'sans-serif'],
+		$extensions: {
+			'com.projectwallace.css-authored-as': 'Arial Black, sans-serif',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -193,32 +184,32 @@ let { line_height } = css_to_tokens(`
 `)
 
 let line_height = {
-  'lineHeight-563f7fe2': {
-    $type: 'dimension',
-    $value: {
-      value: 1.5,
-      unit: 'rem'
-    },
-    $extensions: {
-      'com.projectwallace.css-authored-as': '1.5rem',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
-  'lineHeight-bdb8': {
-    $type: 'number',
-    $value: 1.5,
-    $extensions: {
-      'com.projectwallace.css-authored-as': '1.5',
-      'com.projectwallace.usage-count': 1,
-    }
-  },
-  'lineHeight-582e015a': {
-    $value: '20vmin',
-    $extensions: {
-      'com.projectwallace.css-authored-as': '20vmin',
-      'com.projectwallace.usage-count': 1,
-    }
-  }
+	'lineHeight-563f7fe2': {
+		$type: 'dimension',
+		$value: {
+			value: 1.5,
+			unit: 'rem',
+		},
+		$extensions: {
+			'com.projectwallace.css-authored-as': '1.5rem',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
+	'lineHeight-bdb8': {
+		$type: 'number',
+		$value: 1.5,
+		$extensions: {
+			'com.projectwallace.css-authored-as': '1.5',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
+	'lineHeight-582e015a': {
+		$value: '20vmin',
+		$extensions: {
+			'com.projectwallace.css-authored-as': '20vmin',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -234,13 +225,13 @@ let { gradient } = css_to_tokens(`
 `)
 
 let gradient = {
-  'gradient-2aec04e5': {
-    $value: 'linear-gradient(to right, red, blue)',
-    $extensions: {
-      'com.projectwallace.css-authored-as': 'linear-gradient(to right, red, blue)',
-      'com.projectwallace.usage-count': 1,
-    }
-  }
+	'gradient-2aec04e5': {
+		$value: 'linear-gradient(to right, red, blue)',
+		$extensions: {
+			'com.projectwallace.css-authored-as': 'linear-gradient(to right, red, blue)',
+			'com.projectwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -261,101 +252,102 @@ let { box_shadow } = css_to_tokens(`
 `)
 
 let box_shadow = {
-  'boxShadow-6f90da6b': {
-    $type: 'shadow',
-    $value: {
-      offsetX: {
-        value: 0,
-        unit: 'px'
-      },
-      offsetY: {
-        value: 0,
-        unit: 'px'
-      },
-      blur: {
-        value: 10,
-        unit: 'px'
-      },
-      spread: {
-        value: 0,
-        unit: 'px'
-      },
-      inset: false,
-      color: {
-        colorSpace: 'srgb',
-        components: [0, 0, 0],
-        alpha: 0.5,
-      },
-    },
-    $extensions: {
-      'com.projectwallace.css-authored-as': '0 0 10px 0 rgba(0, 0, 0, 0.5)',
-      'com.projectwwallace.usage-count': 1,
-    }
-  },
-  'boxShadow-be2751ac': {
-    $type: 'shadow',
-    $value: [
-      {
-        offsetX: {
-          value: 0,
-          unit: 'px'
-        },
-        offsetY: {
-          value: 0,
-          unit: 'px'
-        },
-        blur: {
-          value: 10,
-          unit: 'px'
-        },
-        spread: {
-          value: 0,
-          unit: 'px'
-        },
-        inset: false,
-        color: {
-          colorSpace: 'srgb',
-          components: [0, 0, 0],
-          alpha: 0.5,
-        },
-      },
-      {
-        offsetX: {
-          value: 0,
-          unit: 'px'
-        },
-        offsetY: {
-          value: 0,
-          unit: 'px'
-        },
-        blur: {
-          value: 10,
-          unit: 'px'
-        },
-        spread: {
-          value: 0,
-          unit: 'px'
-        },
-        inset: false,
-        color: {
-          colorSpace: 'srgb',
-          components: [0, 0, 0],
-          alpha: 0.5,
-        },
-      }
-    ],
-    $extensions: {
-      'com.projectwwallace.css-authored-as': '0 0 10px 0 rgba(0, 0, 0, 0.5), 0 0 10px 0 rgba(0, 0, 0, 0.5)',
-      'com.projectwwallace.usage-count': 1,
-    }
-  },
-  'boxShadow-j4h5gas5h': {
-    $value: '0 0 0 0 var(--red)',
-    $extensions: {
-      'com.projectwwallace.css-authored-as': '0 0 0 0 var(--red)',
-      'com.projectwwallace.usage-count': 1,
-    }
-  }
+	'boxShadow-6f90da6b': {
+		$type: 'shadow',
+		$value: {
+			offsetX: {
+				value: 0,
+				unit: 'px',
+			},
+			offsetY: {
+				value: 0,
+				unit: 'px',
+			},
+			blur: {
+				value: 10,
+				unit: 'px',
+			},
+			spread: {
+				value: 0,
+				unit: 'px',
+			},
+			inset: false,
+			color: {
+				colorSpace: 'srgb',
+				components: [0, 0, 0],
+				alpha: 0.5,
+			},
+		},
+		$extensions: {
+			'com.projectwallace.css-authored-as': '0 0 10px 0 rgba(0, 0, 0, 0.5)',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
+	'boxShadow-be2751ac': {
+		$type: 'shadow',
+		$value: [
+			{
+				offsetX: {
+					value: 0,
+					unit: 'px',
+				},
+				offsetY: {
+					value: 0,
+					unit: 'px',
+				},
+				blur: {
+					value: 10,
+					unit: 'px',
+				},
+				spread: {
+					value: 0,
+					unit: 'px',
+				},
+				inset: false,
+				color: {
+					colorSpace: 'srgb',
+					components: [0, 0, 0],
+					alpha: 0.5,
+				},
+			},
+			{
+				offsetX: {
+					value: 0,
+					unit: 'px',
+				},
+				offsetY: {
+					value: 0,
+					unit: 'px',
+				},
+				blur: {
+					value: 10,
+					unit: 'px',
+				},
+				spread: {
+					value: 0,
+					unit: 'px',
+				},
+				inset: false,
+				color: {
+					colorSpace: 'srgb',
+					components: [0, 0, 0],
+					alpha: 0.5,
+				},
+			},
+		],
+		$extensions: {
+			'com.projectwwallace.css-authored-as':
+				'0 0 10px 0 rgba(0, 0, 0, 0.5), 0 0 10px 0 rgba(0, 0, 0, 0.5)',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
+	'boxShadow-j4h5gas5h': {
+		$value: '0 0 0 0 var(--red)',
+		$extensions: {
+			'com.projectwwallace.css-authored-as': '0 0 0 0 var(--red)',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -371,13 +363,13 @@ let { radius } = css_to_tokens(`
 `)
 
 let radius = {
-  'radius-170867': {
-    $value: '10px',
-    $extensions: {
-      'com.projectwwallace.css-authored-as': '10px',
-      'com.projectwwallace.usage-count': 1,
-    }
-  }
+	'radius-170867': {
+		$value: '10px',
+		$extensions: {
+			'com.projectwwallace.css-authored-as': '10px',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -395,17 +387,17 @@ let { duration } = css_to_tokens(`
 `)
 
 let duration = {
-  'duration-17005f': {
-    $type: 'duration',
-    $value: {
-      value: 1000,
-      unit: 'ms'
-    },
-    $extensions: {
-      'com.projectwwallace.css-authored-as': '1s',
-      'com.projectwwallace.usage-count': 1,
-    }
-  }
+	'duration-17005f': {
+		$type: 'duration',
+		$value: {
+			value: 1000,
+			unit: 'ms',
+		},
+		$extensions: {
+			'com.projectwwallace.css-authored-as': '1s',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -425,39 +417,29 @@ let actual = css_to_tokens(`
 `)
 
 let easing = {
-  'easing-ea6c7565': {
-    $type: 'cubicBezier',
-    $value: [
-      0.42,
-      0,
-      0.58,
-      1
-    ],
-    $extensions: {
-      'com.projectwwallace.css-authored-as': 'ease-in-out',
-      'com.projectwwallace.usage-count': 1,
-    }
-  },
-  'easing-90111eba': {
-    $type: 'cubicBezier',
-    $value: [
-      0,
-      0,
-      0.5,
-      0.8
-    ],
-    $extensions: {
-      'com.projectwwallace.css-authored-as': 'cubic-bezier(0, 0, 0.5, .8)',
-      'com.projectwwallace.usage-count': 1,
-    }
-  },
-  'easing-12bb7f36': {
-    $value: 'var(--test)',
-    $extensions: {
-      'com.projectwwallace.css-authored-as': 'var(--test)',
-      'com.projectwwallace.usage-count': 1,
-    }
-  }
+	'easing-ea6c7565': {
+		$type: 'cubicBezier',
+		$value: [0.42, 0, 0.58, 1],
+		$extensions: {
+			'com.projectwwallace.css-authored-as': 'ease-in-out',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
+	'easing-90111eba': {
+		$type: 'cubicBezier',
+		$value: [0, 0, 0.5, 0.8],
+		$extensions: {
+			'com.projectwwallace.css-authored-as': 'cubic-bezier(0, 0, 0.5, .8)',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
+	'easing-12bb7f36': {
+		$value: 'var(--test)',
+		$extensions: {
+			'com.projectwwallace.css-authored-as': 'var(--test)',
+			'com.projectwwallace.usage-count': 1,
+		},
+	},
 }
 ```
 
@@ -509,7 +491,7 @@ let green_count = color['green-5e0cf03']['$extensions']['com.projectwallace.usag
 
 ### CSS property usage
 
-__For color tokens only__
+**For color tokens only**
 
 You can read the `$extensions['com.projectwallace.css-properties']` property to see for which CSS properties a color was used:
 

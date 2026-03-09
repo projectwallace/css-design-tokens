@@ -130,19 +130,24 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(''))}`
 
 						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-						let new_properties = Object.entries(items_per_context).reduce((acc, [property, collection]) => {
-							if (color in collection.unique) {
-								return acc.add(property)
-							}
-							if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
-								return acc.add(property)
-							}
-							return acc
-						}, new Set() as Set<string>)
+						let new_properties = Object.entries(items_per_context).reduce(
+							(acc, [property, collection]) => {
+								if (color in collection.unique) {
+									return acc.add(property)
+								}
+								if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
+									return acc.add(property)
+								}
+								return acc
+							},
+							new Set() as Set<string>,
+						)
 
 						if (colors[name]) {
 							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
-							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(new Set(old_properties).union(new_properties))
+							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(
+								new Set(old_properties).union(new_properties),
+							)
 							colors[name].$extensions[EXTENSION_USAGE_COUNT] += count
 						} else {
 							colors[name] = {
@@ -220,7 +225,10 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return families
 		})(),
 		line_height: (() => {
-			let line_heights = Object.create(null) as Record<TokenID, UnparsedToken | DimensionToken | NumberToken>
+			let line_heights = Object.create(null) as Record<
+				TokenID,
+				UnparsedToken | DimensionToken | NumberToken
+			>
 			let unique = get_unique(analysis.values.lineHeights)
 
 			for (let line_height in unique) {
@@ -239,7 +247,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				} else if (typeof parsed === 'number') {
 					let name = `lineHeight-${hash(parsed)}`
 					if (line_heights[name]) {
-						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
+							extensions[EXTENSION_USAGE_COUNT]
 					} else {
 						line_heights[name] = {
 							$type: 'number',
@@ -251,7 +260,8 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					if (parsed.unit === 'px' || parsed.unit === 'rem') {
 						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
 						if (line_heights[name]) {
-							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
+								extensions[EXTENSION_USAGE_COUNT]
 						} else {
 							line_heights[name] = {
 								$type: 'dimension',

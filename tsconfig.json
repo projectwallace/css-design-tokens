@@ -15,14 +15,8 @@
 		"moduleResolution": "bundler",
 		"allowSyntheticDefaultImports": true,
 		"noEmit": true,
-		"lib": [
-			"esnext",
-		],
+		"lib": ["esnext"]
 	},
-	"include": [
-		"src/**/*.ts"
-	],
-	"exclude": [
-		"node_modules",
-	]
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
 }
