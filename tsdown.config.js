@@ -9,7 +9,7 @@ export default defineConfig({
 	plugins: [
 		codecovRollupPlugin({
 			enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-			bundleName: 'formatCss',
+			bundleName: 'cssDesignTokens',
 			uploadToken: process.env.CODECOV_TOKEN,
 		}),
 	],
