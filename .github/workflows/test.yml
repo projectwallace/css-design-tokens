@@ -26,6 +26,7 @@ jobs:
         uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          slug: projectwallace/css-design-tokens
 
   check:
     name: Check types
