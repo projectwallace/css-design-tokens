@@ -25,7 +25,7 @@ export const color_dict = new Map<number, string>([
 	[blue, 'blue'],
 	[magenta, 'magenta'],
 	[pink, 'pink'],
-	[unknown, 'unknown']
+	[unknown, 'unknown'],
 ])
 
 type AuthoredColor = string
@@ -77,6 +77,6 @@ export function group_colors(colors: Record<AuthoredColor, unknown>) {
 	}
 
 	return Array.from(color_groups).sort((a, b) =>
-		a[0] === unknown || b[0] === unknown ? -1 : b[1].length - a[1].length
+		a[0] === unknown || b[0] === unknown ? -1 : b[1].length - a[1].length,
 	)
 }

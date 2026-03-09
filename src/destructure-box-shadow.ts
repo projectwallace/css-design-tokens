@@ -1,7 +1,11 @@
 import { parse_value } from '@projectwallace/css-parser/parse-value'
 import { color_to_token } from './colors.js'
 import type { ColorValue } from './types.js'
-import { namedColors as named_colors, systemColors as system_colors, colorFunctions as color_functions } from '@projectwallace/css-analyzer'
+import {
+	namedColors as named_colors,
+	systemColors as system_colors,
+	colorFunctions as color_functions,
+} from '@projectwallace/css-analyzer'
 
 export type CssLength = {
 	value: number
@@ -49,7 +53,10 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 				}
 				current_shadow.color = color_token
 			}
-		} else if (node.type_name === 'Dimension' || (node.type_name === 'Number' && node.value === 0)) {
+		} else if (
+			node.type_name === 'Dimension' ||
+			(node.type_name === 'Number' && node.value === 0)
+		) {
 			let length =
 				node.type_name === 'Dimension'
 					? {

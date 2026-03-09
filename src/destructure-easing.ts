@@ -5,7 +5,7 @@ const EASING_KEYWORDS = new Map<string, Easing>([
 	['ease', [0.25, 0.1, 0.25, 1]],
 	['ease-in', [0.42, 0, 1, 1]],
 	['ease-out', [0, 0, 0.58, 1]],
-	['ease-in-out', [0.42, 0, 0.58, 1]]
+	['ease-in-out', [0.42, 0, 0.58, 1]],
 ])
 
 export function destructure_easing(easing: string): Easing | null {
@@ -25,7 +25,7 @@ export function destructure_easing(easing: string): Easing | null {
 			.replace(')', '')
 			.split(',')
 			.map((v) => Number(v.trim()))
-		if (parts.length === 4 && parts.every(n => Number.isFinite(n))) {
+		if (parts.length === 4 && parts.every((n) => Number.isFinite(n))) {
 			return parts as Easing
 		}
 	}

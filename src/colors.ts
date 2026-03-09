@@ -1,4 +1,7 @@
-import { colorKeywords as color_keywords, cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
+import {
+	colorKeywords as color_keywords,
+	cssKeywords as css_keywords,
+} from '@projectwallace/css-analyzer'
 import { type ColorValue, type ColorSpace as tColorSpace } from './types.js'
 import {
 	tryColor,
