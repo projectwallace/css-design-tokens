@@ -53,7 +53,7 @@ export function parse_length(value: string): DesignTokenLength | null {
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
 			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
 			// depending on the element's font-family.
-			let name = maybe_length.name.toLowerCase()
+			let name = maybe_length.name!.toLowerCase()
 			if (absolute_size_map.has(name)) {
 				return {
 					value: absolute_size_map.get(name)!,

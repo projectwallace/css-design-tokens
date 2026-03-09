@@ -40,10 +40,10 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 
 	for (let node of ast.children) {
 		if (node.type_name === 'Identifier') {
-			if (node.name.toLowerCase() === 'inset') {
+			if (node.name!.toLowerCase() === 'inset') {
 				current_shadow.inset = true
 			} else if (named_colors.has(node.name) || system_colors.has(node.name)) {
-				let color_token = color_to_token(node.name)
+				let color_token = color_to_token(node.name!)
 				if (color_token === null) {
 					continue
 				}
@@ -77,7 +77,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 					continue
 				}
 				current_shadow.color = color_token
-			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
+			} else if (node.name?.toLowerCase() === 'var' && !current_shadow.color) {
 				let color_token = color_to_token(node.text)
 				if (color_token === null) {
 					continue
@@ -90,7 +90,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 				continue
 			}
 			current_shadow.color = color_token
-		} else if (node.type_name === 'Operator' && node.name === ',') {
+		} else if (node.type_name === 'Operator' && node.value === ',') {
 			// Start a new shadow, but only after we've made sure that the current shadow is valid
 			complete_shadow_token(current_shadow)
 			current_shadow = create_destructured()

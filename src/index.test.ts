@@ -747,7 +747,7 @@ describe('css_to_tokens', () => {
 						unit: 'ms',
 					},
 					$extensions: {
-						[EXTENSION_AUTHORED_AS]: '1S',
+						[EXTENSION_AUTHORED_AS]: '1s',
 						[EXTENSION_USAGE_COUNT]: 2,
 					},
 				},
