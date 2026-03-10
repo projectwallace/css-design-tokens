@@ -35,16 +35,16 @@
 	},
 	"dependencies": {
 		"@projectwallace/css-analyzer": "^9.3.0",
-		"@projectwallace/css-parser": "^0.13.5",
-		"color-sorter": "^7.0.1",
+		"@projectwallace/css-parser": "^0.13.6",
+		"color-sorter": "^7.0.2",
 		"colorjs.io": "^0.6.1",
-		"css-time-sort": "^3.0.0"
+		"css-time-sort": "^3.0.1"
 	},
 	"devDependencies": {
 		"@codecov/rollup-plugin": "^1.9.1",
 		"@vitest/coverage-v8": "^4.0.18",
-		"oxfmt": "^0.36.0",
-		"oxlint": "^1.51.0",
+		"oxfmt": "^0.37.0",
+		"oxlint": "^1.52.0",
 		"publint": "^0.3.18",
 		"tsdown": "^0.21.1",
 		"typescript": "^5.9.3",
