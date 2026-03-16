@@ -16,8 +16,8 @@ updates:
           - '@vitest/*'
       oxc:
         patterns:
-          - 'oxc'
-          - '@oxc-*/*'
+          - 'oxlint'
+          - 'oxfmt'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
