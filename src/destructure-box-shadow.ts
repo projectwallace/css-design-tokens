@@ -46,7 +46,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 		if (node.type_name === 'Identifier') {
 			if (node.name!.toLowerCase() === 'inset') {
 				current_shadow.inset = true
-			} else if (named_colors.has(node.name) || system_colors.has(node.name)) {
+			} else if (node.name && (named_colors.has(node.name) || system_colors.has(node.name))) {
 				let color_token = color_to_token(node.name!)
 				if (color_token === null) {
 					continue
@@ -77,7 +77,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 			} else if (!current_shadow.spread) {
 				current_shadow.spread = length
 			}
-		} else if (node.type_name === 'Function') {
+		} else if (node.type_name === 'Function' && node.name) {
 			if (color_functions.has(node.name)) {
 				let color_token = color_to_token(node.text)
 				if (color_token === null) {
