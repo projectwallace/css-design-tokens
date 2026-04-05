@@ -1,4 +1,5 @@
-import { parse_value } from '@projectwallace/css-parser'
+import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
+import { parse_value } from '@projectwallace/css-parser/parse-value'
 import { type Length, type Unit } from './types'
 
 const ALLOWED_UNITS = new Set(['px', 'rem'])
@@ -14,11 +15,11 @@ const ALLOWED_UNITS = new Set(['px', 'rem'])
 export function destructure_line_height(value: string): Length | number | null {
 	let ast = parse_value(value)
 	if (!ast.has_children) return null
-	if (ast.children.length !== 1) return null
-	let maybe_dimension = ast.first_child!
+	if (ast.child_count !== 1) return null
+	let maybe_dimension = ast.first_child
 
-	switch (maybe_dimension.type_name) {
-		case 'Dimension': {
+	switch (maybe_dimension.type) {
+		case DIMENSION: {
 			let { value, unit } = maybe_dimension
 			if (value === 0) {
 				return 0
@@ -28,24 +29,24 @@ export function destructure_line_height(value: string): Length | number | null {
 				return Number(value) / 100
 			}
 
-			unit = unit!.toLowerCase()
+			unit = unit.toLowerCase()
 
 			if (ALLOWED_UNITS.has(unit)) {
 				return {
-					value: value as number,
+					value: value,
 					unit: unit as Unit,
 				}
 			}
 			return null
 		}
-		case 'Number': {
+		case NUMBER: {
 			return Number(maybe_dimension.value)
 		}
-		case 'Identifier': {
+		case IDENTIFIER: {
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
 			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
 			// depending on the element's font-family.
-			if (maybe_dimension.name?.toLowerCase() === 'normal') {
+			if (maybe_dimension.name.toLowerCase() === 'normal') {
 				return 1.2
 			}
 		}

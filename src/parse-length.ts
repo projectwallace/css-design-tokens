@@ -1,4 +1,5 @@
-import { parse_value } from '@projectwallace/css-parser'
+import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
+import { parse_value } from '@projectwallace/css-parser/parse-value'
 
 type DesignTokenLength = {
 	value: number
@@ -26,14 +27,14 @@ let absolute_size_map = new Map([
  */
 export function parse_length(value: string): DesignTokenLength | null {
 	let ast = parse_value(value)
-	if (!ast.has_children || ast.children.length !== 1) {
+	if (!ast.has_children || ast.child_count !== 1) {
 		return null
 	}
-	let maybe_length = ast.first_child!
+	let maybe_length = ast.first_child
 
-	switch (maybe_length.type_name) {
-		case 'Dimension': {
-			let unit = maybe_length.unit!.toLowerCase()
+	switch (maybe_length.type) {
+		case DIMENSION: {
+			let unit = maybe_length.unit.toLowerCase()
 			if (unit === 'px' || unit === 'rem') {
 				let value = Number(maybe_length.value)
 				// Always return `0px`, `0`, or `0rem` as `0px`
@@ -50,11 +51,11 @@ export function parse_length(value: string): DesignTokenLength | null {
 			}
 			break
 		}
-		case 'Identifier': {
+		case IDENTIFIER: {
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
 			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
 			// depending on the element's font-family.
-			let name = maybe_length.name!.toLowerCase()
+			let name = maybe_length.name.toLowerCase()
 			if (absolute_size_map.has(name)) {
 				return {
 					value: absolute_size_map.get(name)!,
@@ -63,7 +64,7 @@ export function parse_length(value: string): DesignTokenLength | null {
 			}
 			break
 		}
-		case 'Number': {
+		case NUMBER: {
 			if (Number(maybe_length.value) === 0) {
 				return {
 					value: 0,
