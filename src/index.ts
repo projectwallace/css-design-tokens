@@ -206,17 +206,17 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 			for (let font_family in unique) {
 				let parsed = destructure_font_family(font_family)
-				let name = `fontFamily-${hash(font_family)}`
+				if (!parsed) continue
+
+				let [main] = parsed
+				let name = `fontFamily-${hash(main)}`
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: font_family,
 					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
 				}
 
-				if (parsed === undefined) {
-					families[name] = {
-						$value: font_family,
-						$extensions: extensions,
-					}
+				if (families[name]) {
+					families[name]!.$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 				} else {
 					families[name] = {
 						$type: 'fontFamily',

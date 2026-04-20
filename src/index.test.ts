@@ -365,12 +365,31 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-3375cf09': {
+				'fontFamily-43874bc': {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
 						[EXTENSION_AUTHORED_AS]: "'Inter', sans-serif",
 						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+			})
+		})
+
+		test('dedupes', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-family: 'Inter', sans-serif;
+				font-family: "Inter", Fallback, serif;
+			}
+		`)
+			expect(actual.font_family).toEqual({
+				'fontFamily-43874bc': {
+					$type: 'fontFamily',
+					$value: ['Inter', 'sans-serif'],
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: "'Inter', sans-serif",
+						[EXTENSION_USAGE_COUNT]: 2,
 					},
 				},
 			})
@@ -383,7 +402,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-91e929d2': {
+				'fontFamily-43874bc': {
 					$type: 'fontFamily',
 					$value: ['Inter'],
 					$extensions: {
@@ -401,22 +420,7 @@ describe('css_to_tokens', () => {
 				font-family: Arial, sans-serif, var(--fallback-font);
 			}
 		`)
-			expect(actual.font_family).toEqual({
-				'fontFamily-1a365bd0': {
-					$extensions: {
-						'com.projectwallace.css-authored-as': 'var(--body-font)',
-						'com.projectwallace.usage-count': 1,
-					},
-					$value: 'var(--body-font)',
-				},
-				'fontFamily-5bd6f89e': {
-					$extensions: {
-						'com.projectwallace.css-authored-as': 'Arial, sans-serif, var(--fallback-font)',
-						'com.projectwallace.usage-count': 1,
-					},
-					$value: 'Arial, sans-serif, var(--fallback-font)',
-				},
-			})
+			expect(actual.font_family).toEqual({})
 		})
 	})
 
