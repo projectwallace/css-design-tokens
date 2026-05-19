@@ -14,15 +14,15 @@ importers:
       '@projectwallace/css-parser':
         specifier: ^0.15.0
         version: 0.15.0
+      '@projectwallace/css-time-sort':
+        specifier: ^3.1.0
+        version: 3.1.0
       color-sorter:
         specifier: ^8.0.0
         version: 8.0.0
       colorjs.io:
         specifier: ^0.6.1
         version: 0.6.1
-      css-time-sort:
-        specifier: ^3.0.1
-        version: 3.0.2
     devDependencies:
       '@codecov/rollup-plugin':
         specifier: ^2.0.1
@@ -451,6 +451,10 @@ packages:
 
   '@projectwallace/css-parser@0.15.0':
     resolution: {integrity: sha512-93/+vgClR/Zb0m4cWQLGaNOLBzeLRPRXNSEaxW6ZAwEOnri48kcpiaB1uUBicLvt660DPvjNExFHINipdkOB1w==}
+
+  '@projectwallace/css-time-sort@3.1.0':
+    resolution: {integrity: sha512-hG6zILMK9OJpsvkCkbF9GIW+bAHAxKGB0AsyR5N5T+n8bCKPgWhZGwPlDMP1FrLsBkuRq7U7+fqB19qzUJq5hQ==}
+    engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
   '@publint/pack@0.1.4':
     resolution: {integrity: sha512-HDVTWq3H0uTXiU0eeSQntcVUTPP3GamzeXI41+x7uU9J65JgWQh3qWZHblR1i0npXfFtF+mxBiU2nJH8znxWnQ==}
@@ -910,10 +914,6 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
-
-  css-time-sort@3.0.2:
-    resolution: {integrity: sha512-17fMjAsBIYfuQLZvgYVWWFICjbXUVnFv6TRXWoINwSa1K8umaEm+IfesH98InDPq/AK7debwbYVvsqwtGxOP/g==}
-    engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
   defu@6.1.7:
     resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
@@ -1695,6 +1695,8 @@ snapshots:
 
   '@projectwallace/css-parser@0.15.0': {}
 
+  '@projectwallace/css-time-sort@3.1.0': {}
+
   '@publint/pack@0.1.4': {}
 
   '@quansync/fs@1.0.0':
@@ -2001,8 +2003,6 @@ snapshots:
   colorjs.io@0.6.1: {}
 
   convert-source-map@2.0.0: {}
-
-  css-time-sort@3.0.2: {}
 
   defu@6.1.7: {}
 

@@ -1,5 +1,5 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { convert as convert_duration } from 'css-time-sort'
+import { convert as convert_duration } from '@projectwallace/css-time-sort'
 import { group_colors, color_dict } from './group-colors.js'
 import { destructure_box_shadow } from './destructure-box-shadow.js'
 import { destructure_easing } from './destructure-easing.js'
