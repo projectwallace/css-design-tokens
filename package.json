@@ -38,8 +38,8 @@
 		"lint": "oxlint; oxfmt --check"
 	},
 	"dependencies": {
-		"@projectwallace/css-analyzer": "^9.6.3",
-		"@projectwallace/css-parser": "^0.15.0",
+		"@projectwallace/css-analyzer": "^9.8.2",
+		"@projectwallace/css-parser": "^0.16.0",
 		"@projectwallace/css-time-sort": "^3.1.0",
 		"color-sorter": "^8.0.0",
 		"colorjs.io": "^0.6.1"

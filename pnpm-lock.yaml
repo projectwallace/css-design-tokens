@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@projectwallace/css-analyzer':
-        specifier: ^9.6.3
-        version: 9.8.1
+        specifier: ^9.8.2
+        version: 9.8.2
       '@projectwallace/css-parser':
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: ^0.16.0
+        version: 0.16.0
       '@projectwallace/css-time-sort':
         specifier: ^3.1.0
         version: 3.1.0
@@ -445,12 +445,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@projectwallace/css-analyzer@9.8.1':
-    resolution: {integrity: sha512-N+1Lkr8yZa7KBzUsfPwbLcFKtL5bXZnBNPSmEvSKihcHctlIf6+p9boNnLuxvw/PDf5w018M8kRf4UDvHotvkQ==}
+  '@projectwallace/css-analyzer@9.8.2':
+    resolution: {integrity: sha512-yBl4lhtCoRDxIxJq8SeTH1lfT8EP8W0D7SiXlLxoiBg40rVf8JjGLEZlrbVox5SZ5tPY070A1nyP61GApY83iQ==}
     engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.15.0':
-    resolution: {integrity: sha512-93/+vgClR/Zb0m4cWQLGaNOLBzeLRPRXNSEaxW6ZAwEOnri48kcpiaB1uUBicLvt660DPvjNExFHINipdkOB1w==}
+  '@projectwallace/css-parser@0.16.0':
+    resolution: {integrity: sha512-4WJOIU/6Zbscp5snGGvqx2UobIgYOfBaZDGbx6Mj7b7PjcMz34fFufus7h3AbDFlS7nXEkHHlPDZJl/Qu5gumg==}
+    engines: {pnpm: '>=11.0.0'}
 
   '@projectwallace/css-time-sort@3.1.0':
     resolution: {integrity: sha512-hG6zILMK9OJpsvkCkbF9GIW+bAHAxKGB0AsyR5N5T+n8bCKPgWhZGwPlDMP1FrLsBkuRq7U7+fqB19qzUJq5hQ==}
@@ -1689,11 +1690,11 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.64.0':
     optional: true
 
-  '@projectwallace/css-analyzer@9.8.1':
+  '@projectwallace/css-analyzer@9.8.2':
     dependencies:
-      '@projectwallace/css-parser': 0.15.0
+      '@projectwallace/css-parser': 0.16.0
 
-  '@projectwallace/css-parser@0.15.0': {}
+  '@projectwallace/css-parser@0.16.0': {}
 
   '@projectwallace/css-time-sort@3.1.0': {}
 
