@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@projectwallace/css-analyzer':
-        specifier: ^9.8.2
-        version: 9.8.2
+        specifier: ^9.9.1
+        version: 9.9.1
       '@projectwallace/css-parser':
-        specifier: ^0.16.0
-        version: 0.16.0
+        specifier: ^0.17.0
+        version: 0.17.0
       '@projectwallace/css-time-sort':
         specifier: ^3.1.0
         version: 3.1.0
@@ -21,8 +21,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       colorjs.io:
-        specifier: ^0.6.1
-        version: 0.6.1
+        specifier: ^0.7.0
+        version: 0.7.0
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^4.1.4
@@ -372,12 +372,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@projectwallace/css-analyzer@9.8.2':
-    resolution: {integrity: sha512-yBl4lhtCoRDxIxJq8SeTH1lfT8EP8W0D7SiXlLxoiBg40rVf8JjGLEZlrbVox5SZ5tPY070A1nyP61GApY83iQ==}
+  '@projectwallace/css-analyzer@9.9.1':
+    resolution: {integrity: sha512-xGWjBfXsjVHk5xHKrmJvT+DLMkPsrQu59lisYbAx2R04QKMmcvwmv6qfXQemh+imMcMa8T2wd9yVhHy2p9+8bQ==}
     engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.16.0':
-    resolution: {integrity: sha512-4WJOIU/6Zbscp5snGGvqx2UobIgYOfBaZDGbx6Mj7b7PjcMz34fFufus7h3AbDFlS7nXEkHHlPDZJl/Qu5gumg==}
+  '@projectwallace/css-parser@0.17.0':
+    resolution: {integrity: sha512-y+PHhq9YzC8M3Rndw3XX2tucnV8zEYDLyz/fEsRfd0VCSxol0bB6MU03vvXuICkW8+FLsME6Ff0TA0DVEUfg5A==}
     engines: {pnpm: '>=11.0.0'}
 
   '@projectwallace/css-time-sort@3.1.0':
@@ -675,6 +675,9 @@ packages:
 
   colorjs.io@0.6.1:
     resolution: {integrity: sha512-8lyR2wHzuIykCpqHKgluGsqQi5iDm3/a2IgP2GBZrasn2sBRkE4NOGsglZxWLs/jZQoNkmA/KM/8NV16rLUdBg==}
+
+  colorjs.io@0.7.0:
+    resolution: {integrity: sha512-JfLy3aZW1Xp2iwSFzGlLn0XSMnIdItH3BmzsXtwHVFEWwVUJIwKBWNzjQq2Tgf3998OY7qW2R6klrlYo8vmEGg==}
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -1313,11 +1316,11 @@ snapshots:
   '@oxlint/binding-win32-x64-msvc@1.64.0':
     optional: true
 
-  '@projectwallace/css-analyzer@9.8.2':
+  '@projectwallace/css-analyzer@9.9.1':
     dependencies:
-      '@projectwallace/css-parser': 0.16.0
+      '@projectwallace/css-parser': 0.17.0
 
-  '@projectwallace/css-parser@0.16.0': {}
+  '@projectwallace/css-parser@0.17.0': {}
 
   '@projectwallace/css-time-sort@3.1.0': {}
 
@@ -1529,6 +1532,8 @@ snapshots:
       colorjs.io: 0.6.1
 
   colorjs.io@0.6.1: {}
+
+  colorjs.io@0.7.0: {}
 
   convert-source-map@2.0.0: {}
 
