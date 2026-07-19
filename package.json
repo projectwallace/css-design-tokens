@@ -38,31 +38,27 @@
 		"lint": "oxlint; oxfmt --check"
 	},
 	"dependencies": {
-		"@projectwallace/css-analyzer": "^9.8.2",
-		"@projectwallace/css-parser": "^0.16.0",
+		"@projectwallace/css-analyzer": "^9.9.1",
+		"@projectwallace/css-parser": "^0.17.0",
 		"@projectwallace/css-time-sort": "^3.1.0",
 		"color-sorter": "^8.0.0",
-		"colorjs.io": "^0.6.1"
+		"colorjs.io": "^0.7.0"
 	},
 	"devDependencies": {
-		"@codecov/rollup-plugin": "^2.0.1",
-		"@vitest/coverage-v8": "^4.1.4",
-		"oxfmt": "^0.49.0",
-		"oxlint": "^1.61.0",
-		"publint": "^0.3.18",
-		"tsdown": "^0.22.0",
-		"typescript": "^6.0.3",
-		"vitest": "^4.1.4"
+		"@projectwallace/preset-oxlint": "^0.0.11",
+		"@vitest/coverage-v8": "^4.1.10",
+		"oxfmt": "^0.59.0",
+		"oxlint": "^1.74.0",
+		"publint": "^0.3.21",
+		"tsdown": "^0.22.11",
+		"typescript": "^7.0.2",
+		"vite": "^8.1.5",
+		"vitest": "^4.1.10"
 	},
 	"engines": {
 		"node": ">=22",
-		"pnpm": ">=10.0.0"
+		"pnpm": ">=11.1.0"
 	},
-	"packageManager": "pnpm@10.30.3",
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		]
-	},
+	"packageManager": "pnpm@11.1.0",
 	"issues": "https://github.com/projectwallace/css-design-tokens/issues"
 }

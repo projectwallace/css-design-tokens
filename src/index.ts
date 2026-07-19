@@ -99,7 +99,11 @@ export type Tokens = {
  * locations enabled or not.
  */
 function get_unique(collection: Collection): UniqueCount | UniqueWithLocations {
-	if ('uniqueWithLocations' in collection && collection.uniqueWithLocations != null) {
+	if (
+		'uniqueWithLocations' in collection &&
+		collection.uniqueWithLocations !== null &&
+		collection.uniqueWithLocations !== undefined
+	) {
 		return collection.uniqueWithLocations
 	}
 	return collection.unique!
@@ -389,15 +393,15 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 					[EXTENSION_USAGE_COUNT]: get_count(unique[easing]!),
 				}
 
-				if (value !== null) {
+				if (value === null) {
 					easings[name] = {
-						$value: value,
-						$type: 'cubicBezier',
+						$value: easing,
 						$extensions: extensions,
 					}
 				} else {
 					easings[name] = {
-						$value: easing,
+						$value: value,
+						$type: 'cubicBezier',
 						$extensions: extensions,
 					}
 				}
