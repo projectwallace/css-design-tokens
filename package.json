@@ -56,13 +56,8 @@
 	},
 	"engines": {
 		"node": ">=22",
-		"pnpm": ">=10.0.0"
+		"pnpm": ">=11.1.0"
 	},
-	"packageManager": "pnpm@10.30.3",
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		]
-	},
+	"packageManager": "pnpm@11.1.0",
 	"issues": "https://github.com/projectwallace/css-design-tokens/issues"
 }
