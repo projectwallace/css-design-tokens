@@ -45,13 +45,13 @@
 		"colorjs.io": "^0.7.0"
 	},
 	"devDependencies": {
-		"@vitest/coverage-v8": "^4.1.4",
-		"oxfmt": "^0.49.0",
-		"oxlint": "^1.61.0",
-		"publint": "^0.3.18",
-		"tsdown": "^0.22.0",
+		"@vitest/coverage-v8": "^4.1.10",
+		"oxfmt": "^0.59.0",
+		"oxlint": "^1.74.0",
+		"publint": "^0.3.21",
+		"tsdown": "^0.22.11",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.4"
+		"vitest": "^4.1.10"
 	},
 	"engines": {
 		"node": ">=22",
