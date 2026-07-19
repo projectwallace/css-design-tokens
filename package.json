@@ -51,7 +51,7 @@
 		"oxlint": "^1.74.0",
 		"publint": "^0.3.21",
 		"tsdown": "^0.22.11",
-		"typescript": "^6.0.3",
+		"typescript": "^7.0.2",
 		"vitest": "^4.1.10"
 	},
 	"engines": {
