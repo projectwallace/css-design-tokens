@@ -38,19 +38,19 @@
 		"lint": "oxlint; oxfmt --check"
 	},
 	"dependencies": {
-		"@projectwallace/css-analyzer": "^9.9.1",
-		"@projectwallace/css-parser": "^0.17.0",
+		"@projectwallace/css-analyzer": "^9.9.3",
+		"@projectwallace/css-parser": "^0.18.1",
 		"@projectwallace/css-time-sort": "^3.1.0",
 		"color-sorter": "^8.0.0",
-		"colorjs.io": "^0.7.0"
+		"colorjs.io": "^0.7.1"
 	},
 	"devDependencies": {
 		"@projectwallace/preset-oxlint": "^0.0.11",
 		"@vitest/coverage-v8": "^4.1.10",
-		"oxfmt": "^0.59.0",
-		"oxlint": "^1.74.0",
-		"publint": "^0.3.21",
-		"tsdown": "^0.22.11",
+		"oxfmt": "^0.60.0",
+		"oxlint": "^1.75.0",
+		"publint": "^0.3.22",
+		"tsdown": "^0.22.14",
 		"typescript": "^7.0.2",
 		"vite": "^8.1.5",
 		"vitest": "^4.1.10"
