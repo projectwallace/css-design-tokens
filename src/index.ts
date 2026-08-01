@@ -29,6 +29,7 @@ export {
 	EXTENSION_USAGE_COUNT,
 	EXTENSION_CSS_PROPERTIES,
 	type Easing,
+	type BaseToken,
 	type CubicBezierToken,
 	type DimensionValue,
 	type DimensionToken,

@@ -35,18 +35,20 @@
 		"test": "vitest --coverage",
 		"build": "tsdown",
 		"check": "tsc --noEmit",
-		"lint": "oxlint; oxfmt --check"
+		"lint": "oxlint; oxfmt --check",
+		"knip": "knip"
 	},
 	"dependencies": {
 		"@projectwallace/css-analyzer": "^9.9.3",
-		"@projectwallace/css-parser": "^0.18.1",
+		"@projectwallace/css-parser": "^0.18.2",
 		"@projectwallace/css-time-sort": "^3.1.0",
-		"color-sorter": "^8.0.0",
+		"color-sorter": "^8.0.1",
 		"colorjs.io": "^0.7.1"
 	},
 	"devDependencies": {
 		"@projectwallace/preset-oxlint": "^0.0.11",
 		"@vitest/coverage-v8": "^4.1.10",
+		"knip": "^6.31.0",
 		"oxfmt": "^0.60.0",
 		"oxlint": "^1.75.0",
 		"publint": "^0.3.22",
