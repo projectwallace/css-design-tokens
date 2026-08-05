@@ -2,59 +2,26 @@ import {
 	colorKeywords as color_keywords,
 	cssKeywords as css_keywords,
 } from '@projectwallace/css-analyzer'
-import { type ColorValue, type ColorSpace as tColorSpace } from './types.js'
-import {
-	tryColor,
-	ColorSpace,
-	XYZ_D65,
-	XYZ_D50,
-	XYZ_ABS_D65,
-	Lab_D65,
-	Lab,
-	LCH,
-	sRGB_Linear,
-	sRGB,
-	HSL,
-	HWB,
-	HSV,
-	P3_Linear,
-	P3,
-	A98RGB_Linear,
-	A98RGB,
-	ProPhoto_Linear,
-	ProPhoto,
-	REC_2020_Linear,
-	REC_2020,
-	OKLab,
-	OKLCH,
-	OKLrab,
-} from 'colorjs.io/fn'
+import { type ColorValue } from './types.js'
+import { colordx, extend, getFormat, type ColorFormat } from '@colordx/core'
+import hwb from '@colordx/core/plugins/hwb'
+import lab from '@colordx/core/plugins/lab'
+import lch from '@colordx/core/plugins/lch'
+import p3 from '@colordx/core/plugins/p3'
+import rec2020 from '@colordx/core/plugins/rec2020'
+import a98rgb from '@colordx/core/plugins/a98rgb'
+import prophoto from '@colordx/core/plugins/prophoto'
+import names from '@colordx/core/plugins/names'
 
 // Register color spaces for parsing and converting
-// TODO: According to the changelog we should be able to import
-// and register all spaces in one go but it doesn't seem to work
-ColorSpace.register(sRGB) // Parses keywords and hex colors
-ColorSpace.register(XYZ_D65)
-ColorSpace.register(XYZ_D50)
-ColorSpace.register(XYZ_ABS_D65)
-ColorSpace.register(Lab_D65)
-ColorSpace.register(Lab)
-ColorSpace.register(LCH)
-ColorSpace.register(sRGB_Linear)
-ColorSpace.register(HSL)
-ColorSpace.register(HWB)
-ColorSpace.register(HSV)
-ColorSpace.register(P3_Linear)
-ColorSpace.register(P3)
-ColorSpace.register(A98RGB_Linear)
-ColorSpace.register(A98RGB)
-ColorSpace.register(ProPhoto_Linear)
-ColorSpace.register(ProPhoto)
-ColorSpace.register(REC_2020_Linear)
-ColorSpace.register(REC_2020)
-ColorSpace.register(OKLab)
-ColorSpace.register(OKLCH)
-ColorSpace.register(OKLrab)
+extend([hwb, lab, lch, p3, rec2020, a98rgb, prophoto, names])
+
+// Full precision, to avoid rounding differences from the original authored value
+const PRECISION = 15
+
+// colordx resolves a `none` alpha to 0 (fully transparent); fall back to 1 instead,
+// like the previous colorjs.io-based implementation did.
+const NONE_ALPHA_RE = /\/\s*none\s*\)?\s*$/i
 
 export function color_to_token(color: string): ColorValue | null {
 	let lowercased = color.toLowerCase()
@@ -77,14 +44,122 @@ export function color_to_token(color: string): ColorValue | null {
 		return null
 	}
 
-	let parsed_color = tryColor(color)
+	let format: ColorFormat | undefined = getFormat(color)
+	if (format === undefined) return null
 
-	if (parsed_color === null) return null
-	let [component_a, component_b, component_c] = parsed_color.coords
+	let parsed = colordx(color)
+	if (!parsed.isValid()) return null
 
-	return {
-		colorSpace: parsed_color.space.id as tColorSpace,
-		components: [component_a ?? 'none', component_b ?? 'none', component_c ?? 'none'],
-		alpha: parsed_color.alpha ?? 1,
+	let alpha_none = NONE_ALPHA_RE.test(color)
+
+	switch (format) {
+		case 'hex':
+		case 'rgb':
+		case 'name': {
+			let rgb = parsed.toRgb()
+			return {
+				colorSpace: 'srgb',
+				components: [rgb.r / 255, rgb.g / 255, rgb.b / 255],
+				alpha: alpha_none ? 1 : rgb.alpha,
+			}
+		}
+		case 'hsl': {
+			let value = parsed.toHsl(PRECISION)
+			return {
+				colorSpace: 'hsl',
+				components: [value.h, value.s, value.l],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'hwb': {
+			let value = parsed.toHwb(PRECISION)
+			return {
+				colorSpace: 'hwb',
+				components: [value.h, value.w, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'lab': {
+			let value = parsed.toLab(PRECISION)
+			return {
+				colorSpace: 'lab',
+				components: [value.l, value.a, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'lch': {
+			let value = parsed.toLch(PRECISION)
+			return {
+				colorSpace: 'lch',
+				components: [value.l, value.c, value.h],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'oklab': {
+			let value = parsed.toOklab(PRECISION)
+			return {
+				colorSpace: 'oklab',
+				components: [value.l, value.a, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'oklch': {
+			let value = parsed.toOklch(PRECISION)
+			return {
+				colorSpace: 'oklch',
+				components: [value.l, value.c, value.h],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'p3': {
+			let value = parsed.toP3(PRECISION)
+			return {
+				colorSpace: 'display-p3',
+				components: [value.r, value.g, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'rec2020': {
+			let value = parsed.toRec2020(PRECISION)
+			return {
+				colorSpace: 'rec2020',
+				components: [value.r, value.g, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'a98-rgb': {
+			let value = parsed.toA98(PRECISION)
+			return {
+				colorSpace: 'a98-rgb',
+				components: [value.r, value.g, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'prophoto-rgb': {
+			let value = parsed.toProphoto(PRECISION)
+			return {
+				colorSpace: 'prophoto-rgb',
+				components: [value.r, value.g, value.b],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'xyz': {
+			let value = parsed.toXyz(PRECISION)
+			return {
+				colorSpace: 'xyz-d50',
+				components: [value.x, value.y, value.z],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		case 'xyz-d65': {
+			let value = parsed.toXyzD65(PRECISION)
+			return {
+				colorSpace: 'xyz-d65',
+				components: [value.x, value.y, value.z],
+				alpha: alpha_none ? 1 : value.alpha,
+			}
+		}
+		default:
+			return null
 	}
 }
