@@ -19,10 +19,6 @@ extend([hwb, lab, lch, p3, rec2020, a98rgb, prophoto, names])
 // Full precision, to avoid rounding differences from the original authored value
 const PRECISION = 15
 
-// colordx resolves a `none` alpha to 0 (fully transparent); fall back to 1 instead,
-// like the previous colorjs.io-based implementation did.
-const NONE_ALPHA_RE = /\/\s*none\s*\)?\s*$/i
-
 export function color_to_token(color: string): ColorValue | null {
 	let lowercased = color.toLowerCase()
 
@@ -50,8 +46,6 @@ export function color_to_token(color: string): ColorValue | null {
 	let parsed = colordx(color)
 	if (!parsed.isValid()) return null
 
-	let alpha_none = NONE_ALPHA_RE.test(color)
-
 	switch (format) {
 		case 'hex':
 		case 'rgb':
@@ -60,7 +54,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'srgb',
 				components: [rgb.r / 255, rgb.g / 255, rgb.b / 255],
-				alpha: alpha_none ? 1 : rgb.alpha,
+				alpha: rgb.alpha,
 			}
 		}
 		case 'hsl': {
@@ -68,7 +62,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'hsl',
 				components: [value.h, value.s, value.l],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'hwb': {
@@ -76,7 +70,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'hwb',
 				components: [value.h, value.w, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'lab': {
@@ -84,7 +78,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'lab',
 				components: [value.l, value.a, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'lch': {
@@ -92,7 +86,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'lch',
 				components: [value.l, value.c, value.h],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'oklab': {
@@ -100,7 +94,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'oklab',
 				components: [value.l, value.a, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'oklch': {
@@ -108,7 +102,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'oklch',
 				components: [value.l, value.c, value.h],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'p3': {
@@ -116,7 +110,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'display-p3',
 				components: [value.r, value.g, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'rec2020': {
@@ -124,7 +118,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'rec2020',
 				components: [value.r, value.g, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'a98-rgb': {
@@ -132,7 +126,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'a98-rgb',
 				components: [value.r, value.g, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'prophoto-rgb': {
@@ -140,7 +134,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'prophoto-rgb',
 				components: [value.r, value.g, value.b],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'xyz': {
@@ -148,7 +142,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'xyz-d50',
 				components: [value.x, value.y, value.z],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		case 'xyz-d65': {
@@ -156,7 +150,7 @@ export function color_to_token(color: string): ColorValue | null {
 			return {
 				colorSpace: 'xyz-d65',
 				components: [value.x, value.y, value.z],
-				alpha: alpha_none ? 1 : value.alpha,
+				alpha: value.alpha,
 			}
 		}
 		default:
