@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@colordx/core':
+        specifier: ^5.5.0
+        version: 5.5.0
       '@projectwallace/css-analyzer':
         specifier: ^9.9.3
         version: 9.9.3
@@ -18,11 +21,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       color-sorter:
-        specifier: ^8.0.1
-        version: 8.0.1
-      colorjs.io:
-        specifier: ^0.7.1
-        version: 0.7.1
+        specifier: ^8.0.2
+        version: 8.0.2
     devDependencies:
       '@projectwallace/preset-oxlint':
         specifier: ^0.0.11
@@ -77,6 +77,9 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@colordx/core@5.5.0':
+    resolution: {integrity: sha512-3PxTH8itZzltK0U9jTwVVnjLXvnDYuq3m+QXsHkENxWiPRh4WaoLcs1SQjqgZ55kS+QyirpH5BVwzP2gMVG6EQ==}
 
   '@emnapi/core@1.11.1':
     resolution: {integrity: sha512-RSvbQmHzdKzNsLYa/wHrbc3KN4sYLKAdPZxqiM2HATqv/SBk2/ENSHpvXGaLOMcsAyz0poEGqkmmKYG3OWiJEQ==}
@@ -1130,12 +1133,9 @@ packages:
     resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
     engines: {node: '>=18'}
 
-  color-sorter@8.0.1:
-    resolution: {integrity: sha512-8qIof2gUQbHS3yum9wOWLSXEIDvGjk1S2Vm0MGmS67N5Faf+dA1bEr+dQCfAg8f4BWUafU/H+3bS2cmv1ppTkA==}
+  color-sorter@8.0.2:
+    resolution: {integrity: sha512-6PVyJu6ufP/Buv4I5NhSjKzH0mWe0wJjPOQWIM98lC+XPtNK9NWWoP0DqQxVOTjLI2gK5lceYDhjnugo3byUZA==}
     engines: {node: '>=18.0.0'}
-
-  colorjs.io@0.7.1:
-    resolution: {integrity: sha512-LY7OHnJZxHwT5UlzNa9bbhHHDbzB6yE5+3MIPwJEQKRvSCt/T4G7epsj+9j2BExUIIfXFIJGsIXUKdfrK9Q5tA==}
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -1660,6 +1660,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.28.5
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@colordx/core@5.5.0': {}
 
   '@emnapi/core@1.11.1':
     dependencies:
@@ -2291,11 +2293,9 @@ snapshots:
 
   chai@6.2.2: {}
 
-  color-sorter@8.0.1:
+  color-sorter@8.0.2:
     dependencies:
-      colorjs.io: 0.7.1
-
-  colorjs.io@0.7.1: {}
+      '@colordx/core': 5.5.0
 
   convert-source-map@2.0.0: {}
 

@@ -73,7 +73,7 @@ let { color } = css_to_tokens(
 
 ['Color' Design Token format](https://www.designtokens.org/tr/third-editors-draft/color/#format)
 
-Only fully compliant colors are listed. Colors that can't be parsed by [colorjs.io](https://colorjs.io/) are ignored, like `rgb(var(--red) var(--green) var(--blue))` or CSS system colors like `ButtonText`.
+Only fully compliant colors are listed. Colors that can't be parsed by [colordx](https://colordx.dev) are ignored, like `rgb(var(--red) var(--green) var(--blue))` or CSS system colors like `ButtonText`.
 
 - The optional `alpha` property is _always_ present.
 - The optional `hex` fallback property is _never_ present.
@@ -514,7 +514,7 @@ let properties = color['green-5e0cf03']['$extensions']['com.projectwallace.css-p
 
 ## Acknowledgements
 
-- [ColorJS.io](https://colorjs.io/) powers all color conversions necessary for grouping and sorting and converting into Color tokens
+- [colordx](https://colordx.dev) powers all color conversions necessary for grouping and sorting and converting into Color tokens
 
 ## Related projects
 
