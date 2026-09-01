@@ -16,10 +16,10 @@ importers:
         version: 9.9.3
       '@projectwallace/css-parser':
         specifier: ^0.18.2
-        version: 0.18.2
+        version: 0.18.6
       '@projectwallace/css-time-sort':
         specifier: ^3.1.0
-        version: 3.1.0
+        version: 3.1.1
       color-sorter:
         specifier: ^8.0.2
         version: 8.0.2
@@ -599,16 +599,12 @@ packages:
     resolution: {integrity: sha512-qyoW3eRPHgQvJGhLCCaypG/YuCPF+lrCIHtCjRxwG6HNWk+BMvFJ7qzTicBIkehfSJFQXrT+T4mvBpZmUgzlDg==}
     engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.18.1':
-    resolution: {integrity: sha512-XTeexH92z5NLWfNw031emlEdd7P3yxJPv9ac/ZN3tFxyPyz1l8vEdZ6afQsd+cpfclOMvFfWbDxhfZ7IRePoLg==}
+  '@projectwallace/css-parser@0.18.6':
+    resolution: {integrity: sha512-o/3Q5YHs28nq5APCR73w/nUC9hr67nU229cbo611T1U72QeCBti11xkLwk7aMmUTzpSKnqqZib1o4bq7QEgapw==}
     engines: {pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.18.2':
-    resolution: {integrity: sha512-CqOpnkzvHDqjaQ8SqOQf3PCy7EtEVAOQpgXbdcneV8u0YEdKH34JSAUVDxsQzm0SlpBjf0fi0MbkIML1Q6Iphg==}
-    engines: {pnpm: '>=11.0.0'}
-
-  '@projectwallace/css-time-sort@3.1.0':
-    resolution: {integrity: sha512-hG6zILMK9OJpsvkCkbF9GIW+bAHAxKGB0AsyR5N5T+n8bCKPgWhZGwPlDMP1FrLsBkuRq7U7+fqB19qzUJq5hQ==}
+  '@projectwallace/css-time-sort@3.1.1':
+    resolution: {integrity: sha512-0fVzVSQ3vwypAnxLtfgpd8TZrtkGp/D20V1/DzJbo3cEaSDibgBG3C/sVabzQzjfnbi3pUmhw/FduIvq+DD3Kg==}
     engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
   '@projectwallace/preset-oxlint@0.0.11':
@@ -1960,13 +1956,11 @@ snapshots:
 
   '@projectwallace/css-analyzer@9.9.3':
     dependencies:
-      '@projectwallace/css-parser': 0.18.1
+      '@projectwallace/css-parser': 0.18.6
 
-  '@projectwallace/css-parser@0.18.1': {}
+  '@projectwallace/css-parser@0.18.6': {}
 
-  '@projectwallace/css-parser@0.18.2': {}
-
-  '@projectwallace/css-time-sort@3.1.0': {}
+  '@projectwallace/css-time-sort@3.1.1': {}
 
   '@projectwallace/preset-oxlint@0.0.11(oxlint@1.75.0)':
     dependencies:
