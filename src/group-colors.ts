@@ -1,4 +1,4 @@
-import { convert } from 'color-sorter'
+import { convert } from '@projectwallace/color-sorter'
 
 const white = 0
 const black = 1
@@ -76,7 +76,5 @@ export function group_colors(colors: Record<AuthoredColor, unknown>) {
 		}
 	}
 
-	return Array.from(color_groups).sort((a, b) =>
-		a[0] === unknown || b[0] === unknown ? -1 : b[1].length - a[1].length,
-	)
+	return Array.from(color_groups).sort((a, b) => (a[0] === unknown || b[0] === unknown ? -1 : b[1].length - a[1].length))
 }
