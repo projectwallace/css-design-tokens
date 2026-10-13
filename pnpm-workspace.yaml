@@ -1,3 +1,5 @@
+minimumReleaseAgeExclude:
+  - '@projectwallace/css-analyzer@9.9.4'
 settings:
   # Block dependencies from using non-registry sources (git repos, tarballs)
   blockExoticSubdeps: true

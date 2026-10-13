@@ -40,10 +40,10 @@
 	},
 	"dependencies": {
 		"@colordx/core": "^7.3.0",
-		"@projectwallace/css-analyzer": "^9.9.3",
-		"@projectwallace/css-parser": "^0.18.2",
-		"@projectwallace/css-time-sort": "^3.1.0",
-		"@projectwallace/color-sorter": "^9.0.0"
+		"@projectwallace/color-sorter": "^9.0.0",
+		"@projectwallace/css-analyzer": "^9.9.4",
+		"@projectwallace/css-parser": "^0.18.9",
+		"@projectwallace/css-time-sort": "^3.1.1"
 	},
 	"devDependencies": {
 		"@projectwallace/preset-oxlint": "^0.0.11",
