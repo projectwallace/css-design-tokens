@@ -35,32 +35,32 @@
 		"test": "vitest --coverage",
 		"build": "tsdown",
 		"check": "tsc --noEmit",
-		"lint": "oxlint; oxfmt --check",
+		"lint": "oxlint && oxfmt --check",
 		"knip": "knip"
 	},
 	"dependencies": {
-		"@colordx/core": "^5.5.0",
-		"@projectwallace/css-analyzer": "^9.9.3",
-		"@projectwallace/css-parser": "^0.18.2",
-		"@projectwallace/css-time-sort": "^3.1.0",
-		"color-sorter": "^8.0.2"
+		"@colordx/core": "^7.3.0",
+		"@projectwallace/color-sorter": "^9.0.0",
+		"@projectwallace/css-analyzer": "^9.9.4",
+		"@projectwallace/css-parser": "^0.18.9",
+		"@projectwallace/css-time-sort": "^3.1.1"
 	},
 	"devDependencies": {
 		"@projectwallace/preset-oxlint": "^0.0.11",
-		"@vitest/coverage-v8": "^4.1.10",
-		"knip": "^6.31.0",
-		"oxfmt": "^0.60.0",
-		"oxlint": "^1.75.0",
-		"publint": "^0.3.22",
-		"tsdown": "^0.22.14",
+		"@vitest/coverage-v8": "^5.0.3",
+		"knip": "^6.39.0",
+		"oxfmt": "^0.72.0",
+		"oxlint": "^1.87.0",
+		"publint": "^0.3.25",
+		"tsdown": "^0.23.0",
 		"typescript": "^7.0.2",
-		"vite": "^8.1.5",
-		"vitest": "^4.1.10"
+		"vite": "^8.3.2",
+		"vitest": "^5.0.3"
 	},
 	"engines": {
 		"node": ">=22",
 		"pnpm": ">=11.1.0"
 	},
-	"packageManager": "pnpm@11.1.0",
+	"packageManager": "pnpm@11.16.0",
 	"issues": "https://github.com/projectwallace/css-design-tokens/issues"
 }

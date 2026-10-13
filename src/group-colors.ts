@@ -1,4 +1,4 @@
-import { convert } from 'color-sorter'
+import { convert } from '@projectwallace/color-sorter'
 
 const white = 0
 const black = 1
