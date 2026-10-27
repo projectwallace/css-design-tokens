@@ -15,11 +15,11 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@projectwallace/css-analyzer':
-        specifier: ^9.9.4
-        version: 9.9.4
+        specifier: ^9.9.5
+        version: 9.9.5
       '@projectwallace/css-parser':
-        specifier: ^0.18.9
-        version: 0.18.9
+        specifier: ^0.19.0
+        version: 0.19.0
       '@projectwallace/css-time-sort':
         specifier: ^3.1.1
         version: 3.1.1
@@ -583,12 +583,12 @@ packages:
     resolution: {integrity: sha512-yBHv8jSNWUG4KF/G+3AgA4dCR3M/KPSQ4xCTQTZMo2Gq3p0+9mCwavHVp3nJfUGpCFCgojcF3BbS+v8erYAYwg==}
     engines: {node: '>=18.0.0'}
 
-  '@projectwallace/css-analyzer@9.9.4':
-    resolution: {integrity: sha512-MQU1tvCADwFrvYiiJQNH7w4iABSbOm7TTyvdPhuLxjK3TDyh8qole6hJn4NKWRRLh+9seYXbB5wkgoDRWefo2g==}
+  '@projectwallace/css-analyzer@9.9.5':
+    resolution: {integrity: sha512-HtEWI5G/flzuoptALwvx66N4Vkq+SR2W019VI1R5RIX7MOuEOjuIIx2OKC3S9NAZAKbiopKp88ZLqy5ymmaAIg==}
     engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.18.9':
-    resolution: {integrity: sha512-euAUMV2madmhqCeTVNGbeewj8x0VhUIxVik/aGpyIrVBbKfzDV3IxEu/YDTYdUTkwrf+RZPyDkiYQhDuZMW/cg==}
+  '@projectwallace/css-parser@0.19.0':
+    resolution: {integrity: sha512-Sgb2uCRJbVfsEHbGaypNd8XnBcwtofc8vwDuxLrXXMQ1BeYT0X7Jr/DuFgbDX4cvQT9HusLXcNWT8JdjFzV/cw==}
     engines: {pnpm: '>=11.0.0'}
 
   '@projectwallace/css-time-sort@3.1.1':
@@ -1714,11 +1714,11 @@ snapshots:
     dependencies:
       '@colordx/core': 7.3.0
 
-  '@projectwallace/css-analyzer@9.9.4':
+  '@projectwallace/css-analyzer@9.9.5':
     dependencies:
-      '@projectwallace/css-parser': 0.18.9
+      '@projectwallace/css-parser': 0.19.0
 
-  '@projectwallace/css-parser@0.18.9': {}
+  '@projectwallace/css-parser@0.19.0': {}
 
   '@projectwallace/css-time-sort@3.1.1': {}
 
