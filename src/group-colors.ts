@@ -13,7 +13,7 @@ const magenta = 9
 const pink = 10
 const unknown = 11
 
-export const color_dict = new Map<number, string>([
+export const color_dict: Map<number, string> = new Map<number, string>([
 	[white, 'white'],
 	[black, 'black'],
 	[grey, 'grey'],
@@ -30,7 +30,7 @@ export const color_dict = new Map<number, string>([
 
 type AuthoredColor = string
 
-export function group_colors(colors: Record<AuthoredColor, unknown>) {
+export function group_colors(colors: Record<AuthoredColor, unknown>): [number, AuthoredColor[]][] {
 	let color_groups = new Map<number, AuthoredColor[]>()
 
 	for (let color in colors) {
