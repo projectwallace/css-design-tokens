@@ -47,7 +47,7 @@ export {
 } from './types.js'
 export type { CssLength, ShadowValue } from './destructure-box-shadow.js'
 
-export function css_to_tokens(css: string) {
+export function css_to_tokens(css: string): Tokens {
 	let analysis = analyze(css)
 	// The analyze function has overloads and TypeScript's ReturnType only captures the last overload's return type,
 	// making the two variants structurally incompatible for a direct cast.
