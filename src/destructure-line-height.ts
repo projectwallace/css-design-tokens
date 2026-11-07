@@ -14,8 +14,9 @@ const ALLOWED_UNITS = new Set(['px', 'rem'])
  */
 export function destructure_line_height(value: string): Length | number | null {
 	let ast = parse_value(value)
-	if (!ast.has_children) return null
-	if (ast.child_count !== 1) return null
+	if (!ast.has_children || ast.child_count !== 1) {
+		return null
+	}
 	let maybe_dimension = ast.first_child
 
 	switch (maybe_dimension.type) {
