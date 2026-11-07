@@ -1,6 +1,6 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import { type Length, type Unit } from './types'
+import { type Length, type Unit } from './types.ts'
 
 const ALLOWED_UNITS = new Set(['px', 'rem'])
 

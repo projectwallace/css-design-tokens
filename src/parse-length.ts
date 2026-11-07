@@ -1,10 +1,6 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-
-type DesignTokenLength = {
-	value: number
-	unit: 'px' | 'rem'
-}
+import type { Length } from './types.ts'
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/absolute-size#values
 let absolute_size_map = new Map([
@@ -19,13 +15,13 @@ let absolute_size_map = new Map([
 ])
 
 /**
- * @description Parse a length from a css value
- *  - a `<number>`
- *  - a `<length>`
- * - a `<percentage>`
- * - the keyword `normal`.
+ * @description Parse a font-size-like length from a css value. Supports:
+ * - a `<length>` in `px` or `rem`
+ * - an `<absolute-size>` keyword (`small`, `x-large`, ...), converted to `rem`
+ * - the unitless number `0`, normalized to `0px`
+ * Anything else returns `null`.
  */
-export function parse_length(value: string): DesignTokenLength | null {
+export function parse_length(value: string): Length | null {
 	let ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null
@@ -52,9 +48,7 @@ export function parse_length(value: string): DesignTokenLength | null {
 			break
 		}
 		case IDENTIFIER: {
-			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
-			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
-			// depending on the element's font-family.
+			// https://drafts.csswg.org/css-fonts/#absolute-size-mapping, relative to `medium` (1rem)
 			let name = maybe_length.name.toLowerCase()
 			if (absolute_size_map.has(name)) {
 				return {

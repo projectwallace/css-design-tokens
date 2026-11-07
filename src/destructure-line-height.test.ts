@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { destructure_line_height } from './destructure-line-height.js'
+import { destructure_line_height } from './destructure-line-height.ts'
 
 test('`normal` keyword', () => {
 	expect(destructure_line_height('normal')).toEqual(1.2)

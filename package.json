@@ -42,8 +42,7 @@
 		"@colordx/core": "catalog:",
 		"@projectwallace/color-sorter": "^9.0.0",
 		"@projectwallace/css-analyzer": "^9.9.6",
-		"@projectwallace/css-parser": "catalog:",
-		"@projectwallace/css-time-sort": "^3.1.1"
+		"@projectwallace/css-parser": "catalog:"
 	},
 	"devDependencies": {
 		"@projectwallace/preset-oxlint": "^0.0.12",

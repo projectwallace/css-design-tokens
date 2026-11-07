@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { parse_length } from './parse-length.js'
+import { parse_length } from './parse-length.ts'
 
 test('px values', () => {
 	expect.soft(parse_length('1px')).toEqual({ value: 1, unit: 'px' })

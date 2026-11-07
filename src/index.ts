@@ -1,12 +1,12 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { convert as convert_duration } from '@projectwallace/css-time-sort'
-import { group_colors, color_dict } from './group-colors.js'
-import { destructure_box_shadow } from './destructure-box-shadow.js'
-import { destructure_easing } from './destructure-easing.js'
-import { destructure_font_family } from './destructure-font-family.js'
-import { hash } from './hash.js'
-import { destructure_line_height } from './destructure-line-height.js'
-import { parse_length } from './parse-length.js'
+import { group_colors, color_dict } from './group-colors.ts'
+import { destructure_box_shadow } from './destructure-box-shadow.ts'
+import { destructure_easing } from './destructure-easing.ts'
+import { destructure_font_family } from './destructure-font-family.ts'
+import { hash } from './hash.ts'
+import { destructure_line_height } from './destructure-line-height.ts'
+import { parse_length } from './parse-length.ts'
+import { parse_duration } from './parse-duration.ts'
 import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
@@ -20,9 +20,9 @@ import {
 	type ColorToken,
 	type CssAnalysis,
 	type ShadowToken,
-} from './types.js'
-import { color_to_token } from './colors.js'
-export { color_to_token } from './colors.js'
+} from './types.ts'
+import { color_to_token } from './colors.ts'
+export { color_to_token } from './colors.ts'
 
 export {
 	EXTENSION_AUTHORED_AS,
@@ -44,8 +44,8 @@ export {
 	type ColorToken,
 	type ColorValue,
 	type ColorComponent,
-} from './types.js'
-export type { CssLength, ShadowValue } from './destructure-box-shadow.js'
+} from './types.ts'
+export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
 	let analysis = analyze(css)
@@ -128,6 +128,26 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.colors)
 			let color_groups = group_colors(unique)
 
+			// Build a color -> properties lookup once, instead of scanning every context for every color
+			let properties_per_color = new Map<string, Set<string>>()
+			let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
+			for (let property in items_per_context) {
+				let collection = items_per_context[property]!
+				for (let source of [collection.unique, collection.uniqueWithLocations]) {
+					if (!source) {
+						continue
+					}
+					for (let color in source) {
+						let properties = properties_per_color.get(color)
+						if (properties === undefined) {
+							properties_per_color.set(color, new Set([property]))
+						} else {
+							properties.add(property)
+						}
+					}
+				}
+			}
+
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
@@ -135,21 +155,9 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 					if (color_token !== null) {
 						let { colorSpace, components, alpha } = color_token
-						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(''))}`
+						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(','))}`
 
-						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-						let new_properties = Object.entries(items_per_context).reduce(
-							(acc, [property, collection]) => {
-								if (color in collection.unique) {
-									return acc.add(property)
-								}
-								if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
-									return acc.add(property)
-								}
-								return acc
-							},
-							new Set() as Set<string>,
-						)
+						let new_properties = properties_per_color.get(color) ?? new Set<string>()
 
 						if (colors[name]) {
 							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
@@ -211,16 +219,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 			for (let font_family in unique) {
 				let parsed = destructure_font_family(font_family)
-				if (!parsed) {
-					continue
-				}
-
-				let [main] = parsed
-				let name = `fontFamily-${hash(main)}`
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: font_family,
 					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
 				}
+
+				if (!parsed) {
+					families[`fontFamily-${hash(font_family)}`] = {
+						$value: font_family,
+						$extensions: extensions,
+					}
+					continue
+				}
+
+				// Dedupe on the full (normalized) stack: `Arial, serif` and `Arial, sans-serif` are different tokens
+				let name = `fontFamily-${hash(parsed.join(','))}`
 
 				if (families[name]) {
 					families[name]!.$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
@@ -266,23 +279,16 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							$extensions: extensions,
 						}
 					}
-				} else if (typeof parsed === 'object') {
-					if (parsed.unit === 'px' || parsed.unit === 'rem') {
-						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
-						if (line_heights[name]) {
-							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
-								extensions[EXTENSION_USAGE_COUNT]
-						} else {
-							line_heights[name] = {
-								$type: 'dimension',
-								$value: parsed,
-								$extensions: extensions,
-							}
-						}
+				} else {
+					// destructure_line_height only returns px or rem lengths
+					let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
+					if (line_heights[name]) {
+						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
+							extensions[EXTENSION_USAGE_COUNT]
 					} else {
-						let name = `lineHeight-${hash(line_height)}`
 						line_heights[name] = {
-							$value: line_height,
+							$type: 'dimension',
+							$value: parsed,
 							$extensions: extensions,
 						}
 					}
@@ -310,7 +316,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.boxShadows)
 
 			for (let box_shadow in unique) {
-				let name = `boxShadow-${hash(box_shadow)}`
 				let parsed = destructure_box_shadow(box_shadow)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: box_shadow,
@@ -318,10 +323,17 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
-					shadows[name] = {
+					shadows[`boxShadow-${hash(box_shadow)}`] = {
 						$value: box_shadow,
 						$extensions: extensions,
 					}
+					continue
+				}
+
+				// Dedupe on the parsed value so equivalent notations (`0 0 0 #000` vs `0px 0px #000000`) merge
+				let name = `boxShadow-${hash(JSON.stringify(parsed))}`
+				if (shadows[name]) {
+					shadows[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 				} else {
 					shadows[name] = {
 						$type: 'shadow',
@@ -353,31 +365,30 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.animations.durations)
 
 			for (let duration in unique) {
-				let parsed = convert_duration(duration)
-				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
+				let parsed = parse_duration(duration)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: duration,
 					[EXTENSION_USAGE_COUNT]: get_count(unique[duration]!),
 				}
 
-				if (is_valid) {
-					let name = `duration-${hash(parsed.toString())}`
-					if (durations[name]) {
-						durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					} else {
-						durations[name] = {
-							$type: 'duration',
-							$value: {
-								value: parsed,
-								unit: 'ms',
-							},
-							$extensions: extensions,
-						}
-					}
-				} else {
-					let name = `duration-${hash('invalid' + parsed.toString())}`
-					durations[name] = {
+				if (parsed === null) {
+					durations[`duration-${hash(duration)}`] = {
 						$value: duration,
+						$extensions: extensions,
+					}
+					continue
+				}
+
+				let name = `duration-${hash(parsed.toString())}`
+				if (durations[name]) {
+					durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+				} else {
+					durations[name] = {
+						$type: 'duration',
+						$value: {
+							value: parsed,
+							unit: 'ms',
+						},
 						$extensions: extensions,
 					}
 				}
@@ -389,7 +400,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.animations.timingFunctions)
 
 			for (let easing in unique) {
-				let name = `easing-${hash(easing)}`
 				let value = destructure_easing(easing)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: easing,
@@ -397,10 +407,17 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (value === null) {
-					easings[name] = {
+					easings[`easing-${hash(easing)}`] = {
 						$value: easing,
 						$extensions: extensions,
 					}
+					continue
+				}
+
+				// Dedupe on the parsed value so `ease` and `cubic-bezier(0.25, 0.1, 0.25, 1)` merge
+				let name = `easing-${hash(value.join(','))}`
+				if (easings[name]) {
+					easings[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 				} else {
 					easings[name] = {
 						$value: value,

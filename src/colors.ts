@@ -1,5 +1,5 @@
 import { cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
-import { type ColorValue, type ColorSpace } from './types.js'
+import { type ColorValue, type ColorSpace } from './types.ts'
 import { colordx, extend, getFormat, type ColorFormat, type Colordx } from '@colordx/core'
 import hwb from '@colordx/core/plugins/hwb'
 import lab from '@colordx/core/plugins/lab'
@@ -29,6 +29,11 @@ function to_srgb(color: Colordx): Converted {
 		components: [value.r / 255, value.g / 255, value.b / 255],
 		alpha: value.alpha,
 	}
+}
+
+// colordx returns XYZ on a 0-100 scale, DTCG expects 0-1
+function xyz_triple(value: { x: number; y: number; z: number; alpha: number }): Converted {
+	return { components: [value.x / 100, value.y / 100, value.z / 100], alpha: value.alpha }
 }
 
 // To map the `getFormat()` return value to a DTCG ColorSpace
@@ -74,14 +79,8 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 	rec2020: (color) => rgb_triple(color.toRec2020(PRECISION)),
 	'a98-rgb': (color) => rgb_triple(color.toA98(PRECISION)),
 	'prophoto-rgb': (color) => rgb_triple(color.toProphoto(PRECISION)),
-	xyz: (color) => {
-		let value = color.toXyz(PRECISION)
-		return { components: [value.x, value.y, value.z], alpha: value.alpha }
-	},
-	'xyz-d65': (color) => {
-		let value = color.toXyzD65(PRECISION)
-		return { components: [value.x, value.y, value.z], alpha: value.alpha }
-	},
+	xyz: (color) => xyz_triple(color.toXyz(PRECISION)),
+	'xyz-d65': (color) => xyz_triple(color.toXyzD65(PRECISION)),
 }
 
 export function color_to_token(color: string): ColorValue | null {
@@ -95,23 +94,22 @@ export function color_to_token(color: string): ColorValue | null {
 		return null
 	}
 
+	// Cheap format lookup first, so unsupported formats never get fully parsed
+	let format = getFormat(color)
+	if (!format) {
+		return null
+	}
+
+	let converter_fn = CONVERTERS[format]
+	if (!converter_fn) {
+		return null
+	}
+
 	let parsed = colordx(color)
 	if (!parsed.isValid()) {
 		return null
 	}
 
-	let format = getFormat(color)
-
-	if (!format) {
-		return null
-	}
-
 	let colorSpace = (FORMAT_TO_SPACE[format] ?? format) as ColorSpace
-	let converter_fn = format && CONVERTERS[format]
-
-	if (!converter_fn) {
-		return null
-	}
-
 	return { colorSpace, ...converter_fn(parsed) }
 }

@@ -1,5 +1,5 @@
 import type { analyze } from '@projectwallace/css-analyzer'
-import type { ShadowValue } from './destructure-box-shadow'
+import type { ShadowValue } from './destructure-box-shadow.ts'
 
 // CssAnalysis represents the result of analyze() which can be called with or without useLocations
 // TypeScript infers this as the union of both overload return types
@@ -49,7 +49,6 @@ export type ColorSpace =
 	| 'lch'
 	| 'oklab'
 	| 'oklch'
-	| 'display-p3'
 	| 'a98-rgb'
 	| 'prophoto-rgb'
 	| 'rec2020'
@@ -62,6 +61,7 @@ export type ColorValue = {
 	colorSpace: ColorSpace
 	components: [ColorComponent, ColorComponent, ColorComponent]
 	alpha: number
+	/** Optional DTCG sRGB fallback, currently not populated */
 	hex?: string
 }
 

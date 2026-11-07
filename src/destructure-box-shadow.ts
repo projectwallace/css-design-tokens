@@ -7,13 +7,9 @@ import {
 	NUMBER,
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
-import {
-	namedColors as named_colors,
-	systemColors as system_colors,
-	colorFunctions as color_functions,
-} from '@projectwallace/css-analyzer'
-import { color_to_token } from './colors.js'
-import type { ColorValue } from './types.js'
+import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
+import { color_to_token } from './colors.ts'
+import type { ColorValue } from './types.ts'
 
 export type CssLength = {
 	value: number
@@ -43,21 +39,23 @@ function create_destructured(): ShadowValue {
 export function destructure_box_shadow(value: string): null | ShadowValue[] {
 	let ast = parse_value(value)
 
-	let current_shadow = create_destructured()
-	let destructured: ShadowValue[] = [current_shadow]
-
 	if (ast.child_count < 2) {
 		return null
 	}
+
+	let current_shadow = create_destructured()
+	let destructured: ShadowValue[] = [current_shadow]
 
 	for (let node of ast) {
 		if (node.type === IDENTIFIER) {
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
-			} else if (node.name && (named_colors.has(node.name) || system_colors.has(node.name))) {
-				let color_token = color_to_token(node.name!)
+			} else {
+				// Named colors and `transparent` resolve; system colors, `currentcolor` and
+				// unknown keywords don't, and would otherwise silently become a black shadow
+				let color_token = color_to_token(node.name)
 				if (color_token === null) {
-					continue
+					return null
 				}
 				current_shadow.color = color_token
 			}
@@ -83,23 +81,21 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 				current_shadow.spread = length
 			}
 		} else if (node.type === FUNCTION) {
-			if (color_functions.has(node.name)) {
-				let color_token = color_to_token(node.text)
-				if (color_token === null) {
-					continue
-				}
-				current_shadow.color = color_token
-			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
-				let color_token = color_to_token(node.text)
-				if (color_token === null) {
-					continue
-				}
-				current_shadow.color = color_token
+			// Anything we can't resolve statically (var(), calc(), env(), a color function
+			// containing var(), ...) would otherwise silently become a 0px length or a black
+			// color, so bail out and let the caller emit an unparsed token instead.
+			if (!color_functions.has(node.name)) {
+				return null
 			}
+			let color_token = color_to_token(node.text)
+			if (color_token === null) {
+				return null
+			}
+			current_shadow.color = color_token
 		} else if (node.type === HASH) {
 			let color_token = color_to_token(node.text)
 			if (color_token === null) {
-				continue
+				return null
 			}
 			current_shadow.color = color_token
 		} else if (node.type === OPERATOR && node.value === ',') {
@@ -115,9 +111,9 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 	return destructured
 }
 
-const DIMENSION_ZERO = {
-	value: 0,
-	unit: 'px',
+// A fresh object per call, so tokens never share (and accidentally mutate) the same length
+function zero_px(): CssLength {
+	return { value: 0, unit: 'px' }
 }
 
 /**
@@ -127,16 +123,16 @@ const DIMENSION_ZERO = {
  */
 function complete_shadow_token(token: ShadowValue) {
 	if (!token.offsetX) {
-		token.offsetX = DIMENSION_ZERO
+		token.offsetX = zero_px()
 	}
 	if (!token.offsetY) {
-		token.offsetY = DIMENSION_ZERO
+		token.offsetY = zero_px()
 	}
 	if (!token.blur) {
-		token.blur = DIMENSION_ZERO
+		token.blur = zero_px()
 	}
 	if (!token.spread) {
-		token.spread = DIMENSION_ZERO
+		token.spread = zero_px()
 	}
 	if (!token.color) {
 		token.color = color_to_token('#000')!

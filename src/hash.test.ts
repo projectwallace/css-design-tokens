@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { hash } from './hash.js'
+import { hash } from './hash.ts'
 
 test('hash contains only hex characters', () => {
 	const result = hash('hello')
@@ -35,4 +35,13 @@ test('handles NaN input', () => {
 test('handles number input', () => {
 	const result = hash(123)
 	expect(result).toMatch('be32')
+})
+
+test('distinguishes characters outside the BMP', () => {
+	// Both share the same high surrogate (\uD83D), so hashing only the first code unit collides
+	expect(hash('😀')).not.toBe(hash('😁'))
+})
+
+test('hashes BMP strings the same as before', () => {
+	expect(hash('abc')).toBe('17862')
 })

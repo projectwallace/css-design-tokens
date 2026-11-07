@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'vitest'
-import { destructure_box_shadow } from './destructure-box-shadow.js'
-import type { ColorValue } from './types.js'
-import { color_to_token } from './colors.js'
+import { destructure_box_shadow } from './destructure-box-shadow.ts'
+import type { ColorValue } from './types.ts'
+import { color_to_token } from './colors.ts'
 
 function create_px_length(value: number): { value: number; unit: string } {
 	return {
@@ -25,6 +25,28 @@ test('handles invalid input', () => {
 	expect.soft(destructure_box_shadow('2px')).toBeNull()
 	expect.soft(destructure_box_shadow('var(--my-var)')).toBeNull()
 	expect.soft(destructure_box_shadow('var(--my-var, 0px 0px 0px #000)')).toBeNull()
+})
+
+test('returns null when a part cannot be resolved statically', () => {
+	expect.soft(destructure_box_shadow('0 0 1px var(--color)')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 var(--blur) #000')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 calc(1px + 2px) #000')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px rgb(var(--rgb))')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px #000, 0 0 1px var(--color)')).toBeNull()
+})
+
+test('resolves keyword colors case-insensitively', () => {
+	expect(destructure_box_shadow('0 0 1px RED')![0]!.color).toEqual(color_to_token('red'))
+	expect(destructure_box_shadow('0 0 1px transparent')![0]!.color).toEqual(
+		color_to_token('transparent'),
+	)
+})
+
+test('returns null for keyword colors that cannot be resolved statically', () => {
+	expect.soft(destructure_box_shadow('0 0 1px currentColor')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px Canvas')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px foo')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px #zzz')).toBeNull()
 })
 
 test('0px 0px 0px 0px #000', () => {
@@ -175,4 +197,12 @@ describe('color formats', () => {
 			])
 		})
 	}
+})
+
+test('defaulted lengths are not shared between shadows', () => {
+	let [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
+	expect(a!.blur).not.toBe(b!.blur)
+	expect(a!.blur).not.toBe(a!.spread)
+	a!.blur!.value = 10
+	expect(b!.blur!.value).toBe(0)
 })

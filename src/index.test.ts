@@ -5,7 +5,7 @@ import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_CSS_PROPERTIES,
 	EXTENSION_USAGE_COUNT,
-} from './index.js'
+} from './index.ts'
 import { analyze } from '@projectwallace/css-analyzer'
 
 describe('analysis_to_tokens', () => {
@@ -22,7 +22,7 @@ describe('analysis_to_tokens', () => {
 
 	let expected = {
 		color: {
-			'green-3fc58faf': {
+			'green-8aff77af': {
 				$type: 'color',
 				$value: {
 					colorSpace: 'srgb',
@@ -81,6 +81,17 @@ describe('css_to_tokens', () => {
 	})
 
 	describe('colors', () => {
+		test('does not merge colors whose components only differ in digit grouping', () => {
+			// Without a separator, [50, 1, 23] and [50, 12, 3] both hash 'lab501231'
+			let actual = css_to_tokens(`
+			.my-design-system {
+				color: lab(50 1 23);
+				background-color: lab(50 12 3);
+			}
+		`)
+			expect(Object.keys(actual.color)).toHaveLength(2)
+		})
+
 		test('output a colors section', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
@@ -90,7 +101,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'green-3fc58faf': {
+				'green-8aff77af': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -103,7 +114,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color'],
 					},
 				},
-				'grey-d68e53e4': {
+				'grey-d85b3edc': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -135,7 +146,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'black-edec3e7a': {
+				'black-e211158a': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -164,7 +175,7 @@ describe('css_to_tokens', () => {
 		test('extensions[css-properties] does not yield a type error', () => {
 			let actual = css_to_tokens('a { color: green; }')
 			// Not so much interested in the test result, more looking that this isn't giving a type error
-			let properties = actual.color['green-3fc58faf']!['$extensions'][EXTENSION_CSS_PROPERTIES]
+			let properties = actual.color['green-8aff77af']!['$extensions'][EXTENSION_CSS_PROPERTIES]
 			expect(properties).toEqual(['color'])
 		})
 
@@ -182,7 +193,7 @@ describe('css_to_tokens', () => {
 				}
 		`)
 			expect(actual.color).toEqual({
-				'green-3fc58faf': {
+				'green-8aff77af': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -195,7 +206,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color', 'background-color'],
 					},
 				},
-				'green-64a061f5': {
+				'green-c90049f5': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -365,7 +376,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-43874bc': {
+				'fontFamily-9e342b3': {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
@@ -376,15 +387,15 @@ describe('css_to_tokens', () => {
 			})
 		})
 
-		test('dedupes', () => {
+		test('dedupes identical stacks regardless of quoting', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				font-family: 'Inter', sans-serif;
-				font-family: "Inter", Fallback, serif;
+				font-family: "Inter", sans-serif;
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-43874bc': {
+				'fontFamily-9e342b3': {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
@@ -393,6 +404,20 @@ describe('css_to_tokens', () => {
 					},
 				},
 			})
+		})
+
+		test('does not merge stacks that only share the first family', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-family: Arial, serif;
+				font-family: Arial, sans-serif;
+			}
+		`)
+			let values = Object.values(actual.font_family).map((token) => token.$value)
+			expect(values).toEqual([
+				['Arial', 'serif'],
+				['Arial', 'sans-serif'],
+			])
 		})
 
 		test('Always returns an array as value', () => {
@@ -413,14 +438,30 @@ describe('css_to_tokens', () => {
 			})
 		})
 
-		test('does not mark var() as a fontFamily token', () => {
+		test('outputs var() font families as unparsed tokens', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				font-family: var(--body-font);
 				font-family: Arial, sans-serif, var(--fallback-font);
 			}
 		`)
-			expect(actual.font_family).toEqual({})
+			let tokens = Object.values(actual.font_family)
+			expect(tokens).toEqual([
+				{
+					$value: 'var(--body-font)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'var(--body-font)',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+				{
+					$value: 'Arial, sans-serif, var(--fallback-font)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'Arial, sans-serif, var(--fallback-font)',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+			])
 		})
 	})
 
@@ -560,6 +601,31 @@ describe('css_to_tokens', () => {
 	})
 
 	describe('box shadows', () => {
+		test('dedupes equivalent notations', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				box-shadow: 0 0 10px #000;
+				box-shadow: 0px 0px 10px 0px #000000;
+				box-shadow: 0 0 10px black;
+			}
+		`)
+			let tokens = Object.values(actual.box_shadow)
+			expect(tokens).toHaveLength(1)
+			expect(tokens[0]!.$extensions[EXTENSION_AUTHORED_AS]).toBe('0 0 10px #000')
+			expect(tokens[0]!.$extensions[EXTENSION_USAGE_COUNT]).toBe(3)
+		})
+
+		test('does not merge different shadows', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				box-shadow: 0 0 10px #000;
+				box-shadow: 0 0 10px #000 inset;
+				box-shadow: 0 0 11px #000;
+			}
+		`)
+			expect(Object.keys(actual.box_shadow)).toHaveLength(3)
+		})
+
 		test('outputs a single box shadow token when 1 shadow is used', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
@@ -567,7 +633,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.box_shadow).toEqual({
-				'boxShadow-6f90da6b': {
+				'boxShadow-9d7bf51b': {
 					$type: 'shadow',
 					$value: {
 						offsetX: {
@@ -608,7 +674,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.box_shadow).toEqual({
-				'boxShadow-be2751ac': {
+				'boxShadow-3427242a': {
 					$type: 'shadow',
 					$value: [
 						{
@@ -716,15 +782,29 @@ describe('css_to_tokens', () => {
 					animation-duration: var(--test);
 				}
 			`)
-			expect(actual.duration).toEqual({
-				'duration-f9e24f32': {
-					$value: 'var(--test)',
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'var(--test)',
-						[EXTENSION_USAGE_COUNT]: 1,
-					},
+			let [token] = Object.values(actual.duration)
+			expect(token).toEqual({
+				$value: 'var(--test)',
+				$extensions: {
+					[EXTENSION_AUTHORED_AS]: 'var(--test)',
+					[EXTENSION_USAGE_COUNT]: 1,
 				},
 			})
+		})
+
+		test('keeps every distinct invalid duration as its own token', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					animation-duration: var(--a);
+					transition-duration: var(--b);
+					animation-duration: foo;
+					transition-duration: bar;
+				}
+			`)
+			let authored = Object.values(actual.duration).map(
+				(token) => token.$extensions[EXTENSION_AUTHORED_AS],
+			)
+			expect(authored.sort()).toEqual(['bar', 'foo', 'var(--a)', 'var(--b)'])
 		})
 
 		test('dedupes values', () => {
@@ -773,7 +853,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.easing).toEqual({
-				'easing-ea6c7565': {
+				'easing-7160ca12': {
 					$type: 'cubicBezier',
 					$value: [0.42, 0, 0.58, 1],
 					$extensions: {
@@ -791,7 +871,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.easing).toEqual({
-				'easing-90111eba': {
+				'easing-cbb31ccd': {
 					$type: 'cubicBezier',
 					$value: [0, 0, 0.5, 0.8],
 					$extensions: {
@@ -800,6 +880,21 @@ describe('css_to_tokens', () => {
 					},
 				},
 			})
+		})
+
+		test('dedupes keywords and their equivalent cubic-bezier()', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				animation-timing-function: ease;
+				transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+				transition-timing-function: cubic-bezier(.25,.1,.25,1);
+			}
+		`)
+			let tokens = Object.values(actual.easing)
+			expect(tokens).toHaveLength(1)
+			expect(tokens[0]!.$value).toEqual([0.25, 0.1, 0.25, 1])
+			expect(tokens[0]!.$extensions[EXTENSION_AUTHORED_AS]).toBe('ease')
+			expect(tokens[0]!.$extensions[EXTENSION_USAGE_COUNT]).toBe(3)
 		})
 
 		test('outputs an unparsed token when using an invalid easing', () => {

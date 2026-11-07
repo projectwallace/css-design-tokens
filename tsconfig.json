@@ -11,6 +11,8 @@
 		// Type checking, not transpiling
 		"module": "ESNext",
 		"moduleResolution": "bundler",
+		// Import local files by their real `.ts` extension; tsdown bundles, so nothing needs rewriting
+		"allowImportingTsExtensions": true,
 		"allowSyntheticDefaultImports": true,
 		"noEmit": true,
 		"declaration": true,
