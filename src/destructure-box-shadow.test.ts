@@ -198,3 +198,11 @@ describe('color formats', () => {
 		})
 	}
 })
+
+test('defaulted lengths are not shared between shadows', () => {
+	let [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
+	expect(a!.blur).not.toBe(b!.blur)
+	expect(a!.blur).not.toBe(a!.spread)
+	a!.blur!.value = 10
+	expect(b!.blur!.value).toBe(0)
+})

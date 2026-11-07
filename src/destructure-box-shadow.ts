@@ -111,9 +111,9 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 	return destructured
 }
 
-const DIMENSION_ZERO = {
-	value: 0,
-	unit: 'px',
+// A fresh object per call, so tokens never share (and accidentally mutate) the same length
+function zero_px(): CssLength {
+	return { value: 0, unit: 'px' }
 }
 
 /**
@@ -123,16 +123,16 @@ const DIMENSION_ZERO = {
  */
 function complete_shadow_token(token: ShadowValue) {
 	if (!token.offsetX) {
-		token.offsetX = DIMENSION_ZERO
+		token.offsetX = zero_px()
 	}
 	if (!token.offsetY) {
-		token.offsetY = DIMENSION_ZERO
+		token.offsetY = zero_px()
 	}
 	if (!token.blur) {
-		token.blur = DIMENSION_ZERO
+		token.blur = zero_px()
 	}
 	if (!token.spread) {
-		token.spread = DIMENSION_ZERO
+		token.spread = zero_px()
 	}
 	if (!token.color) {
 		token.color = color_to_token('#000')!
