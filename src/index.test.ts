@@ -22,7 +22,7 @@ describe('analysis_to_tokens', () => {
 
 	let expected = {
 		color: {
-			'green-3fc58faf': {
+			'green-8aff77af': {
 				$type: 'color',
 				$value: {
 					colorSpace: 'srgb',
@@ -81,6 +81,17 @@ describe('css_to_tokens', () => {
 	})
 
 	describe('colors', () => {
+		test('does not merge colors whose components only differ in digit grouping', () => {
+			// Without a separator, [50, 1, 23] and [50, 12, 3] both hash 'lab501231'
+			let actual = css_to_tokens(`
+			.my-design-system {
+				color: lab(50 1 23);
+				background-color: lab(50 12 3);
+			}
+		`)
+			expect(Object.keys(actual.color)).toHaveLength(2)
+		})
+
 		test('output a colors section', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
@@ -90,7 +101,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'green-3fc58faf': {
+				'green-8aff77af': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -103,7 +114,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color'],
 					},
 				},
-				'grey-d68e53e4': {
+				'grey-d85b3edc': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -135,7 +146,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.color).toEqual({
-				'black-edec3e7a': {
+				'black-e211158a': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -164,7 +175,7 @@ describe('css_to_tokens', () => {
 		test('extensions[css-properties] does not yield a type error', () => {
 			let actual = css_to_tokens('a { color: green; }')
 			// Not so much interested in the test result, more looking that this isn't giving a type error
-			let properties = actual.color['green-3fc58faf']!['$extensions'][EXTENSION_CSS_PROPERTIES]
+			let properties = actual.color['green-8aff77af']!['$extensions'][EXTENSION_CSS_PROPERTIES]
 			expect(properties).toEqual(['color'])
 		})
 
@@ -182,7 +193,7 @@ describe('css_to_tokens', () => {
 				}
 		`)
 			expect(actual.color).toEqual({
-				'green-3fc58faf': {
+				'green-8aff77af': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',
@@ -195,7 +206,7 @@ describe('css_to_tokens', () => {
 						[EXTENSION_CSS_PROPERTIES]: ['color', 'border-color', 'background-color'],
 					},
 				},
-				'green-64a061f5': {
+				'green-c90049f5': {
 					$type: 'color',
 					$value: {
 						colorSpace: 'srgb',

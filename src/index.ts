@@ -135,7 +135,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 					if (color_token !== null) {
 						let { colorSpace, components, alpha } = color_token
-						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(''))}`
+						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(','))}`
 
 						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
 						let new_properties = Object.entries(items_per_context).reduce(
