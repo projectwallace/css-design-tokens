@@ -365,7 +365,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-43874bc': {
+				'fontFamily-9e342b3': {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
@@ -376,15 +376,15 @@ describe('css_to_tokens', () => {
 			})
 		})
 
-		test('dedupes', () => {
+		test('dedupes identical stacks regardless of quoting', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				font-family: 'Inter', sans-serif;
-				font-family: "Inter", Fallback, serif;
+				font-family: "Inter", sans-serif;
 			}
 		`)
 			expect(actual.font_family).toEqual({
-				'fontFamily-43874bc': {
+				'fontFamily-9e342b3': {
 					$type: 'fontFamily',
 					$value: ['Inter', 'sans-serif'],
 					$extensions: {
@@ -393,6 +393,20 @@ describe('css_to_tokens', () => {
 					},
 				},
 			})
+		})
+
+		test('does not merge stacks that only share the first family', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				font-family: Arial, serif;
+				font-family: Arial, sans-serif;
+			}
+		`)
+			let values = Object.values(actual.font_family).map((token) => token.$value)
+			expect(values).toEqual([
+				['Arial', 'serif'],
+				['Arial', 'sans-serif'],
+			])
 		})
 
 		test('Always returns an array as value', () => {
