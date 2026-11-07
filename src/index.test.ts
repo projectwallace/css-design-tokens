@@ -601,6 +601,31 @@ describe('css_to_tokens', () => {
 	})
 
 	describe('box shadows', () => {
+		test('dedupes equivalent notations', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				box-shadow: 0 0 10px #000;
+				box-shadow: 0px 0px 10px 0px #000000;
+				box-shadow: 0 0 10px black;
+			}
+		`)
+			let tokens = Object.values(actual.box_shadow)
+			expect(tokens).toHaveLength(1)
+			expect(tokens[0]!.$extensions[EXTENSION_AUTHORED_AS]).toBe('0 0 10px #000')
+			expect(tokens[0]!.$extensions[EXTENSION_USAGE_COUNT]).toBe(3)
+		})
+
+		test('does not merge different shadows', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				box-shadow: 0 0 10px #000;
+				box-shadow: 0 0 10px #000 inset;
+				box-shadow: 0 0 11px #000;
+			}
+		`)
+			expect(Object.keys(actual.box_shadow)).toHaveLength(3)
+		})
+
 		test('outputs a single box shadow token when 1 shadow is used', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
@@ -608,7 +633,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.box_shadow).toEqual({
-				'boxShadow-6f90da6b': {
+				'boxShadow-9d7bf51b': {
 					$type: 'shadow',
 					$value: {
 						offsetX: {
@@ -649,7 +674,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.box_shadow).toEqual({
-				'boxShadow-be2751ac': {
+				'boxShadow-3427242a': {
 					$type: 'shadow',
 					$value: [
 						{
@@ -828,7 +853,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.easing).toEqual({
-				'easing-ea6c7565': {
+				'easing-7160ca12': {
 					$type: 'cubicBezier',
 					$value: [0.42, 0, 0.58, 1],
 					$extensions: {
@@ -846,7 +871,7 @@ describe('css_to_tokens', () => {
 			}
 		`)
 			expect(actual.easing).toEqual({
-				'easing-90111eba': {
+				'easing-cbb31ccd': {
 					$type: 'cubicBezier',
 					$value: [0, 0, 0.5, 0.8],
 					$extensions: {
@@ -855,6 +880,21 @@ describe('css_to_tokens', () => {
 					},
 				},
 			})
+		})
+
+		test('dedupes keywords and their equivalent cubic-bezier()', () => {
+			let actual = css_to_tokens(`
+			.my-design-system {
+				animation-timing-function: ease;
+				transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+				transition-timing-function: cubic-bezier(.25,.1,.25,1);
+			}
+		`)
+			let tokens = Object.values(actual.easing)
+			expect(tokens).toHaveLength(1)
+			expect(tokens[0]!.$value).toEqual([0.25, 0.1, 0.25, 1])
+			expect(tokens[0]!.$extensions[EXTENSION_AUTHORED_AS]).toBe('ease')
+			expect(tokens[0]!.$extensions[EXTENSION_USAGE_COUNT]).toBe(3)
 		})
 
 		test('outputs an unparsed token when using an invalid easing', () => {

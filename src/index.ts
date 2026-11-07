@@ -323,7 +323,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.boxShadows)
 
 			for (let box_shadow in unique) {
-				let name = `boxShadow-${hash(box_shadow)}`
 				let parsed = destructure_box_shadow(box_shadow)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: box_shadow,
@@ -331,10 +330,17 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (parsed === null) {
-					shadows[name] = {
+					shadows[`boxShadow-${hash(box_shadow)}`] = {
 						$value: box_shadow,
 						$extensions: extensions,
 					}
+					continue
+				}
+
+				// Dedupe on the parsed value so equivalent notations (`0 0 0 #000` vs `0px 0px #000000`) merge
+				let name = `boxShadow-${hash(JSON.stringify(parsed))}`
+				if (shadows[name]) {
+					shadows[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 				} else {
 					shadows[name] = {
 						$type: 'shadow',
@@ -402,7 +408,6 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.animations.timingFunctions)
 
 			for (let easing in unique) {
-				let name = `easing-${hash(easing)}`
 				let value = destructure_easing(easing)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: easing,
@@ -410,10 +415,17 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 
 				if (value === null) {
-					easings[name] = {
+					easings[`easing-${hash(easing)}`] = {
 						$value: easing,
 						$extensions: extensions,
 					}
+					continue
+				}
+
+				// Dedupe on the parsed value so `ease` and `cubic-bezier(0.25, 0.1, 0.25, 1)` merge
+				let name = `easing-${hash(value.join(','))}`
+				if (easings[name]) {
+					easings[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 				} else {
 					easings[name] = {
 						$value: value,
