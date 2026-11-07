@@ -18,6 +18,7 @@ import {
 	type NumberToken,
 	type UnparsedToken,
 	type ColorToken,
+	type BaseToken,
 	type CssAnalysis,
 	type ShadowToken,
 } from './types.ts'
@@ -121,6 +122,48 @@ function get_count(collection_item: number | CssLocation[]) {
 	return collection_item
 }
 
+type Parsed<T extends BaseToken> = {
+	/** Value to dedupe on, so equivalent notations merge into a single token */
+	key: string | number
+	token: Omit<T, '$extensions'>
+}
+
+/**
+ * Turn a collection of authored values into tokens. Values that `parse` can't handle become
+ * unparsed tokens; parsed values that share a `key` are merged and their usage counts summed.
+ */
+function to_tokens<T extends BaseToken = never>(
+	prefix: string,
+	unique: UniqueCount | UniqueWithLocations,
+	parse?: (value: string) => Parsed<T> | null,
+): Record<TokenID, T | UnparsedToken> {
+	let tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
+
+	for (let authored in unique) {
+		let extensions = {
+			[EXTENSION_AUTHORED_AS]: authored,
+			[EXTENSION_USAGE_COUNT]: get_count(unique[authored]!),
+		}
+		let parsed = parse?.(authored) ?? null
+
+		if (parsed === null) {
+			tokens[`${prefix}-${hash(authored)}`] = {
+				$value: authored,
+				$extensions: extensions,
+			}
+			continue
+		}
+
+		let name = `${prefix}-${hash(parsed.key)}`
+		if (tokens[name]) {
+			tokens[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+		} else {
+			tokens[name] = { ...parsed.token, $extensions: extensions } as T
+		}
+	}
+	return tokens
+}
+
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
@@ -181,252 +224,98 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			}
 			return colors
 		})(),
-		font_size: (() => {
-			let font_sizes = Object.create(null) as Record<TokenID, UnparsedToken | DimensionToken>
-			let unique = get_unique(analysis.values.fontSizes)
-
-			for (let font_size in unique) {
-				let parsed = parse_length(font_size)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: font_size,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[font_size]!),
-				}
-
+		font_size: to_tokens<DimensionToken>(
+			'fontSize',
+			get_unique(analysis.values.fontSizes),
+			(value) => {
+				let parsed = parse_length(value)
 				if (parsed === null) {
-					let name = `fontSize-${hash(font_size)}`
-					font_sizes[name] = {
-						$value: font_size,
-						$extensions: extensions,
-					}
-				} else {
-					let name = `fontSize-${hash(parsed.value.toString() + parsed.unit)}`
-					if (font_sizes[name]) {
-						font_sizes[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					} else {
-						font_sizes[name] = {
-							$type: 'dimension',
-							$value: parsed,
-							$extensions: extensions,
-						}
-					}
+					return null
 				}
-			}
-			return font_sizes
-		})(),
-		font_family: (() => {
-			let families = Object.create(null) as Record<TokenID, FontFamilyToken | UnparsedToken>
-			let unique = get_unique(analysis.values.fontFamilies)
-
-			for (let font_family in unique) {
-				let parsed = destructure_font_family(font_family)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: font_family,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
+				return {
+					key: parsed.value.toString() + parsed.unit,
+					token: { $type: 'dimension', $value: parsed },
 				}
-
+			},
+		),
+		font_family: to_tokens<FontFamilyToken>(
+			'fontFamily',
+			get_unique(analysis.values.fontFamilies),
+			(value) => {
+				let parsed = destructure_font_family(value)
 				if (!parsed) {
-					families[`fontFamily-${hash(font_family)}`] = {
-						$value: font_family,
-						$extensions: extensions,
-					}
-					continue
+					return null
 				}
-
 				// Dedupe on the full (normalized) stack: `Arial, serif` and `Arial, sans-serif` are different tokens
-				let name = `fontFamily-${hash(parsed.join(','))}`
-
-				if (families[name]) {
-					families[name]!.$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-				} else {
-					families[name] = {
-						$type: 'fontFamily',
-						$value: parsed,
-						$extensions: extensions,
-					}
+				return {
+					key: parsed.join(','),
+					token: { $type: 'fontFamily', $value: parsed },
 				}
-			}
-			return families
-		})(),
-		line_height: (() => {
-			let line_heights = Object.create(null) as Record<
-				TokenID,
-				UnparsedToken | DimensionToken | NumberToken
-			>
-			let unique = get_unique(analysis.values.lineHeights)
-
-			for (let line_height in unique) {
-				let parsed = destructure_line_height(line_height)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: line_height,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[line_height]!),
-				}
-
+			},
+		),
+		line_height: to_tokens<DimensionToken | NumberToken>(
+			'lineHeight',
+			get_unique(analysis.values.lineHeights),
+			(value) => {
+				let parsed = destructure_line_height(value)
 				if (parsed === null) {
-					let name = `lineHeight-${hash(line_height)}`
-					line_heights[name] = {
-						$value: line_height,
-						$extensions: extensions,
-					}
-				} else if (typeof parsed === 'number') {
-					let name = `lineHeight-${hash(parsed)}`
-					if (line_heights[name]) {
-						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
-							extensions[EXTENSION_USAGE_COUNT]
-					} else {
-						line_heights[name] = {
-							$type: 'number',
-							$value: parsed,
-							$extensions: extensions,
-						}
-					}
-				} else {
-					// destructure_line_height only returns px or rem lengths
-					let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
-					if (line_heights[name]) {
-						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
-							extensions[EXTENSION_USAGE_COUNT]
-					} else {
-						line_heights[name] = {
-							$type: 'dimension',
-							$value: parsed,
-							$extensions: extensions,
-						}
-					}
+					return null
 				}
-			}
-			return line_heights
-		})(),
-		gradient: (() => {
-			let gradients = Object.create(null) as Record<TokenID, UnparsedToken>
-			let unique = get_unique(analysis.values.gradients)
-
-			for (let gradient in unique) {
-				gradients[`gradient-${hash(gradient)}`] = {
-					$value: gradient,
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: gradient,
-						[EXTENSION_USAGE_COUNT]: get_count(unique[gradient]!),
-					},
+				if (typeof parsed === 'number') {
+					return { key: parsed, token: { $type: 'number', $value: parsed } }
 				}
-			}
-			return gradients
-		})(),
-		box_shadow: (() => {
-			let shadows = Object.create(null) as Record<TokenID, ShadowToken | UnparsedToken>
-			let unique = get_unique(analysis.values.boxShadows)
-
-			for (let box_shadow in unique) {
-				let parsed = destructure_box_shadow(box_shadow)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: box_shadow,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[box_shadow]!),
+				// destructure_line_height only returns px or rem lengths
+				return {
+					key: parsed.value.toString() + parsed.unit,
+					token: { $type: 'dimension', $value: parsed },
 				}
-
+			},
+		),
+		gradient: to_tokens('gradient', get_unique(analysis.values.gradients)),
+		box_shadow: to_tokens<ShadowToken>(
+			'boxShadow',
+			get_unique(analysis.values.boxShadows),
+			(value) => {
+				let parsed = destructure_box_shadow(value)
 				if (parsed === null) {
-					shadows[`boxShadow-${hash(box_shadow)}`] = {
-						$value: box_shadow,
-						$extensions: extensions,
-					}
-					continue
+					return null
 				}
-
 				// Dedupe on the parsed value so equivalent notations (`0 0 0 #000` vs `0px 0px #000000`) merge
-				let name = `boxShadow-${hash(JSON.stringify(parsed))}`
-				if (shadows[name]) {
-					shadows[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-				} else {
-					shadows[name] = {
-						$type: 'shadow',
-						$value: parsed.length === 1 ? parsed[0]! : parsed,
-						$extensions: extensions,
-					}
+				return {
+					key: JSON.stringify(parsed),
+					token: { $type: 'shadow', $value: parsed.length === 1 ? parsed[0]! : parsed },
 				}
-			}
-			return shadows
-		})(),
-		radius: (() => {
-			let radii = Object.create(null) as Record<TokenID, UnparsedToken>
-			let unique = get_unique(analysis.values.borderRadiuses)
-
-			for (let radius in unique) {
-				let name = `radius-${hash(radius)}`
-				radii[name] = {
-					$value: radius,
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: radius,
-						[EXTENSION_USAGE_COUNT]: get_count(unique[radius]!),
-					},
-				}
-			}
-			return radii
-		})(),
-		duration: (() => {
-			let durations = Object.create(null) as Record<TokenID, DurationToken | UnparsedToken>
-			let unique = get_unique(analysis.values.animations.durations)
-
-			for (let duration in unique) {
-				let parsed = parse_duration(duration)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: duration,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[duration]!),
-				}
-
+			},
+		),
+		radius: to_tokens('radius', get_unique(analysis.values.borderRadiuses)),
+		duration: to_tokens<DurationToken>(
+			'duration',
+			get_unique(analysis.values.animations.durations),
+			(value) => {
+				let parsed = parse_duration(value)
 				if (parsed === null) {
-					durations[`duration-${hash(duration)}`] = {
-						$value: duration,
-						$extensions: extensions,
-					}
-					continue
+					return null
 				}
-
-				let name = `duration-${hash(parsed.toString())}`
-				if (durations[name]) {
-					durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-				} else {
-					durations[name] = {
-						$type: 'duration',
-						$value: {
-							value: parsed,
-							unit: 'ms',
-						},
-						$extensions: extensions,
-					}
+				return {
+					key: parsed.toString(),
+					token: { $type: 'duration', $value: { value: parsed, unit: 'ms' } },
 				}
-			}
-			return durations
-		})(),
-		easing: (() => {
-			let easings = Object.create(null) as Record<TokenID, UnparsedToken | CubicBezierToken>
-			let unique = get_unique(analysis.values.animations.timingFunctions)
-
-			for (let easing in unique) {
-				let value = destructure_easing(easing)
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: easing,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[easing]!),
+			},
+		),
+		easing: to_tokens<CubicBezierToken>(
+			'easing',
+			get_unique(analysis.values.animations.timingFunctions),
+			(value) => {
+				let parsed = destructure_easing(value)
+				if (parsed === null) {
+					return null
 				}
-
-				if (value === null) {
-					easings[`easing-${hash(easing)}`] = {
-						$value: easing,
-						$extensions: extensions,
-					}
-					continue
-				}
-
 				// Dedupe on the parsed value so `ease` and `cubic-bezier(0.25, 0.1, 0.25, 1)` merge
-				let name = `easing-${hash(value.join(','))}`
-				if (easings[name]) {
-					easings[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-				} else {
-					easings[name] = {
-						$value: value,
-						$type: 'cubicBezier',
-						$extensions: extensions,
-					}
+				return {
+					key: parsed.join(','),
+					token: { $value: parsed, $type: 'cubicBezier' },
 				}
-			}
-			return easings
-		})(),
+			},
+		),
 	}
 }
