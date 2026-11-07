@@ -27,6 +27,14 @@ test('handles invalid input', () => {
 	expect.soft(destructure_box_shadow('var(--my-var, 0px 0px 0px #000)')).toBeNull()
 })
 
+test('returns null when a part cannot be resolved statically', () => {
+	expect.soft(destructure_box_shadow('0 0 1px var(--color)')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 var(--blur) #000')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 calc(1px + 2px) #000')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px rgb(var(--rgb))')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px #000, 0 0 1px var(--color)')).toBeNull()
+})
+
 test('0px 0px 0px 0px #000', () => {
 	expect(destructure_box_shadow('0px 0px 0px 0px #000')).toEqual([
 		{

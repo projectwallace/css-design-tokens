@@ -83,19 +83,17 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 				current_shadow.spread = length
 			}
 		} else if (node.type === FUNCTION) {
-			if (color_functions.has(node.name)) {
-				let color_token = color_to_token(node.text)
-				if (color_token === null) {
-					continue
-				}
-				current_shadow.color = color_token
-			} else if (node.name.toLowerCase() === 'var' && !current_shadow.color) {
-				let color_token = color_to_token(node.text)
-				if (color_token === null) {
-					continue
-				}
-				current_shadow.color = color_token
+			// Anything we can't resolve statically (var(), calc(), env(), a color function
+			// containing var(), ...) would otherwise silently become a 0px length or a black
+			// color, so bail out and let the caller emit an unparsed token instead.
+			if (!color_functions.has(node.name)) {
+				return null
 			}
+			let color_token = color_to_token(node.text)
+			if (color_token === null) {
+				return null
+			}
+			current_shadow.color = color_token
 		} else if (node.type === HASH) {
 			let color_token = color_to_token(node.text)
 			if (color_token === null) {
