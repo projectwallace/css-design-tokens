@@ -70,4 +70,20 @@ describe('unsupported', () => {
 	test('trailing content', () => {
 		expect(destructure_easing('cubic-bezier(0, 0, 1, 1) foo')).toBeNull()
 	})
+	test('missing commas', () => {
+		expect(destructure_easing('cubic-bezier(.1 .2 .3 .4)')).toBeNull()
+	})
+	test('too many arguments', () => {
+		expect(destructure_easing('cubic-bezier(0, 0, 1, 1, 1)')).toBeNull()
+	})
+	test('trailing comma', () => {
+		expect(destructure_easing('cubic-bezier(0, 0, 1, 1,)')).toBeNull()
+	})
+	test('non-number arguments', () => {
+		expect.soft(destructure_easing('cubic-bezier(0, 0, 1px, 1)')).toBeNull()
+		expect.soft(destructure_easing('cubic-bezier(0, 0, calc(1), 1)')).toBeNull()
+	})
+	test('other functions', () => {
+		expect(destructure_easing('linear(0, 0.5, 1)')).toBeNull()
+	})
 })

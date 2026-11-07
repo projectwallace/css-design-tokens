@@ -1,3 +1,5 @@
+import { FUNCTION, IDENTIFIER, NUMBER, OPERATOR } from '@projectwallace/css-parser/nodes'
+import { parse_value } from '@projectwallace/css-parser/parse-value'
 import type { Easing } from './types.js'
 
 const EASING_KEYWORDS = new Map<string, Easing>([
@@ -8,38 +10,45 @@ const EASING_KEYWORDS = new Map<string, Easing>([
 	['ease-in-out', [0.42, 0, 0.58, 1]],
 ])
 
-const CUBIC_BEZIER = /^cubic-bezier\(([^()]*)\)$/
-
 export function destructure_easing(easing: string): Easing | null {
-	easing = easing.trim().toLowerCase()
+	let ast = parse_value(easing)
+	if (ast.child_count !== 1) {
+		return null
+	}
+	let node = ast.first_child!
 
-	if (EASING_KEYWORDS.has(easing)) {
-		return EASING_KEYWORDS.get(easing) as Easing
+	if (node.type === IDENTIFIER) {
+		return EASING_KEYWORDS.get(node.name.toLowerCase()) ?? null
 	}
 
-	if (easing.includes('var(')) {
+	if (node.type !== FUNCTION || node.name.toLowerCase() !== 'cubic-bezier') {
 		return null
 	}
 
-	let match = CUBIC_BEZIER.exec(easing)
-	if (match !== null) {
-		let parts = match[1]!.split(',').map((v) => v.trim())
-		if (parts.length !== 4 || parts.some((v) => v === '')) {
+	// Expect exactly `<number> , <number> , <number> , <number>`
+	let children = [...node]
+	if (children.length !== 7) {
+		return null
+	}
+
+	let numbers: number[] = []
+	for (let [index, child] of children.entries()) {
+		if (index % 2 === 1) {
+			if (child.type !== OPERATOR || child.value !== ',') {
+				return null
+			}
+		} else if (child.type === NUMBER) {
+			numbers.push(Number(child.value))
+		} else {
 			return null
-		}
-		let numbers = parts.map(Number)
-		let [x1, , x2] = numbers
-		if (
-			numbers.every((n) => Number.isFinite(n)) &&
-			// https://drafts.csswg.org/css-easing/#cubic-bezier-easing-functions: x values must be in [0, 1]
-			x1! >= 0 &&
-			x1! <= 1 &&
-			x2! >= 0 &&
-			x2! <= 1
-		) {
-			return numbers as Easing
 		}
 	}
 
-	return null
+	// https://drafts.csswg.org/css-easing/#cubic-bezier-easing-functions: x values must be in [0, 1]
+	let [x1, , x2] = numbers as Easing
+	if (x1 < 0 || x1 > 1 || x2 < 0 || x2 > 1) {
+		return null
+	}
+
+	return numbers as Easing
 }
