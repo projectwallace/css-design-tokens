@@ -279,23 +279,16 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 							$extensions: extensions,
 						}
 					}
-				} else if (typeof parsed === 'object') {
-					if (parsed.unit === 'px' || parsed.unit === 'rem') {
-						let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
-						if (line_heights[name]) {
-							line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
-								extensions[EXTENSION_USAGE_COUNT]
-						} else {
-							line_heights[name] = {
-								$type: 'dimension',
-								$value: parsed,
-								$extensions: extensions,
-							}
-						}
+				} else {
+					// destructure_line_height only returns px or rem lengths
+					let name = `lineHeight-${hash(parsed.value.toString() + parsed.unit)}`
+					if (line_heights[name]) {
+						line_heights[name].$extensions[EXTENSION_USAGE_COUNT] +=
+							extensions[EXTENSION_USAGE_COUNT]
 					} else {
-						let name = `lineHeight-${hash(line_height)}`
 						line_heights[name] = {
-							$value: line_height,
+							$type: 'dimension',
+							$value: parsed,
 							$extensions: extensions,
 						}
 					}

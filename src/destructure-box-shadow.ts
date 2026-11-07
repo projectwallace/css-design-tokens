@@ -39,12 +39,12 @@ function create_destructured(): ShadowValue {
 export function destructure_box_shadow(value: string): null | ShadowValue[] {
 	let ast = parse_value(value)
 
-	let current_shadow = create_destructured()
-	let destructured: ShadowValue[] = [current_shadow]
-
 	if (ast.child_count < 2) {
 		return null
 	}
+
+	let current_shadow = create_destructured()
+	let destructured: ShadowValue[] = [current_shadow]
 
 	for (let node of ast) {
 		if (node.type === IDENTIFIER) {
