@@ -1,5 +1,5 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { group_colors, color_dict } from './group-colors.ts'
+import { group_colors } from './group-colors.ts'
 import { destructure_box_shadow } from './destructure-box-shadow.ts'
 import { destructure_easing } from './destructure-easing.ts'
 import { destructure_font_family } from './destructure-font-family.ts'
@@ -198,7 +198,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 					if (color_token !== null) {
 						let { colorSpace, components, alpha } = color_token
-						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(','))}`
+						let name = `${group}-${hash([colorSpace, ...components, alpha].join(','))}`
 
 						let new_properties = properties_per_color.get(color) ?? new Set<string>()
 
