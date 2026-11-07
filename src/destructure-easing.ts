@@ -8,6 +8,8 @@ const EASING_KEYWORDS = new Map<string, Easing>([
 	['ease-in-out', [0.42, 0, 0.58, 1]],
 ])
 
+const CUBIC_BEZIER = /^cubic-bezier\(([^()]*)\)$/
+
 export function destructure_easing(easing: string): Easing | null {
 	easing = easing.trim().toLowerCase()
 
@@ -19,14 +21,23 @@ export function destructure_easing(easing: string): Easing | null {
 		return null
 	}
 
-	if (easing.startsWith('cubic-bezier(')) {
-		let parts = easing
-			.replace('cubic-bezier(', '')
-			.replace(')', '')
-			.split(',')
-			.map((v) => Number(v.trim()))
-		if (parts.length === 4 && parts.every((n) => Number.isFinite(n))) {
-			return parts as Easing
+	let match = CUBIC_BEZIER.exec(easing)
+	if (match !== null) {
+		let parts = match[1]!.split(',').map((v) => v.trim())
+		if (parts.length !== 4 || parts.some((v) => v === '')) {
+			return null
+		}
+		let numbers = parts.map(Number)
+		let [x1, , x2] = numbers
+		if (
+			numbers.every((n) => Number.isFinite(n)) &&
+			// https://drafts.csswg.org/css-easing/#cubic-bezier-easing-functions: x values must be in [0, 1]
+			x1! >= 0 &&
+			x1! <= 1 &&
+			x2! >= 0 &&
+			x2! <= 1
+		) {
+			return numbers as Easing
 		}
 	}
 
