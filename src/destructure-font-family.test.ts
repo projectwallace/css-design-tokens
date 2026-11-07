@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { destructure_font_family } from './destructure-font-family.js'
+import { destructure_font_family } from './destructure-font-family.ts'
 
 test('single font-family', () => {
 	expect.soft(destructure_font_family('Arial')).toEqual(['Arial'])

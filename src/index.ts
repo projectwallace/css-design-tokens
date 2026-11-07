@@ -1,12 +1,12 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { group_colors, color_dict } from './group-colors.js'
-import { destructure_box_shadow } from './destructure-box-shadow.js'
-import { destructure_easing } from './destructure-easing.js'
-import { destructure_font_family } from './destructure-font-family.js'
-import { hash } from './hash.js'
-import { destructure_line_height } from './destructure-line-height.js'
-import { parse_length } from './parse-length.js'
-import { parse_duration } from './parse-duration.js'
+import { group_colors, color_dict } from './group-colors.ts'
+import { destructure_box_shadow } from './destructure-box-shadow.ts'
+import { destructure_easing } from './destructure-easing.ts'
+import { destructure_font_family } from './destructure-font-family.ts'
+import { hash } from './hash.ts'
+import { destructure_line_height } from './destructure-line-height.ts'
+import { parse_length } from './parse-length.ts'
+import { parse_duration } from './parse-duration.ts'
 import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
@@ -20,9 +20,9 @@ import {
 	type ColorToken,
 	type CssAnalysis,
 	type ShadowToken,
-} from './types.js'
-import { color_to_token } from './colors.js'
-export { color_to_token } from './colors.js'
+} from './types.ts'
+import { color_to_token } from './colors.ts'
+export { color_to_token } from './colors.ts'
 
 export {
 	EXTENSION_AUTHORED_AS,
@@ -44,8 +44,8 @@ export {
 	type ColorToken,
 	type ColorValue,
 	type ColorComponent,
-} from './types.js'
-export type { CssLength, ShadowValue } from './destructure-box-shadow.js'
+} from './types.ts'
+export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
 	let analysis = analyze(css)

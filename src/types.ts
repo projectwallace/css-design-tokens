@@ -1,5 +1,5 @@
 import type { analyze } from '@projectwallace/css-analyzer'
-import type { ShadowValue } from './destructure-box-shadow.js'
+import type { ShadowValue } from './destructure-box-shadow.ts'
 
 // CssAnalysis represents the result of analyze() which can be called with or without useLocations
 // TypeScript infers this as the union of both overload return types

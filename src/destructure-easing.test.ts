@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest'
-import { destructure_easing } from './destructure-easing.js'
+import { destructure_easing } from './destructure-easing.ts'
 
 describe('keywords', () => {
 	test('ease', () => {

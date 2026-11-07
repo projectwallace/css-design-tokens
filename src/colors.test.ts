@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest'
-import { color_to_token } from './colors.js'
+import { color_to_token } from './colors.ts'
 
 describe('xyz', () => {
 	test('xyz-d65 components are on a 0-1 scale', () => {

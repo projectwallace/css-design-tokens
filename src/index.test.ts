@@ -5,7 +5,7 @@ import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_CSS_PROPERTIES,
 	EXTENSION_USAGE_COUNT,
-} from './index.js'
+} from './index.ts'
 import { analyze } from '@projectwallace/css-analyzer'
 
 describe('analysis_to_tokens', () => {

@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'vitest'
-import { destructure_box_shadow } from './destructure-box-shadow.js'
-import type { ColorValue } from './types.js'
-import { color_to_token } from './colors.js'
+import { destructure_box_shadow } from './destructure-box-shadow.ts'
+import type { ColorValue } from './types.ts'
+import { color_to_token } from './colors.ts'
 
 function create_px_length(value: number): { value: number; unit: string } {
 	return {

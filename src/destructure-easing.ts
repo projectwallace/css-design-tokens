@@ -1,6 +1,6 @@
 import { FUNCTION, IDENTIFIER, NUMBER, OPERATOR } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { Easing } from './types.js'
+import type { Easing } from './types.ts'
 
 const EASING_KEYWORDS = new Map<string, Easing>([
 	['linear', [0, 0, 1, 1]],

@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { parse_duration } from './parse-duration.js'
+import { parse_duration } from './parse-duration.ts'
 
 test.each([
 	['100ms', 100],

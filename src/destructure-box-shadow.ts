@@ -8,8 +8,8 @@ import {
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
 import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
-import { color_to_token } from './colors.js'
-import type { ColorValue } from './types.js'
+import { color_to_token } from './colors.ts'
+import type { ColorValue } from './types.ts'
 
 export type CssLength = {
 	value: number

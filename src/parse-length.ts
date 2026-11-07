@@ -1,6 +1,6 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { Length } from './types.js'
+import type { Length } from './types.ts'
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/absolute-size#values
 let absolute_size_map = new Map([
