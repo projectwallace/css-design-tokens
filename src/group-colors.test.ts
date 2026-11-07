@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest'
-import { group_colors, color_dict } from './group-colors.ts'
+import { group_colors } from './group-colors.ts'
 
 function group_names(colors: string[]) {
 	let input = Object.fromEntries(colors.map((color) => [color, 1]))
-	return group_colors(input).map(([group]) => color_dict.get(group))
+	return group_colors(input).map(([group]) => group)
 }
 
 test('sorts groups by size, largest first', () => {
