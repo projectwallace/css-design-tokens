@@ -7,11 +7,7 @@ import {
 	NUMBER,
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
-import {
-	namedColors as named_colors,
-	systemColors as system_colors,
-	colorFunctions as color_functions,
-} from '@projectwallace/css-analyzer'
+import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
 import { color_to_token } from './colors.js'
 import type { ColorValue } from './types.js'
 
@@ -54,10 +50,12 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 		if (node.type === IDENTIFIER) {
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
-			} else if (node.name && (named_colors.has(node.name) || system_colors.has(node.name))) {
-				let color_token = color_to_token(node.name!)
+			} else {
+				// Named colors and `transparent` resolve; system colors, `currentcolor` and
+				// unknown keywords don't, and would otherwise silently become a black shadow
+				let color_token = color_to_token(node.name)
 				if (color_token === null) {
-					continue
+					return null
 				}
 				current_shadow.color = color_token
 			}
@@ -97,7 +95,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 		} else if (node.type === HASH) {
 			let color_token = color_to_token(node.text)
 			if (color_token === null) {
-				continue
+				return null
 			}
 			current_shadow.color = color_token
 		} else if (node.type === OPERATOR && node.value === ',') {

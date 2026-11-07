@@ -35,6 +35,20 @@ test('returns null when a part cannot be resolved statically', () => {
 	expect.soft(destructure_box_shadow('0 0 1px #000, 0 0 1px var(--color)')).toBeNull()
 })
 
+test('resolves keyword colors case-insensitively', () => {
+	expect(destructure_box_shadow('0 0 1px RED')![0]!.color).toEqual(color_to_token('red'))
+	expect(destructure_box_shadow('0 0 1px transparent')![0]!.color).toEqual(
+		color_to_token('transparent'),
+	)
+})
+
+test('returns null for keyword colors that cannot be resolved statically', () => {
+	expect.soft(destructure_box_shadow('0 0 1px currentColor')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px Canvas')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px foo')).toBeNull()
+	expect.soft(destructure_box_shadow('0 0 1px #zzz')).toBeNull()
+})
+
 test('0px 0px 0px 0px #000', () => {
 	expect(destructure_box_shadow('0px 0px 0px 0px #000')).toEqual([
 		{
