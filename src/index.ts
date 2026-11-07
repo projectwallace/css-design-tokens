@@ -211,7 +211,9 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 			for (let font_family in unique) {
 				let parsed = destructure_font_family(font_family)
-				if (!parsed) continue
+				if (!parsed) {
+					continue
+				}
 
 				let [main] = parsed
 				let name = `fontFamily-${hash(main)}`
