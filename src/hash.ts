@@ -13,7 +13,7 @@ export function hash(input: string | undefined | number): string {
 
 	let hash = 0
 	for (let char of input) {
-		hash = (hash << 5) - hash + char.charCodeAt(0)
+		hash = (hash << 5) - hash + char.codePointAt(0)!
 		hash |= 0
 	}
 	return (hash >>> 0).toString(16)

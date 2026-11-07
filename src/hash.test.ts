@@ -36,3 +36,12 @@ test('handles number input', () => {
 	const result = hash(123)
 	expect(result).toMatch('be32')
 })
+
+test('distinguishes characters outside the BMP', () => {
+	// Both share the same high surrogate (\uD83D), so hashing only the first code unit collides
+	expect(hash('😀')).not.toBe(hash('😁'))
+})
+
+test('hashes BMP strings the same as before', () => {
+	expect(hash('abc')).toBe('17862')
+})
