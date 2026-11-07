@@ -94,23 +94,22 @@ export function color_to_token(color: string): ColorValue | null {
 		return null
 	}
 
+	// Cheap format lookup first, so unsupported formats never get fully parsed
+	let format = getFormat(color)
+	if (!format) {
+		return null
+	}
+
+	let converter_fn = CONVERTERS[format]
+	if (!converter_fn) {
+		return null
+	}
+
 	let parsed = colordx(color)
 	if (!parsed.isValid()) {
 		return null
 	}
 
-	let format = getFormat(color)
-
-	if (!format) {
-		return null
-	}
-
 	let colorSpace = (FORMAT_TO_SPACE[format] ?? format) as ColorSpace
-	let converter_fn = format && CONVERTERS[format]
-
-	if (!converter_fn) {
-		return null
-	}
-
 	return { colorSpace, ...converter_fn(parsed) }
 }
