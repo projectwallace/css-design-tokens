@@ -128,6 +128,26 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.colors)
 			let color_groups = group_colors(unique)
 
+			// Build a color -> properties lookup once, instead of scanning every context for every color
+			let properties_per_color = new Map<string, Set<string>>()
+			let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
+			for (let property in items_per_context) {
+				let collection = items_per_context[property]!
+				for (let source of [collection.unique, collection.uniqueWithLocations]) {
+					if (!source) {
+						continue
+					}
+					for (let color in source) {
+						let properties = properties_per_color.get(color)
+						if (properties === undefined) {
+							properties_per_color.set(color, new Set([property]))
+						} else {
+							properties.add(property)
+						}
+					}
+				}
+			}
+
 			for (let [group, group_colors] of color_groups) {
 				for (let color of group_colors) {
 					let color_token = color_to_token(color)
@@ -137,19 +157,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						let { colorSpace, components, alpha } = color_token
 						let name = `${color_dict.get(group)}-${hash([colorSpace, ...components, alpha].join(','))}`
 
-						let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-						let new_properties = Object.entries(items_per_context).reduce(
-							(acc, [property, collection]) => {
-								if (color in collection.unique) {
-									return acc.add(property)
-								}
-								if (collection.uniqueWithLocations && color in collection.uniqueWithLocations) {
-									return acc.add(property)
-								}
-								return acc
-							},
-							new Set() as Set<string>,
-						)
+						let new_properties = properties_per_color.get(color) ?? new Set<string>()
 
 						if (colors[name]) {
 							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
