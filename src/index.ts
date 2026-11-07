@@ -375,7 +375,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 						}
 					}
 				} else {
-					let name = `duration-${hash('invalid' + parsed.toString())}`
+					let name = `duration-${hash(duration)}`
 					durations[name] = {
 						$value: duration,
 						$extensions: extensions,

@@ -716,15 +716,29 @@ describe('css_to_tokens', () => {
 					animation-duration: var(--test);
 				}
 			`)
-			expect(actual.duration).toEqual({
-				'duration-f9e24f32': {
-					$value: 'var(--test)',
-					$extensions: {
-						[EXTENSION_AUTHORED_AS]: 'var(--test)',
-						[EXTENSION_USAGE_COUNT]: 1,
-					},
+			let [token] = Object.values(actual.duration)
+			expect(token).toEqual({
+				$value: 'var(--test)',
+				$extensions: {
+					[EXTENSION_AUTHORED_AS]: 'var(--test)',
+					[EXTENSION_USAGE_COUNT]: 1,
 				},
 			})
+		})
+
+		test('keeps every distinct invalid duration as its own token', () => {
+			let actual = css_to_tokens(`
+				.my-design-system {
+					animation-duration: var(--a);
+					transition-duration: var(--b);
+					animation-duration: foo;
+					transition-duration: bar;
+				}
+			`)
+			let authored = Object.values(actual.duration).map(
+				(token) => token.$extensions[EXTENSION_AUTHORED_AS],
+			)
+			expect(authored.sort()).toEqual(['bar', 'foo', 'var(--a)', 'var(--b)'])
 		})
 
 		test('dedupes values', () => {
