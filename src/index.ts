@@ -1,5 +1,4 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { convert as convert_duration } from '@projectwallace/css-time-sort'
 import { group_colors, color_dict } from './group-colors.js'
 import { destructure_box_shadow } from './destructure-box-shadow.js'
 import { destructure_easing } from './destructure-easing.js'
@@ -7,6 +6,7 @@ import { destructure_font_family } from './destructure-font-family.js'
 import { hash } from './hash.js'
 import { destructure_line_height } from './destructure-line-height.js'
 import { parse_length } from './parse-length.js'
+import { parse_duration } from './parse-duration.js'
 import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
@@ -365,31 +365,30 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			let unique = get_unique(analysis.values.animations.durations)
 
 			for (let duration in unique) {
-				let parsed = convert_duration(duration)
-				let is_valid = parsed < Number.MAX_SAFE_INTEGER - 1
+				let parsed = parse_duration(duration)
 				let extensions = {
 					[EXTENSION_AUTHORED_AS]: duration,
 					[EXTENSION_USAGE_COUNT]: get_count(unique[duration]!),
 				}
 
-				if (is_valid) {
-					let name = `duration-${hash(parsed.toString())}`
-					if (durations[name]) {
-						durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
-					} else {
-						durations[name] = {
-							$type: 'duration',
-							$value: {
-								value: parsed,
-								unit: 'ms',
-							},
-							$extensions: extensions,
-						}
-					}
-				} else {
-					let name = `duration-${hash(duration)}`
-					durations[name] = {
+				if (parsed === null) {
+					durations[`duration-${hash(duration)}`] = {
 						$value: duration,
+						$extensions: extensions,
+					}
+					continue
+				}
+
+				let name = `duration-${hash(parsed.toString())}`
+				if (durations[name]) {
+					durations[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
+				} else {
+					durations[name] = {
+						$type: 'duration',
+						$value: {
+							value: parsed,
+							unit: 'ms',
+						},
 						$extensions: extensions,
 					}
 				}

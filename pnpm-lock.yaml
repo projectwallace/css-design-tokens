@@ -24,9 +24,6 @@ importers:
       '@projectwallace/css-parser':
         specifier: ~0.19.4
         version: 0.19.4
-      '@projectwallace/css-time-sort':
-        specifier: ^3.1.1
-        version: 3.1.1
     devDependencies:
       '@projectwallace/preset-oxlint':
         specifier: ^0.0.12
@@ -594,10 +591,6 @@ packages:
   '@projectwallace/css-parser@0.19.4':
     resolution: {integrity: sha512-Wow4VO1HWUNq5MLMDffTPapW7hu2wXHF8wdgOrcjk6zdU+VYDS/O4b967yiL/8ZjyCO5LWC2HPRYQeqguEP5pQ==}
     engines: {pnpm: '>=11.0.0'}
-
-  '@projectwallace/css-time-sort@3.1.1':
-    resolution: {integrity: sha512-0fVzVSQ3vwypAnxLtfgpd8TZrtkGp/D20V1/DzJbo3cEaSDibgBG3C/sVabzQzjfnbi3pUmhw/FduIvq+DD3Kg==}
-    engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
 
   '@projectwallace/preset-oxlint@0.0.12':
     resolution: {integrity: sha512-Amy4yCmGM2ZbPfWauhMRQ+s32w9LEZV4FTdccxGrL/2zr15+giWv27dlhWnfRhtKVYrRhWkEFYQ5tWvdl/DbxA==}
@@ -1722,8 +1715,6 @@ snapshots:
       '@projectwallace/css-parser': 0.19.4
 
   '@projectwallace/css-parser@0.19.4': {}
-
-  '@projectwallace/css-time-sort@3.1.1': {}
 
   '@projectwallace/preset-oxlint@0.0.12(oxlint@1.90.0)':
     dependencies:
