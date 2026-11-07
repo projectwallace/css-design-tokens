@@ -438,14 +438,30 @@ describe('css_to_tokens', () => {
 			})
 		})
 
-		test('does not mark var() as a fontFamily token', () => {
+		test('outputs var() font families as unparsed tokens', () => {
 			let actual = css_to_tokens(`
 			.my-design-system {
 				font-family: var(--body-font);
 				font-family: Arial, sans-serif, var(--fallback-font);
 			}
 		`)
-			expect(actual.font_family).toEqual({})
+			let tokens = Object.values(actual.font_family)
+			expect(tokens).toEqual([
+				{
+					$value: 'var(--body-font)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'var(--body-font)',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+				{
+					$value: 'Arial, sans-serif, var(--fallback-font)',
+					$extensions: {
+						[EXTENSION_AUTHORED_AS]: 'Arial, sans-serif, var(--fallback-font)',
+						[EXTENSION_USAGE_COUNT]: 1,
+					},
+				},
+			])
 		})
 	})
 

@@ -211,16 +211,21 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 
 			for (let font_family in unique) {
 				let parsed = destructure_font_family(font_family)
+				let extensions = {
+					[EXTENSION_AUTHORED_AS]: font_family,
+					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
+				}
+
 				if (!parsed) {
+					families[`fontFamily-${hash(font_family)}`] = {
+						$value: font_family,
+						$extensions: extensions,
+					}
 					continue
 				}
 
 				// Dedupe on the full (normalized) stack: `Arial, serif` and `Arial, sans-serif` are different tokens
 				let name = `fontFamily-${hash(parsed.join(','))}`
-				let extensions = {
-					[EXTENSION_AUTHORED_AS]: font_family,
-					[EXTENSION_USAGE_COUNT]: get_count(unique[font_family]!),
-				}
 
 				if (families[name]) {
 					families[name]!.$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
