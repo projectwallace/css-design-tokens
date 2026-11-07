@@ -76,7 +76,14 @@ export function group_colors(colors: Record<AuthoredColor, unknown>): [number, A
 		}
 	}
 
-	return Array.from(color_groups).sort((a, b) =>
-		a[0] === unknown || b[0] === unknown ? -1 : b[1].length - a[1].length,
-	)
+	// Largest groups first, `unknown` always last
+	return Array.from(color_groups).sort((a, b) => {
+		if (a[0] === unknown) {
+			return b[0] === unknown ? 0 : 1
+		}
+		if (b[0] === unknown) {
+			return -1
+		}
+		return b[1].length - a[1].length
+	})
 }
