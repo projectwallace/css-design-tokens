@@ -31,6 +31,11 @@ function to_srgb(color: Colordx): Converted {
 	}
 }
 
+// colordx returns XYZ on a 0-100 scale, DTCG expects 0-1
+function xyz_triple(value: { x: number; y: number; z: number; alpha: number }): Converted {
+	return { components: [value.x / 100, value.y / 100, value.z / 100], alpha: value.alpha }
+}
+
 // To map the `getFormat()` return value to a DTCG ColorSpace
 const FORMAT_TO_SPACE: Partial<Record<ColorFormat, ColorSpace>> = {
 	hex: 'srgb',
@@ -74,14 +79,8 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 	rec2020: (color) => rgb_triple(color.toRec2020(PRECISION)),
 	'a98-rgb': (color) => rgb_triple(color.toA98(PRECISION)),
 	'prophoto-rgb': (color) => rgb_triple(color.toProphoto(PRECISION)),
-	xyz: (color) => {
-		let value = color.toXyz(PRECISION)
-		return { components: [value.x, value.y, value.z], alpha: value.alpha }
-	},
-	'xyz-d65': (color) => {
-		let value = color.toXyzD65(PRECISION)
-		return { components: [value.x, value.y, value.z], alpha: value.alpha }
-	},
+	xyz: (color) => xyz_triple(color.toXyz(PRECISION)),
+	'xyz-d65': (color) => xyz_triple(color.toXyzD65(PRECISION)),
 }
 
 export function color_to_token(color: string): ColorValue | null {
