@@ -16,12 +16,10 @@ type ColorGroup =
 
 type AuthoredColor = string
 
-export function group_colors(
-	colors: Record<AuthoredColor, unknown>,
-): [ColorGroup, AuthoredColor[]][] {
+export function group_colors(colors: Iterable<AuthoredColor>): [ColorGroup, AuthoredColor[]][] {
 	let color_groups = new Map<ColorGroup, AuthoredColor[]>()
 
-	for (let color in colors) {
+	for (let color of colors) {
 		let group: ColorGroup = 'unknown'
 
 		if (!color.includes('var(') && !color.includes('calc(')) {

@@ -7,7 +7,7 @@ import {
 	NUMBER,
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
-import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
+import { color_functions } from '@projectwallace/css-analyzer/values'
 import { color_to_token } from './colors.ts'
 import type { ColorValue } from './types.ts'
 

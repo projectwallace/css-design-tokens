@@ -7,6 +7,32 @@ import {
 	EXTENSION_USAGE_COUNT,
 } from './index.ts'
 import { analyze } from '@projectwallace/css-analyzer'
+import {
+	border_radiuses,
+	box_shadows,
+	colors,
+	durations,
+	font_families,
+	font_sizes,
+	gradients,
+	line_heights,
+	timing_functions,
+} from '@projectwallace/css-analyzer/collectors'
+
+function create_collectors(options?: { locations?: boolean }) {
+	let { locations } = options ?? {}
+	return {
+		colors: colors({ contexts: true, locations }),
+		font_sizes: font_sizes({ locations }),
+		font_families: font_families({ locations }),
+		line_heights: line_heights({ locations }),
+		gradients: gradients({ locations }),
+		box_shadows: box_shadows({ locations }),
+		border_radiuses: border_radiuses({ locations }),
+		durations: durations({ locations }),
+		timing_functions: timing_functions({ locations }),
+	}
+}
 
 describe('analysis_to_tokens', () => {
 	test('exports a function', () => {
@@ -59,18 +85,14 @@ describe('analysis_to_tokens', () => {
 	}
 
 	test('allows analysis without locations', () => {
-		let analysis = analyze(css, {
-			useLocations: false,
-		})
-		let actual = analysis_to_tokens(analysis as any)
+		let analysis = analyze(css, create_collectors())
+		let actual = analysis_to_tokens(analysis)
 		expect(actual).toEqual(expected)
 	})
 
 	test('allows analysis with locations', () => {
-		let analysis = analyze(css, {
-			useLocations: true,
-		})
-		let actual = analysis_to_tokens(analysis as any)
+		let analysis = analyze(css, create_collectors({ locations: true }))
+		let actual = analysis_to_tokens(analysis)
 		expect(actual).toEqual(expected)
 	})
 })
