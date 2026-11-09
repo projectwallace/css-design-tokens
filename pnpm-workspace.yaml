@@ -13,7 +13,7 @@ trustPolicy: no-downgrade
 # Single source of truth for versions shared with transitive dependencies
 catalog:
   '@colordx/core': ^7.3.0
-  '@projectwallace/css-parser': ~0.19.4
+  '@projectwallace/css-parser': ~0.19.5
 
 # Force transitive dependencies onto the catalog version so only one copy is installed
 overrides:

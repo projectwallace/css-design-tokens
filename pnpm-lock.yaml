@@ -6,7 +6,7 @@ settings:
 
 overrides:
   '@colordx/core': ^7.3.0
-  '@projectwallace/css-parser': ~0.19.4
+  '@projectwallace/css-parser': ~0.19.5
 
 importers:
 
@@ -19,11 +19,11 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@projectwallace/css-analyzer':
-        specifier: ^9.9.6
-        version: 9.9.6
+        specifier: https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8
+        version: https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8
       '@projectwallace/css-parser':
-        specifier: ~0.19.4
-        version: 0.19.4
+        specifier: ~0.19.5
+        version: 0.19.6
     devDependencies:
       '@projectwallace/preset-oxlint':
         specifier: ^0.0.12
@@ -584,12 +584,13 @@ packages:
     resolution: {integrity: sha512-yBHv8jSNWUG4KF/G+3AgA4dCR3M/KPSQ4xCTQTZMo2Gq3p0+9mCwavHVp3nJfUGpCFCgojcF3BbS+v8erYAYwg==}
     engines: {node: '>=18.0.0'}
 
-  '@projectwallace/css-analyzer@9.9.6':
-    resolution: {integrity: sha512-qankvkxeOhhTziJvz5bK4D/lDoGVPyygzzerhbyXloPxs8M3hWSF+oSnJNA6Iqg+V76etQ+ufn38UA/JKU66Qg==}
-    engines: {node: '>=18.0.0', pnpm: '>=11.0.0'}
+  '@projectwallace/css-analyzer@https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8':
+    resolution: {integrity: sha512-AvtsfOAf/ZQuosYFPI/epvTULZ6/l6g0CeUb111TWE+fgA6n2O09A40ScognvrB4DoelJQFNIiAsXmn9nlTHHw==, tarball: https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8}
+    version: 9.9.7
+    engines: {node: '>=22.18.0', pnpm: '>=11.0.0'}
 
-  '@projectwallace/css-parser@0.19.4':
-    resolution: {integrity: sha512-Wow4VO1HWUNq5MLMDffTPapW7hu2wXHF8wdgOrcjk6zdU+VYDS/O4b967yiL/8ZjyCO5LWC2HPRYQeqguEP5pQ==}
+  '@projectwallace/css-parser@0.19.6':
+    resolution: {integrity: sha512-B59Rr+gS9bdr9NIMTBAxX8Ld4D66//zqe2ZD/zyeS0coZBP0+eJ6r2kXYDjGfnVJNo1GuD6eNOqglJLlCRdVlA==}
     engines: {pnpm: '>=11.0.0'}
 
   '@projectwallace/preset-oxlint@0.0.12':
@@ -1710,11 +1711,11 @@ snapshots:
     dependencies:
       '@colordx/core': 7.3.0
 
-  '@projectwallace/css-analyzer@9.9.6':
+  '@projectwallace/css-analyzer@https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8':
     dependencies:
-      '@projectwallace/css-parser': 0.19.4
+      '@projectwallace/css-parser': 0.19.6
 
-  '@projectwallace/css-parser@0.19.4': {}
+  '@projectwallace/css-parser@0.19.6': {}
 
   '@projectwallace/preset-oxlint@0.0.12(oxlint@1.90.0)':
     dependencies:

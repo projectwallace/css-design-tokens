@@ -1,4 +1,4 @@
-import { cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
+import { keywords as css_keywords } from '@projectwallace/css-analyzer/values'
 import { type ColorValue, type ColorSpace } from './types.ts'
 import { colordx, extend, getFormat, type ColorFormat, type Colordx } from '@colordx/core'
 import hwb from '@colordx/core/plugins/hwb'
