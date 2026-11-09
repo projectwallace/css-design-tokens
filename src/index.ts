@@ -70,7 +70,7 @@ export function css_to_tokens(css: string): Tokens {
 }
 
 // Explicit because of --isolatedDeclarations (see ISSUES.md)
-type Collectors = {
+export type Collectors = {
 	colors: CollectorDef<ColorsResult>
 	font_sizes: CollectorDef<CountResult>
 	font_families: CollectorDef<CountResult>
@@ -82,7 +82,7 @@ type Collectors = {
 	timing_functions: CollectorDef<CountResult>
 }
 
-function create_collectors(options?: { locations?: boolean }): Collectors {
+export function create_collectors(options?: { locations?: boolean }): Collectors {
 	let { locations } = options ?? {}
 	return {
 		colors: colors({ contexts: true, locations }),
