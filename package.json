@@ -41,7 +41,7 @@
 	"dependencies": {
 		"@colordx/core": "catalog:",
 		"@projectwallace/color-sorter": "^9.0.0",
-		"@projectwallace/css-analyzer": "https://pkg.pr.new/@projectwallace/css-analyzer@71e5b1b",
+		"@projectwallace/css-analyzer": "https://pkg.pr.new/@projectwallace/css-analyzer@abf54a8",
 		"@projectwallace/css-parser": "catalog:"
 	},
 	"devDependencies": {

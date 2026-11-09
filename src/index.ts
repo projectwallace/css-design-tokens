@@ -1,23 +1,8 @@
+import { analyze, type CountMap, type ResultOf } from '@projectwallace/css-analyzer'
 import {
-	analyze,
-	type CollectorDef,
-	type ContextCountResult,
-	type CountMap,
-	type CountResult,
-	type ResultOf,
-} from '@projectwallace/css-analyzer'
-import {
-	border_radiuses,
-	box_shadows,
-	colors,
-	durations,
-	font_families,
-	font_sizes,
-	gradients,
-	line_heights,
-	timing_functions,
-	type ColorsResult,
-} from '@projectwallace/css-analyzer/collectors'
+	design_tokens_collectors,
+	type DesignTokensCollectors,
+} from '@projectwallace/css-analyzer/presets'
 import { group_colors } from './group-colors.ts'
 import { destructure_box_shadow } from './destructure-box-shadow.ts'
 import { destructure_easing } from './destructure-easing.ts'
@@ -66,39 +51,14 @@ export {
 export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
-	return analysis_to_tokens(analyze(css, create_collectors()))
+	return analysis_to_tokens(analyze(css, design_tokens_collectors()))
 }
 
-// Explicit because of --isolatedDeclarations (see ISSUES.md)
-export type Collectors = {
-	colors: CollectorDef<ColorsResult>
-	font_sizes: CollectorDef<CountResult>
-	font_families: CollectorDef<CountResult>
-	line_heights: CollectorDef<CountResult>
-	gradients: CollectorDef<CountResult>
-	box_shadows: CollectorDef<CountResult>
-	border_radiuses: CollectorDef<ContextCountResult>
-	durations: CollectorDef<CountResult>
-	timing_functions: CollectorDef<CountResult>
-}
-
-export function create_collectors(options?: { locations?: boolean }): Collectors {
-	let { locations } = options ?? {}
-	return {
-		colors: colors({ contexts: true, locations }),
-		font_sizes: font_sizes({ locations }),
-		font_families: font_families({ locations }),
-		line_heights: line_heights({ locations }),
-		gradients: gradients({ locations }),
-		box_shadows: box_shadows({ locations }),
-		border_radiuses: border_radiuses({ locations }),
-		durations: durations({ locations }),
-		timing_functions: timing_functions({ locations }),
-	}
-}
+export { design_tokens_collectors as create_collectors }
+export type { DesignTokensCollectors as Collectors }
 
 /** The analyzer result that `analysis_to_tokens` consumes */
-export type CssAnalysis = ResultOf<Collectors>
+export type CssAnalysis = ResultOf<DesignTokensCollectors>
 
 type TokenID = string
 
