@@ -24,3 +24,10 @@ test('always puts the unknown group last', () => {
 		expect(group_names(colors)).toEqual(['blue', 'red', 'unknown'])
 	}
 })
+
+test('puts var() and calc() in the unknown group, case-insensitively', () => {
+	const input = { 'VAR(--a)': 1, 'Var(--b)': 1, 'rgb(CALC(255 - 0) 0 0)': 1 }
+	expect(group_colors(input)).toEqual([
+		['unknown', ['VAR(--a)', 'Var(--b)', 'rgb(CALC(255 - 0) 0 0)']],
+	])
+})

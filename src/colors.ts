@@ -9,6 +9,7 @@ import rec2020 from '@colordx/core/plugins/rec2020'
 import a98rgb from '@colordx/core/plugins/a98rgb'
 import prophoto from '@colordx/core/plugins/prophoto'
 import names from '@colordx/core/plugins/names'
+import { str_equals, str_index_of } from '@projectwallace/css-parser/string-utils'
 
 extend([hwb, lab, lch, p3, rec2020, a98rgb, prophoto, names])
 
@@ -84,12 +85,10 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 }
 
 export function color_to_token(color: string): ColorValue | null {
-	const lowercased = color.toLowerCase()
-
 	if (
-		css_keywords.has(lowercased) ||
-		lowercased === 'currentcolor' ||
-		lowercased.includes('var(')
+		str_equals('currentcolor', color) ||
+		str_index_of('var(', color) !== -1 ||
+		css_keywords.has(color.toLowerCase())
 	) {
 		return null
 	}

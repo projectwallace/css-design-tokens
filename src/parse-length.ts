@@ -1,6 +1,7 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
 import type { Length } from './types.ts'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/absolute-size#values
 const absolute_size_map = new Map([
@@ -30,8 +31,12 @@ export function parse_length(value: string): Length | null {
 
 	switch (maybe_length.type) {
 		case DIMENSION: {
-			const unit = maybe_length.unit.toLowerCase()
-			if (unit === 'px' || unit === 'rem') {
+			const unit = str_equals('px', maybe_length.unit)
+				? 'px'
+				: str_equals('rem', maybe_length.unit)
+					? 'rem'
+					: null
+			if (unit !== null) {
 				const value = Number(maybe_length.value)
 				// Always return `0px`, `0`, or `0rem` as `0px`
 				if (value === 0) {

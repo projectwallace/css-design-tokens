@@ -1,4 +1,5 @@
 import { convert } from '@projectwallace/color-sorter'
+import { str_index_of } from '@projectwallace/css-parser/string-utils'
 
 type ColorGroup =
 	| 'white'
@@ -24,7 +25,7 @@ export function group_colors(
 	for (const color in colors) {
 		let group: ColorGroup = 'unknown'
 
-		if (!color.includes('var(') && !color.includes('calc(')) {
+		if (str_index_of('var(', color) === -1 && str_index_of('calc(', color) === -1) {
 			const converted = convert(color)
 			const { hue, saturation, lightness } = converted
 

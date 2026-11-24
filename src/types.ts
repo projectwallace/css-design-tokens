@@ -18,7 +18,7 @@ export type BaseToken = {
 	}
 }
 
-export type Unit = 'rem' | 'px'
+type Unit = 'rem' | 'px'
 
 export type Length = {
 	value: number
