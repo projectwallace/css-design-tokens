@@ -63,3 +63,5 @@ export function destructure_font_family(value: string): FontFamilyValue | undefi
 
 	return families
 }
+
+export type { FontFamilyToken, FontFamilyValue } from './types.ts'

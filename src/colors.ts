@@ -112,3 +112,6 @@ export function color_to_token(color: string): ColorValue | null {
 	const colorSpace = (FORMAT_TO_SPACE[format] ?? format) as ColorSpace
 	return { colorSpace, ...converter_fn(parsed) }
 }
+
+export { group_colors } from './group-colors.ts'
+export type { ColorToken, ColorValue, ColorSpace, ColorComponent } from './types.ts'

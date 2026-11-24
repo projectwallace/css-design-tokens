@@ -27,3 +27,5 @@ export function parse_duration(value: string): number | null {
 	}
 	return null
 }
+
+export type { DurationToken, DurationValue } from './types.ts'

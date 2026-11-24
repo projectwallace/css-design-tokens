@@ -53,3 +53,5 @@ export function destructure_easing(easing: string): Easing | null {
 
 	return numbers as Easing
 }
+
+export type { CubicBezierToken, Easing } from './types.ts'

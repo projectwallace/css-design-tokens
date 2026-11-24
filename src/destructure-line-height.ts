@@ -53,3 +53,5 @@ export function destructure_line_height(value: string): Length | number | null {
 
 	return null
 }
+
+export type { DimensionToken, NumberToken } from './types.ts'

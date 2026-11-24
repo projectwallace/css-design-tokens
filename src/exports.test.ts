@@ -1,10 +1,10 @@
 import { test, expect } from 'vitest'
-import * as color from './exports/color.ts'
-import * as box_shadow from './exports/box-shadow.ts'
-import * as easing from './exports/easing.ts'
-import * as font_family from './exports/font-family.ts'
-import * as line_height from './exports/line-height.ts'
-import * as duration from './exports/duration.ts'
+import * as color from './colors.ts'
+import * as box_shadow from './destructure-box-shadow.ts'
+import * as easing from './destructure-easing.ts'
+import * as font_family from './destructure-font-family.ts'
+import * as line_height from './destructure-line-height.ts'
+import * as duration from './parse-duration.ts'
 import { color_to_token } from './index.ts'
 
 test('sub-exports expose their functions', () => {

@@ -140,3 +140,5 @@ function complete_shadow_token(token: ShadowValue) {
 	}
 	return token
 }
+
+export type { ShadowToken } from './types.ts'
