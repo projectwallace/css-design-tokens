@@ -1,52 +1,48 @@
 import { analyze } from '@projectwallace/css-analyzer'
-import { group_colors } from './group-colors.ts'
-import { destructure_box_shadow } from './destructure-box-shadow.ts'
-import { destructure_easing } from './destructure-easing.ts'
-import { destructure_font_family } from './destructure-font-family.ts'
+import { group_colors } from './color-group.ts'
+import { destructure_box_shadow, type ShadowToken } from './destructure-box-shadow.ts'
+import { destructure_easing, type CubicBezierToken } from './destructure-easing.ts'
+import { destructure_font_family, type FontFamilyToken } from './destructure-font-family.ts'
 import { hash } from './hash.ts'
 import { destructure_line_height } from './destructure-line-height.ts'
 import { parse_length } from './parse-length.ts'
-import { parse_duration } from './parse-duration.ts'
+import { parse_duration, type DurationToken } from './parse-duration.ts'
 import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
 	EXTENSION_CSS_PROPERTIES,
-	type CubicBezierToken,
 	type DimensionToken,
-	type DurationToken,
-	type FontFamilyToken,
 	type NumberToken,
 	type UnparsedToken,
-	type ColorToken,
 	type BaseToken,
 	type CssAnalysis,
-	type ShadowToken,
 } from './types.ts'
-import { color_to_token } from './colors.ts'
-export { color_to_token } from './colors.ts'
+import { color_to_token, type ColorToken } from './color.ts'
+
+//#region deprecated exported functions and types
+export {
+	/** @deprecated Use `import { color_to_token } from '@projectwallace/css-design-tokens/color'` instead */
+	color_to_token,
+} from './color.ts'
+
+export type { Easing, CubicBezierToken } from './destructure-easing.ts'
+export type { ColorSpace, ColorToken, ColorValue, ColorComponent } from './color.ts'
+export type { CssLength, ShadowValue, ShadowToken } from './destructure-box-shadow.ts'
+export type { FontFamilyToken } from './destructure-font-family.ts'
+export type { DurationToken, DurationValue } from './parse-duration.ts'
+//#endregion
 
 export {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
 	EXTENSION_CSS_PROPERTIES,
-	type Easing,
 	type BaseToken,
-	type CubicBezierToken,
 	type DimensionValue,
 	type DimensionToken,
-	type DurationToken,
-	type DurationValue,
-	type FontFamilyToken,
 	type NumberToken,
 	type UnparsedToken,
 	type CssAnalysis,
-	type ShadowToken,
-	type ColorSpace,
-	type ColorToken,
-	type ColorValue,
-	type ColorComponent,
 } from './types.ts'
-export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
 	const analysis = analyze(css)
@@ -167,7 +163,7 @@ function to_tokens<T extends BaseToken = never>(
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			const colors = Object.create(null) as Record<TokenID, ColorToken>
+			const colors = Object.create(null)
 			const unique = get_unique(analysis.values.colors)
 			const color_groups = group_colors(unique)
 

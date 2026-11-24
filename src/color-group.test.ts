@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { group_colors } from './group-colors.ts'
+import { group_colors } from './color-group.ts'
 
 function group_names(colors: string[]) {
 	const input = Object.fromEntries(colors.map((color) => [color, 1]))

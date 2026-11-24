@@ -1,5 +1,5 @@
 import { cssKeywords as css_keywords } from '@projectwallace/css-analyzer'
-import { type ColorValue, type ColorSpace } from './types.ts'
+import { EXTENSION_CSS_PROPERTIES, type BaseToken } from './types.ts'
 import { colordx, extend, getFormat, type ColorFormat, type Colordx } from '@colordx/core'
 import hwb from '@colordx/core/plugins/hwb'
 import lab from '@colordx/core/plugins/lab'
@@ -82,6 +82,39 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 	'prophoto-rgb': (color) => rgb_triple(color.toProphoto(PRECISION)),
 	xyz: (color) => xyz_triple(color.toXyz(PRECISION)),
 	'xyz-d65': (color) => xyz_triple(color.toXyzD65(PRECISION)),
+}
+
+export type ColorSpace =
+	| 'srgb'
+	| 'display-p3'
+	| 'hsl'
+	| 'hwb'
+	| 'lab'
+	| 'lch'
+	| 'oklab'
+	| 'oklch'
+	| 'a98-rgb'
+	| 'prophoto-rgb'
+	| 'rec2020'
+	| 'xyz-d65'
+	| 'xyz-d50'
+
+export type ColorComponent = number | 'none'
+
+export type ColorValue = {
+	colorSpace: ColorSpace
+	components: [ColorComponent, ColorComponent, ColorComponent]
+	alpha: number
+	/** Optional DTCG sRGB fallback, currently not populated */
+	hex?: string
+}
+
+export type ColorToken = BaseToken & {
+	$type: 'color'
+	$value: ColorValue
+	$extensions: {
+		[EXTENSION_CSS_PROPERTIES]: Array<string>
+	}
 }
 
 export function color_to_token(color: string): ColorValue | null {

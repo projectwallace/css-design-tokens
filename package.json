@@ -24,8 +24,46 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
-		"types": "./dist/index.d.ts",
-		"default": "./dist/index.js"
+		"index": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"box-shadow": {
+			"types": "./dist/box-shadow.d.ts",
+			"default": "./dist/box-shadow.js"
+		},
+		"color-group": {
+			"types": "./dist/color-group.d.ts",
+			"default": "./dist/color-group.js"
+		},
+		"color": {
+			"types": "./dist/color.d.ts",
+			"default": "./dist/color.js"
+		},
+		"duration": {
+			"types": "./dist/duration.d.ts",
+			"default": "./dist/duration.js"
+		},
+		"easing": {
+			"types": "./dist/easing.d.ts",
+			"default": "./dist/easing.js"
+		},
+		"font-family": {
+			"types": "./dist/font-family.d.ts",
+			"default": "./dist/font-family.js"
+		},
+		"hash": {
+			"types": "./dist/hash.d.ts",
+			"default": "./dist/hash.js"
+		},
+		"length": {
+			"types": "./dist/length.d.ts",
+			"default": "./dist/length.js"
+		},
+		"line-height": {
+			"types": "./dist/line-height.d.ts",
+			"default": "./dist/line-height.js"
+		}
 	},
 	"publishConfig": {
 		"access": "public",

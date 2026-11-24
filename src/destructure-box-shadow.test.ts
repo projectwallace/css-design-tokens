@@ -1,7 +1,6 @@
 import { test, expect, describe } from 'vitest'
 import { destructure_box_shadow } from './destructure-box-shadow.ts'
-import type { ColorValue } from './types.ts'
-import { color_to_token } from './colors.ts'
+import { color_to_token, type ColorValue } from './color.ts'
 
 function create_px_length(value: number): { value: number; unit: string } {
 	return {
@@ -138,6 +137,23 @@ test('INSET: 2px 4px 6px 8px #000 inset', () => {
 			inset: true,
 		},
 	])
+})
+
+test('2PX 4PX 0.5REM 8PX #000', () => {
+	expect(destructure_box_shadow('2PX 4PX 0.5REM 8PX #000')).toEqual([
+		{
+			color: create_color_value(),
+			offsetX: create_px_length(2),
+			offsetY: create_px_length(4),
+			blur: { value: 0.5, unit: 'rem' },
+			spread: create_px_length(8),
+			inset: false,
+		},
+	])
+})
+
+test('Invalid dimension: 2pt 4pt 6pt 8pt #000', () => {
+	expect(destructure_box_shadow('2pt 4pt 6pt 8pt #000')).toBeNull()
 })
 
 test('color in a different order: #000 2px 4px 6px 8px', () => {

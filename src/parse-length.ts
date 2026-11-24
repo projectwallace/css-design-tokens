@@ -1,6 +1,6 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { Length } from './types.ts'
+import type { DimensionValue, Unit } from './types.ts'
 import { str_equals } from '@projectwallace/css-parser/string-utils'
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/absolute-size#values
@@ -15,6 +15,16 @@ const absolute_size_map = new Map([
 	['xxx-large', 3],
 ])
 
+export function parse_unit(maybe_unit: string): Unit | null {
+	if (str_equals('px', maybe_unit)) {
+		return 'px'
+	}
+	if (str_equals('rem', maybe_unit)) {
+		return 'rem'
+	}
+	return null
+}
+
 /**
  * @description Parse a font-size-like length from a css value. Supports:
  * - a `<length>` in `px` or `rem`
@@ -22,7 +32,7 @@ const absolute_size_map = new Map([
  * - the unitless number `0`, normalized to `0px`
  * Anything else returns `null`.
  */
-export function parse_length(value: string): Length | null {
+export function parse_length(value: string): DimensionValue | null {
 	const ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null
@@ -31,11 +41,8 @@ export function parse_length(value: string): Length | null {
 
 	switch (maybe_length.type) {
 		case DIMENSION: {
-			const unit = str_equals('px', maybe_length.unit)
-				? 'px'
-				: str_equals('rem', maybe_length.unit)
-					? 'rem'
-					: null
+			const unit = parse_unit(maybe_length.unit)
+
 			if (unit !== null) {
 				const value = Number(maybe_length.value)
 				// Always return `0px`, `0`, or `0rem` as `0px`

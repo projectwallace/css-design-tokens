@@ -1,7 +1,7 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { Length } from './types.ts'
 import { str_equals } from '@projectwallace/css-parser/string-utils'
+import type { DimensionValue, Length } from './types.ts'
 
 /**
  * @description Destructure a line-height from a string
@@ -11,7 +11,7 @@ import { str_equals } from '@projectwallace/css-parser/string-utils'
  * - a `<percentage>`
  * - the keyword `normal`.
  */
-export function destructure_line_height(value: string): Length | number | null {
+export function destructure_line_height(value: string): Length | DimensionValue | number | null {
 	const ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null

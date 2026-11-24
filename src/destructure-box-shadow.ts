@@ -1,4 +1,5 @@
 import { parse_value } from '@projectwallace/css-parser/parse-value'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 import {
 	DIMENSION,
 	FUNCTION,
@@ -8,10 +9,11 @@ import {
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
 import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
-import { color_to_token } from './colors.ts'
-import type { ColorValue } from './types.ts'
-import { str_equals } from '@projectwallace/css-parser/string-utils'
+import { color_to_token, type ColorValue } from './color.ts'
+import type { BaseToken, DimensionValue } from './types.ts'
+import { parse_unit } from './parse-length.ts'
 
+/** @deprecated Use type DimensionValue instead */
 export type CssLength = {
 	value: number
 	unit: string
@@ -19,11 +21,16 @@ export type CssLength = {
 
 export type ShadowValue = {
 	color: ColorValue | undefined
-	offsetX: CssLength | undefined
-	offsetY: CssLength | undefined
-	blur: CssLength | undefined
-	spread: CssLength | undefined
+	offsetX: DimensionValue | undefined
+	offsetY: DimensionValue | undefined
+	blur: DimensionValue | undefined
+	spread: DimensionValue | undefined
 	inset: boolean | undefined
+}
+
+export type ShadowToken = BaseToken & {
+	$type: 'shadow'
+	$value: ShadowValue | ShadowValue[]
 }
 
 function create_destructured(): ShadowValue {
@@ -61,16 +68,16 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 				current_shadow.color = color_token
 			}
 		} else if (node.type === DIMENSION || (node.type === NUMBER && node.value === 0)) {
-			const length =
-				node.type === DIMENSION
-					? {
-							value: Number(node.value),
-							unit: node.unit!,
-						}
-					: {
-							value: 0,
-							unit: 'px',
-						}
+			// Dimensions MUST be Dimensions, so only `px` and `rem` allowed
+			const unit = node.type === DIMENSION ? parse_unit(node.unit) : 'px'
+			if (unit === null) {
+				return null
+			}
+
+			const length: DimensionValue = {
+				value: node.type === DIMENSION ? Number(node.value) : 0,
+				unit: unit,
+			}
 
 			if (!current_shadow.offsetX) {
 				current_shadow.offsetX = length
@@ -113,7 +120,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 }
 
 // A fresh object per call, so tokens never share (and accidentally mutate) the same length
-function zero_px(): CssLength {
+function zero_px(): DimensionValue {
 	return { value: 0, unit: 'px' }
 }
 

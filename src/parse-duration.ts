@@ -1,6 +1,17 @@
 import { DIMENSION } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
 import { str_equals } from '@projectwallace/css-parser/string-utils'
+import type { BaseToken } from './types'
+
+export type DurationValue = {
+	value: number
+	unit: 'ms'
+}
+
+export type DurationToken = BaseToken & {
+	$type: 'duration'
+	$value: DurationValue
+}
 
 /**
  * @description Parse a `<time>` into milliseconds. Returns `null` for anything that is not a

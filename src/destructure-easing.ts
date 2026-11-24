@@ -1,7 +1,14 @@
 import { FUNCTION, IDENTIFIER, NUMBER, OPERATOR } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { Easing } from './types.ts'
+import type { BaseToken } from './types.ts'
 import { str_equals } from '@projectwallace/css-parser/string-utils'
+
+export type Easing = [number, number, number, number]
+
+export type CubicBezierToken = BaseToken & {
+	$type: 'cubicBezier'
+	$value: Easing
+}
 
 const EASING_KEYWORDS = new Map<string, Easing>([
 	['linear', [0, 0, 1, 1]],
