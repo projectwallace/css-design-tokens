@@ -1,6 +1,7 @@
 import { FUNCTION, IDENTIFIER, NUMBER, OPERATOR } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
 import type { Easing } from './types.ts'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 
 const EASING_KEYWORDS = new Map<string, Easing>([
 	['linear', [0, 0, 1, 1]],
@@ -21,7 +22,7 @@ export function destructure_easing(easing: string): Easing | null {
 		return EASING_KEYWORDS.get(node.name.toLowerCase()) ?? null
 	}
 
-	if (node.type !== FUNCTION || node.name.toLowerCase() !== 'cubic-bezier') {
+	if (node.type !== FUNCTION || !str_equals('cubic-bezier', node.name)) {
 		return null
 	}
 

@@ -10,6 +10,7 @@ import {
 import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
 import { color_to_token } from './colors.ts'
 import type { ColorValue } from './types.ts'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 
 export type CssLength = {
 	value: number
@@ -48,7 +49,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 
 	for (const node of ast) {
 		if (node.type === IDENTIFIER) {
-			if (node.name.toLowerCase() === 'inset') {
+			if (str_equals('inset', node.name)) {
 				current_shadow.inset = true
 			} else {
 				// Named colors and `transparent` resolve; system colors, `currentcolor` and

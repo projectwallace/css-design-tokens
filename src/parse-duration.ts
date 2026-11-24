@@ -1,5 +1,6 @@
 import { DIMENSION } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 
 /**
  * @description Parse a `<time>` into milliseconds. Returns `null` for anything that is not a
@@ -16,12 +17,12 @@ export function parse_duration(value: string): number | null {
 		return null
 	}
 
-	const unit = node.unit.toLowerCase()
+	const { unit } = node
 	const amount = Number(node.value)
-	if (unit === 'ms') {
+	if (str_equals('ms', unit)) {
 		return amount
 	}
-	if (unit === 's') {
+	if (str_equals('s', unit)) {
 		return amount * 1000
 	}
 	return null
