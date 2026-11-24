@@ -23,29 +23,35 @@ import {
 	type ShadowToken,
 } from './types.ts'
 import { color_to_token } from './colors.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/color' instead */
 export { color_to_token } from './colors.ts'
 
-export {
-	EXTENSION_AUTHORED_AS,
-	EXTENSION_USAGE_COUNT,
-	EXTENSION_CSS_PROPERTIES,
-	type Easing,
-	type BaseToken,
-	type CubicBezierToken,
-	type DimensionValue,
-	type DimensionToken,
-	type DurationToken,
-	type DurationValue,
-	type FontFamilyToken,
-	type NumberToken,
-	type UnparsedToken,
-	type CssAnalysis,
-	type ShadowToken,
-	type ColorSpace,
-	type ColorToken,
-	type ColorValue,
-	type ColorComponent,
-} from './types.ts'
+export { EXTENSION_AUTHORED_AS, EXTENSION_USAGE_COUNT, EXTENSION_CSS_PROPERTIES } from './types.ts'
+export type { BaseToken, UnparsedToken, CssAnalysis, DimensionValue } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/easing' instead */
+export type { Easing } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/easing' instead */
+export type { CubicBezierToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/line-height' instead */
+export type { DimensionToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/duration' instead */
+export type { DurationToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/duration' instead */
+export type { DurationValue } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/font-family' instead */
+export type { FontFamilyToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/line-height' instead */
+export type { NumberToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/box-shadow' instead */
+export type { ShadowToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/color' instead */
+export type { ColorSpace } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/color' instead */
+export type { ColorToken } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/color' instead */
+export type { ColorValue } from './types.ts'
+/** @deprecated Import from '@projectwallace/css-design-tokens/color' instead */
+export type { ColorComponent } from './types.ts'
 export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {

@@ -24,8 +24,34 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
-		"types": "./dist/index.d.ts",
-		"default": "./dist/index.js"
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./color": {
+			"types": "./dist/color.d.ts",
+			"default": "./dist/color.js"
+		},
+		"./box-shadow": {
+			"types": "./dist/box-shadow.d.ts",
+			"default": "./dist/box-shadow.js"
+		},
+		"./easing": {
+			"types": "./dist/easing.d.ts",
+			"default": "./dist/easing.js"
+		},
+		"./font-family": {
+			"types": "./dist/font-family.d.ts",
+			"default": "./dist/font-family.js"
+		},
+		"./line-height": {
+			"types": "./dist/line-height.d.ts",
+			"default": "./dist/line-height.js"
+		},
+		"./duration": {
+			"types": "./dist/duration.d.ts",
+			"default": "./dist/duration.js"
+		}
 	},
 	"publishConfig": {
 		"access": "public",

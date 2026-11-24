@@ -1,6 +1,7 @@
 import type { KnipConfig } from 'knip'
 
 const config: KnipConfig = {
+	entry: ['src/exports/*.ts'],
 	project: ['src/**/*.ts'],
 }
 

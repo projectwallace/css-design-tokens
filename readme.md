@@ -43,6 +43,14 @@ let analysis = analyze(`.my-design-system { color: green; }`, {
 let tokens = analysis_to_tokens(analysis)
 ```
 
+### Token-specific functions
+
+Besides `css_to_tokens`, the helper functions and types for individual token types are exposed as sub-exports. See the `exports` field in [package.json](./package.json) for everything that is available.
+
+```js
+import { color_to_token } from '@projectwallace/css-design-tokens/color'
+```
+
 ### Stable unique token ID's
 
 All tokens have a stabe unique ID using a very simple hashing algorithm. This is helpful when you run analysis multiple times over your project and lets you identify removed or added tokens easily.
