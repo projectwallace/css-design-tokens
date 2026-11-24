@@ -20,7 +20,7 @@ export type UnparsedToken = BaseToken & {
 	$type?: never
 }
 
-type Unit = 'rem' | 'px'
+export type Unit = 'rem' | 'px'
 
 export type DimensionValue = {
 	value: number

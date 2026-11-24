@@ -139,6 +139,23 @@ test('INSET: 2px 4px 6px 8px #000 inset', () => {
 	])
 })
 
+test('2PX 4PX 0.5REM 8PX #000', () => {
+	expect(destructure_box_shadow('2PX 4PX 0.5REM 8PX #000')).toEqual([
+		{
+			color: create_color_value(),
+			offsetX: create_px_length(2),
+			offsetY: create_px_length(4),
+			blur: { value: 0.5, unit: 'rem' },
+			spread: create_px_length(8),
+			inset: false,
+		},
+	])
+})
+
+test('Invalid dimension: 2pt 4pt 6pt 8pt #000', () => {
+	expect(destructure_box_shadow('2pt 4pt 6pt 8pt #000')).toBeNull()
+})
+
 test('color in a different order: #000 2px 4px 6px 8px', () => {
 	expect(destructure_box_shadow('#000 2px 4px 6px 8px')).toEqual([
 		{
