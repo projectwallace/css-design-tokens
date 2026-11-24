@@ -1,7 +1,6 @@
 import { test, expect, describe } from 'vitest'
 import { destructure_box_shadow } from './destructure-box-shadow.ts'
-import type { ColorValue } from './types.ts'
-import { color_to_token } from './colors.ts'
+import { color_to_token, type ColorValue } from './color.ts'
 
 function create_px_length(value: number): { value: number; unit: string } {
 	return {
@@ -140,6 +139,23 @@ test('INSET: 2px 4px 6px 8px #000 inset', () => {
 	])
 })
 
+test('2PX 4PX 0.5REM 8PX #000', () => {
+	expect(destructure_box_shadow('2PX 4PX 0.5REM 8PX #000')).toEqual([
+		{
+			color: create_color_value(),
+			offsetX: create_px_length(2),
+			offsetY: create_px_length(4),
+			blur: { value: 0.5, unit: 'rem' },
+			spread: create_px_length(8),
+			inset: false,
+		},
+	])
+})
+
+test('Invalid dimension: 2pt 4pt 6pt 8pt #000', () => {
+	expect(destructure_box_shadow('2pt 4pt 6pt 8pt #000')).toBeNull()
+})
+
 test('color in a different order: #000 2px 4px 6px 8px', () => {
 	expect(destructure_box_shadow('#000 2px 4px 6px 8px')).toEqual([
 		{
@@ -176,14 +192,14 @@ test('multiple shadows', () => {
 
 describe('color formats', () => {
 	// Generate a list of colors to test with all different color formats (hsl, oklch, color(), etc.)
-	let colors = [
+	const colors = [
 		'#222222',
 		'hsl(1, 20%, 30%)',
 		'rgb(1, 1, 1)',
 		'color(display-p3 -0.6112 1.0079 -0.2192)',
 		'tomato',
 	]
-	for (let color of colors) {
+	for (const color of colors) {
 		test(`1px ${color}`, () => {
 			expect(destructure_box_shadow(`1px ${color}`)).toEqual([
 				{
@@ -200,7 +216,7 @@ describe('color formats', () => {
 })
 
 test('defaulted lengths are not shared between shadows', () => {
-	let [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
+	const [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
 	expect(a!.blur).not.toBe(b!.blur)
 	expect(a!.blur).not.toBe(a!.spread)
 	a!.blur!.value = 10

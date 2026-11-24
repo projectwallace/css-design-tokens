@@ -11,52 +11,48 @@ import {
 	timing_functions,
 	type CountOptions,
 } from '@projectwallace/css-analyzer/collectors'
-import { group_colors } from './group-colors.ts'
-import { destructure_box_shadow } from './destructure-box-shadow.ts'
-import { destructure_easing } from './destructure-easing.ts'
-import { destructure_font_family } from './destructure-font-family.ts'
+import { group_colors } from './color-group.ts'
+import { destructure_box_shadow, type ShadowToken } from './destructure-box-shadow.ts'
+import { destructure_easing, type CubicBezierToken } from './destructure-easing.ts'
+import { destructure_font_family, type FontFamilyToken } from './destructure-font-family.ts'
 import { hash } from './hash.ts'
 import { destructure_line_height } from './destructure-line-height.ts'
 import { parse_length } from './parse-length.ts'
-import { parse_duration } from './parse-duration.ts'
+import { parse_duration, type DurationToken } from './parse-duration.ts'
 import {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
 	EXTENSION_CSS_PROPERTIES,
-	type CubicBezierToken,
 	type DimensionToken,
-	type DurationToken,
-	type FontFamilyToken,
 	type NumberToken,
 	type UnparsedToken,
-	type ColorToken,
 	type BaseToken,
-	type ShadowToken,
 } from './types.ts'
-import { color_to_token } from './colors.ts'
-export { color_to_token } from './colors.ts'
+import { color_to_token, type ColorToken } from './color.ts'
+
+//#region deprecated exported functions and types
+export {
+	/** @deprecated Use `import { color_to_token } from '@projectwallace/css-design-tokens/color'` instead */
+	color_to_token,
+} from './color.ts'
+
+export type { Easing, CubicBezierToken } from './destructure-easing.ts'
+export type { ColorSpace, ColorToken, ColorValue, ColorComponent } from './color.ts'
+export type { CssLength, ShadowValue, ShadowToken } from './destructure-box-shadow.ts'
+export type { FontFamilyToken } from './destructure-font-family.ts'
+export type { DurationToken, DurationValue } from './parse-duration.ts'
+//#endregion
 
 export {
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_USAGE_COUNT,
 	EXTENSION_CSS_PROPERTIES,
-	type Easing,
 	type BaseToken,
-	type CubicBezierToken,
 	type DimensionValue,
 	type DimensionToken,
-	type DurationToken,
-	type DurationValue,
-	type FontFamilyToken,
 	type NumberToken,
 	type UnparsedToken,
-	type ShadowToken,
-	type ColorSpace,
-	type ColorToken,
-	type ColorValue,
-	type ColorComponent,
 } from './types.ts'
-export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
 	return analysis_to_tokens(analyze(css, create_collectors()))
@@ -121,14 +117,14 @@ function to_tokens<T extends BaseToken = never>(
 	unique: CountMap,
 	parse?: (value: string) => Parsed<T> | null,
 ): Record<TokenID, T | UnparsedToken> {
-	let tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
+	const tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
 
-	for (let [authored, { count }] of unique) {
-		let extensions = {
+	for (const [authored, { count }] of unique) {
+		const extensions = {
 			[EXTENSION_AUTHORED_AS]: authored,
 			[EXTENSION_USAGE_COUNT]: count,
 		}
-		let parsed = parse?.(authored) ?? null
+		const parsed = parse?.(authored) ?? null
 
 		if (parsed === null) {
 			tokens[`${prefix}-${hash(authored)}`] = {
@@ -138,7 +134,7 @@ function to_tokens<T extends BaseToken = never>(
 			continue
 		}
 
-		let name = `${prefix}-${hash(parsed.key)}`
+		const name = `${prefix}-${hash(parsed.key)}`
 		if (tokens[name]) {
 			tokens[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 		} else {
@@ -151,15 +147,15 @@ function to_tokens<T extends BaseToken = never>(
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<TokenID, ColorToken>
-			let unique = analysis.colors.unique
-			let color_groups = group_colors(unique.keys())
+			const colors = Object.create(null) as Record<TokenID, ColorToken>
+			const unique = analysis.colors.unique
+			const color_groups = group_colors(unique.keys())
 
 			// Build a color -> properties lookup once, instead of scanning every context for every color
-			let properties_per_color = new Map<string, Set<string>>()
-			for (let [property, collection] of analysis.colors.by_context) {
-				for (let color of collection.unique.keys()) {
-					let properties = properties_per_color.get(color)
+			const properties_per_color = new Map<string, Set<string>>()
+			for (const [property, collection] of analysis.colors.by_context) {
+				for (const color of collection.unique.keys()) {
+					const properties = properties_per_color.get(color)
 					if (properties === undefined) {
 						properties_per_color.set(color, new Set([property]))
 					} else {
@@ -168,19 +164,19 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 			}
 
-			for (let [group, group_colors] of color_groups) {
-				for (let color of group_colors) {
-					let color_token = color_to_token(color)
-					let count = unique.get(color)!.count
+			for (const [group, group_colors] of color_groups) {
+				for (const color of group_colors) {
+					const color_token = color_to_token(color)
+					const count = unique.get(color)!.count
 
 					if (color_token !== null) {
-						let { colorSpace, components, alpha } = color_token
-						let name = `${group}-${hash([colorSpace, ...components, alpha].join(','))}`
+						const { colorSpace, components, alpha } = color_token
+						const name = `${group}-${hash([colorSpace, ...components, alpha].join(','))}`
 
-						let new_properties = properties_per_color.get(color) ?? new Set<string>()
+						const new_properties = properties_per_color.get(color) ?? new Set<string>()
 
 						if (colors[name]) {
-							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
+							const old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
 							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(
 								new Set(old_properties).union(new_properties),
 							)
@@ -202,7 +198,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			return colors
 		})(),
 		font_size: to_tokens<DimensionToken>('fontSize', analysis.font_sizes.unique, (value) => {
-			let parsed = parse_length(value)
+			const parsed = parse_length(value)
 			if (parsed === null) {
 				return null
 			}
@@ -215,7 +211,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'fontFamily',
 			analysis.font_families.unique,
 			(value) => {
-				let parsed = destructure_font_family(value)
+				const parsed = destructure_font_family(value)
 				if (!parsed) {
 					return null
 				}
@@ -230,7 +226,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'lineHeight',
 			analysis.line_heights.unique,
 			(value) => {
-				let parsed = destructure_line_height(value)
+				const parsed = destructure_line_height(value)
 				if (parsed === null) {
 					return null
 				}
@@ -246,7 +242,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 		),
 		gradient: to_tokens('gradient', analysis.gradients.unique),
 		box_shadow: to_tokens<ShadowToken>('boxShadow', analysis.box_shadows.unique, (value) => {
-			let parsed = destructure_box_shadow(value)
+			const parsed = destructure_box_shadow(value)
 			if (parsed === null) {
 				return null
 			}
@@ -258,7 +254,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 		}),
 		radius: to_tokens('radius', analysis.border_radiuses.unique),
 		duration: to_tokens<DurationToken>('duration', analysis.durations.unique, (value) => {
-			let parsed = parse_duration(value)
+			const parsed = parse_duration(value)
 			if (parsed === null) {
 				return null
 			}
@@ -268,7 +264,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			}
 		}),
 		easing: to_tokens<CubicBezierToken>('easing', analysis.timing_functions.unique, (value) => {
-			let parsed = destructure_easing(value)
+			const parsed = destructure_easing(value)
 			if (parsed === null) {
 				return null
 			}

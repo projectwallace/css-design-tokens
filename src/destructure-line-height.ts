@@ -1,8 +1,7 @@
 import { DIMENSION, IDENTIFIER, NUMBER } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import { type Length, type Unit } from './types.ts'
-
-const ALLOWED_UNITS = new Set(['px', 'rem'])
+import { str_equals } from '@projectwallace/css-parser/string-utils'
+import type { DimensionValue, Length } from './types.ts'
 
 /**
  * @description Destructure a line-height from a string
@@ -12,16 +11,17 @@ const ALLOWED_UNITS = new Set(['px', 'rem'])
  * - a `<percentage>`
  * - the keyword `normal`.
  */
-export function destructure_line_height(value: string): Length | number | null {
-	let ast = parse_value(value)
+export function destructure_line_height(value: string): Length | DimensionValue | number | null {
+	const ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null
 	}
-	let maybe_dimension = ast.first_child
+	const maybe_dimension = ast.first_child
 
 	switch (maybe_dimension.type) {
 		case DIMENSION: {
-			let { value, unit } = maybe_dimension
+			const { value, unit } = maybe_dimension
+
 			if (value === 0) {
 				return 0
 			}
@@ -30,13 +30,11 @@ export function destructure_line_height(value: string): Length | number | null {
 				return Number(value) / 100
 			}
 
-			unit = unit.toLowerCase()
-
-			if (ALLOWED_UNITS.has(unit)) {
-				return {
-					value: value,
-					unit: unit as Unit,
-				}
+			if (str_equals('px', unit)) {
+				return { value, unit: 'px' }
+			}
+			if (str_equals('rem', unit)) {
+				return { value, unit: 'rem' }
 			}
 			return null
 		}
@@ -47,7 +45,7 @@ export function destructure_line_height(value: string): Length | number | null {
 			// https://developer.mozilla.org/en-US/docs/Web/CSS/line-height#values
 			// > Depends on the user agent. Desktop browsers (including Firefox) use a default value of roughly 1.2,
 			// depending on the element's font-family.
-			if (maybe_dimension.name.toLowerCase() === 'normal') {
+			if (str_equals('normal', maybe_dimension.name)) {
 				return 1.2
 			}
 		}

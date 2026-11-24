@@ -518,7 +518,7 @@ let properties = color['green-5e0cf03']['$extensions']['com.projectwallace.css-p
 
 ## Related projects
 
-- [Design Tokens analyzer](https://www.projectwallace.com/design-tokens) - Online CSS to Design Tokens convernter, uses this package
+- [Design Tokens analyzer](https://www.projectwallace.com/design-tokens?utm_source=github&utm_medium=wallace_css_design_tokens_related_projects) - Online CSS to Design Tokens converter, uses this package
 - [CSS Analyzer](https://github.com/projectwallace/css-analyzer) - The best CSS analyzer that powers all analysis on [projectwallace.com](https://www.projectwallace.com?utm_source=github&utm_medium=wallace_css_design_tokens_related_projects)
 - [Color Sorter](https://github.com/projectwallace/color-sorter) - Sort CSS colors
   by hue, saturation, lightness and opacity

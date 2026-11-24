@@ -7,7 +7,7 @@ test('hash contains only hex characters', () => {
 })
 
 test('hash is shorter than long input strings', () => {
-	let input = 'var(--token-for-some-color)'
+	const input = 'var(--token-for-some-color)'
 	const result = hash(input)
 	expect.soft(result).toBe('39016ca6')
 	expect(result.length).toBeLessThan(input.length)

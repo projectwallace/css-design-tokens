@@ -1,4 +1,5 @@
 import { parse_value } from '@projectwallace/css-parser/parse-value'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 import {
 	DIMENSION,
 	FUNCTION,
@@ -8,9 +9,11 @@ import {
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
 import { color_functions } from '@projectwallace/css-analyzer/values'
-import { color_to_token } from './colors.ts'
-import type { ColorValue } from './types.ts'
+import { color_to_token, type ColorValue } from './color.ts'
+import type { BaseToken, DimensionValue } from './types.ts'
+import { parse_unit } from './parse-length.ts'
 
+/** @deprecated Use type DimensionValue instead */
 export type CssLength = {
 	value: number
 	unit: string
@@ -18,11 +21,16 @@ export type CssLength = {
 
 export type ShadowValue = {
 	color: ColorValue | undefined
-	offsetX: CssLength | undefined
-	offsetY: CssLength | undefined
-	blur: CssLength | undefined
-	spread: CssLength | undefined
+	offsetX: DimensionValue | undefined
+	offsetY: DimensionValue | undefined
+	blur: DimensionValue | undefined
+	spread: DimensionValue | undefined
 	inset: boolean | undefined
+}
+
+export type ShadowToken = BaseToken & {
+	$type: 'shadow'
+	$value: ShadowValue | ShadowValue[]
 }
 
 function create_destructured(): ShadowValue {
@@ -37,39 +45,39 @@ function create_destructured(): ShadowValue {
 }
 
 export function destructure_box_shadow(value: string): null | ShadowValue[] {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 
 	if (ast.child_count < 2) {
 		return null
 	}
 
 	let current_shadow = create_destructured()
-	let destructured: ShadowValue[] = [current_shadow]
+	const destructured: ShadowValue[] = [current_shadow]
 
-	for (let node of ast) {
+	for (const node of ast) {
 		if (node.type === IDENTIFIER) {
-			if (node.name.toLowerCase() === 'inset') {
+			if (str_equals('inset', node.name)) {
 				current_shadow.inset = true
 			} else {
 				// Named colors and `transparent` resolve; system colors, `currentcolor` and
 				// unknown keywords don't, and would otherwise silently become a black shadow
-				let color_token = color_to_token(node.name)
+				const color_token = color_to_token(node.name)
 				if (color_token === null) {
 					return null
 				}
 				current_shadow.color = color_token
 			}
 		} else if (node.type === DIMENSION || (node.type === NUMBER && node.value === 0)) {
-			let length =
-				node.type === DIMENSION
-					? {
-							value: Number(node.value),
-							unit: node.unit!,
-						}
-					: {
-							value: 0,
-							unit: 'px',
-						}
+			// Dimensions MUST be Dimensions, so only `px` and `rem` allowed
+			const unit = node.type === DIMENSION ? parse_unit(node.unit) : 'px'
+			if (unit === null) {
+				return null
+			}
+
+			const length: DimensionValue = {
+				value: node.type === DIMENSION ? Number(node.value) : 0,
+				unit: unit,
+			}
 
 			if (!current_shadow.offsetX) {
 				current_shadow.offsetX = length
@@ -87,13 +95,13 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 			if (!color_functions.has(node.name)) {
 				return null
 			}
-			let color_token = color_to_token(node.text)
+			const color_token = color_to_token(node.text)
 			if (color_token === null) {
 				return null
 			}
 			current_shadow.color = color_token
 		} else if (node.type === HASH) {
-			let color_token = color_to_token(node.text)
+			const color_token = color_to_token(node.text)
 			if (color_token === null) {
 				return null
 			}
@@ -112,7 +120,7 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 }
 
 // A fresh object per call, so tokens never share (and accidentally mutate) the same length
-function zero_px(): CssLength {
+function zero_px(): DimensionValue {
 	return { value: 0, unit: 'px' }
 }
 

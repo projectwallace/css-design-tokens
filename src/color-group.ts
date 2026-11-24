@@ -1,4 +1,5 @@
 import { convert } from '@projectwallace/color-sorter'
+import { str_index_of } from '@projectwallace/css-parser/string-utils'
 
 type ColorGroup =
 	| 'white'
@@ -17,14 +18,14 @@ type ColorGroup =
 type AuthoredColor = string
 
 export function group_colors(colors: Iterable<AuthoredColor>): [ColorGroup, AuthoredColor[]][] {
-	let color_groups = new Map<ColorGroup, AuthoredColor[]>()
+	const color_groups = new Map<ColorGroup, AuthoredColor[]>()
 
-	for (let color of colors) {
+	for (const color of colors) {
 		let group: ColorGroup = 'unknown'
 
-		if (!color.includes('var(') && !color.includes('calc(')) {
-			let converted = convert(color)
-			let { hue, saturation, lightness } = converted
+		if (str_index_of('var(', color) === -1 && str_index_of('calc(', color) === -1) {
+			const converted = convert(color)
+			const { hue, saturation, lightness } = converted
 
 			if (saturation < 10 && lightness === 100) {
 				group = 'white'

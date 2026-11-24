@@ -1,5 +1,17 @@
 import { DIMENSION } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
+import type { BaseToken } from './types'
+
+export type DurationValue = {
+	value: number
+	unit: 'ms'
+}
+
+export type DurationToken = BaseToken & {
+	$type: 'duration'
+	$value: DurationValue
+}
 
 /**
  * @description Parse a `<time>` into milliseconds. Returns `null` for anything that is not a
@@ -7,21 +19,21 @@ import { parse_value } from '@projectwallace/css-parser/parse-value'
  * @see https://drafts.csswg.org/css-values/#time
  */
 export function parse_duration(value: string): number | null {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 	if (ast.child_count !== 1) {
 		return null
 	}
-	let node = ast.first_child!
+	const node = ast.first_child!
 	if (node.type !== DIMENSION) {
 		return null
 	}
 
-	let unit = node.unit.toLowerCase()
-	let amount = Number(node.value)
-	if (unit === 'ms') {
+	const { unit } = node
+	const amount = Number(node.value)
+	if (str_equals('ms', unit)) {
 		return amount
 	}
-	if (unit === 's') {
+	if (str_equals('s', unit)) {
 		return amount * 1000
 	}
 	return null

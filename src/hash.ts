@@ -12,7 +12,7 @@ export function hash(input: string | undefined | number): string {
 	}
 
 	let hash = 0
-	for (let char of input) {
+	for (const char of input) {
 		hash = (hash << 5) - hash + char.codePointAt(0)!
 		hash |= 0
 	}

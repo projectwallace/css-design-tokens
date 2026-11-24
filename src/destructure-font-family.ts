@@ -1,7 +1,14 @@
 import type { CSSNode } from '@projectwallace/css-parser'
 import { FUNCTION, OPERATOR, STRING } from '@projectwallace/css-parser/nodes'
 import { parse_value } from '@projectwallace/css-parser/parse-value'
-import type { FontFamilyValue } from './types.ts'
+import type { BaseToken } from './types.ts'
+
+export type FontFamilyValue = string[]
+
+export type FontFamilyToken = BaseToken & {
+	$type: 'fontFamily'
+	$value: FontFamilyValue
+}
 
 // https://drafts.csswg.org/css-syntax/#consume-escaped-code-point
 const ESCAPE = /\\(?:([0-9a-f]{1,6})[ \t\n]?|(.))/gis
@@ -29,18 +36,18 @@ function family_name(nodes: CSSNode[]): string | undefined {
 }
 
 export function destructure_font_family(value: string): FontFamilyValue | undefined {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 
-	let families: string[] = []
+	const families: string[] = []
 	let current: CSSNode[] = []
 
-	for (let node of ast) {
+	for (const node of ast) {
 		// var(), env(), attr(), ... can't be resolved statically
 		if (node.type === FUNCTION) {
 			return undefined
 		}
 		if (node.type === OPERATOR && node.value === ',') {
-			let name = family_name(current)
+			const name = family_name(current)
 			if (name === undefined) {
 				return undefined
 			}
@@ -55,7 +62,7 @@ export function destructure_font_family(value: string): FontFamilyValue | undefi
 	if (current.length === 0 && families.length === 0) {
 		return families
 	}
-	let name = family_name(current)
+	const name = family_name(current)
 	if (name === undefined) {
 		return undefined
 	}
