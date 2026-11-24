@@ -1,8 +1,16 @@
 import { analyze, type CountMap, type ResultOf } from '@projectwallace/css-analyzer'
 import {
-	design_tokens_collectors,
-	type DesignTokensCollectors,
-} from '@projectwallace/css-analyzer/presets'
+	colors,
+	font_sizes,
+	font_families,
+	line_heights,
+	gradients,
+	box_shadows,
+	border_radiuses,
+	durations,
+	timing_functions,
+	type CountOptions,
+} from '@projectwallace/css-analyzer/collectors'
 import { group_colors } from './group-colors.ts'
 import { destructure_box_shadow } from './destructure-box-shadow.ts'
 import { destructure_easing } from './destructure-easing.ts'
@@ -51,14 +59,38 @@ export {
 export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
-	return analysis_to_tokens(analyze(css, design_tokens_collectors()))
+	return analysis_to_tokens(analyze(css, create_collectors()))
 }
 
-export { design_tokens_collectors as create_collectors }
-export type { DesignTokensCollectors as Collectors }
+/** The analyzer collectors that `analysis_to_tokens` needs */
+export type Collectors = {
+	colors: ReturnType<typeof colors<{ contexts: true }>>
+	font_sizes: ReturnType<typeof font_sizes>
+	font_families: ReturnType<typeof font_families>
+	line_heights: ReturnType<typeof line_heights>
+	gradients: ReturnType<typeof gradients>
+	box_shadows: ReturnType<typeof box_shadows>
+	border_radiuses: ReturnType<typeof border_radiuses>
+	durations: ReturnType<typeof durations>
+	timing_functions: ReturnType<typeof timing_functions>
+}
+
+export function create_collectors(options: Pick<CountOptions, 'locations'> = {}): Collectors {
+	return {
+		colors: colors({ ...options, contexts: true }),
+		font_sizes: font_sizes(options),
+		font_families: font_families(options),
+		line_heights: line_heights(options),
+		gradients: gradients(options),
+		box_shadows: box_shadows(options),
+		border_radiuses: border_radiuses(options),
+		durations: durations(options),
+		timing_functions: timing_functions(options),
+	}
+}
 
 /** The analyzer result that `analysis_to_tokens` consumes */
-export type CssAnalysis = ResultOf<DesignTokensCollectors>
+export type CssAnalysis = ResultOf<Collectors>
 
 type TokenID = string
 
