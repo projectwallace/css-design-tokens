@@ -1,4 +1,5 @@
 import { parse_value } from '@projectwallace/css-parser/parse-value'
+import { str_equals } from '@projectwallace/css-parser/string-utils'
 import {
 	DIMENSION,
 	FUNCTION,
@@ -8,9 +9,8 @@ import {
 	OPERATOR,
 } from '@projectwallace/css-parser/nodes'
 import { colorFunctions as color_functions } from '@projectwallace/css-analyzer'
-import { color_to_token } from './colors.ts'
-import type { ColorValue } from './types.ts'
-import { str_equals } from '@projectwallace/css-parser/string-utils'
+import { color_to_token, type ColorValue } from './color.ts'
+import { type BaseToken } from './types.ts'
 
 export type CssLength = {
 	value: number
@@ -24,6 +24,11 @@ export type ShadowValue = {
 	blur: CssLength | undefined
 	spread: CssLength | undefined
 	inset: boolean | undefined
+}
+
+export type ShadowToken = BaseToken & {
+	$type: 'shadow'
+	$value: ShadowValue | ShadowValue[]
 }
 
 function create_destructured(): ShadowValue {

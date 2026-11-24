@@ -1,5 +1,4 @@
 import type { analyze } from '@projectwallace/css-analyzer'
-import type { ShadowValue } from './destructure-box-shadow.ts'
 
 // CssAnalysis represents the result of analyze() which can be called with or without useLocations
 // TypeScript infers this as the union of both overload return types
@@ -9,8 +8,6 @@ export const EXTENSION_AUTHORED_AS = 'com.projectwallace.css-authored-as'
 export const EXTENSION_USAGE_COUNT = 'com.projectwallace.usage-count'
 export const EXTENSION_CSS_PROPERTIES = 'com.projectwallace.css-properties'
 
-export type Easing = [number, number, number, number]
-
 export type BaseToken = {
 	$extensions: {
 		[EXTENSION_AUTHORED_AS]: string
@@ -18,65 +15,20 @@ export type BaseToken = {
 	}
 }
 
-type Unit = 'rem' | 'px'
-
-export type Length = {
-	value: number
-	unit: Unit
-}
-
-export type DurationValue = {
-	value: number
-	unit: 'ms'
-}
-
-export type DurationToken = BaseToken & {
-	$type: 'duration'
-	$value: DurationValue
-}
-
 export type UnparsedToken = BaseToken & {
 	$value: string
 	$type?: never
 }
 
-export type ColorSpace =
-	| 'srgb'
-	| 'display-p3'
-	| 'hsl'
-	| 'hwb'
-	| 'lab'
-	| 'lch'
-	| 'oklab'
-	| 'oklch'
-	| 'a98-rgb'
-	| 'prophoto-rgb'
-	| 'rec2020'
-	| 'xyz-d65'
-	| 'xyz-d50'
-
-export type ColorComponent = number | 'none'
-
-export type ColorValue = {
-	colorSpace: ColorSpace
-	components: [ColorComponent, ColorComponent, ColorComponent]
-	alpha: number
-	/** Optional DTCG sRGB fallback, currently not populated */
-	hex?: string
-}
-
-export type ColorToken = BaseToken & {
-	$type: 'color'
-	$value: ColorValue
-	$extensions: {
-		[EXTENSION_CSS_PROPERTIES]: Array<string>
-	}
-}
+type Unit = 'rem' | 'px'
 
 export type DimensionValue = {
 	value: number
 	unit: Unit
 }
+
+/** @deprecated use type DimensionValue instead */
+export type Length = DimensionValue
 
 export type DimensionToken = BaseToken & {
 	$type: 'dimension'
@@ -86,21 +38,4 @@ export type DimensionToken = BaseToken & {
 export type NumberToken = BaseToken & {
 	$type: 'number'
 	$value: number
-}
-
-export type CubicBezierToken = BaseToken & {
-	$type: 'cubicBezier'
-	$value: Easing
-}
-
-export type FontFamilyValue = string[]
-
-export type FontFamilyToken = BaseToken & {
-	$type: 'fontFamily'
-	$value: FontFamilyValue
-}
-
-export type ShadowToken = BaseToken & {
-	$type: 'shadow'
-	$value: ShadowValue | ShadowValue[]
 }
