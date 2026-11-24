@@ -24,7 +24,7 @@ function rgb_triple(value: { r: number; g: number; b: number; alpha: number }): 
 
 // hex/rgb()/named colors: colordx's toRgb() is 0-255 and unscaled, unlike every other `toX()`
 function to_srgb(color: Colordx): Converted {
-	let value = color.toRgb()
+	const value = color.toRgb()
 	return {
 		components: [value.r / 255, value.g / 255, value.b / 255],
 		alpha: value.alpha,
@@ -52,27 +52,27 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 	rgb: to_srgb,
 	name: to_srgb,
 	hsl: (color) => {
-		let value = color.toHsl(PRECISION)
+		const value = color.toHsl(PRECISION)
 		return { components: [value.h, value.s, value.l], alpha: value.alpha }
 	},
 	hwb: (color) => {
-		let value = color.toHwb(PRECISION)
+		const value = color.toHwb(PRECISION)
 		return { components: [value.h, value.w, value.b], alpha: value.alpha }
 	},
 	lab: (color) => {
-		let value = color.toLab(PRECISION)
+		const value = color.toLab(PRECISION)
 		return { components: [value.l, value.a, value.b], alpha: value.alpha }
 	},
 	lch: (color) => {
-		let value = color.toLch(PRECISION)
+		const value = color.toLch(PRECISION)
 		return { components: [value.l, value.c, value.h], alpha: value.alpha }
 	},
 	oklab: (color) => {
-		let value = color.toOklab(PRECISION)
+		const value = color.toOklab(PRECISION)
 		return { components: [value.l, value.a, value.b], alpha: value.alpha }
 	},
 	oklch: (color) => {
-		let value = color.toOklch(PRECISION)
+		const value = color.toOklch(PRECISION)
 		return { components: [value.l, value.c, value.h], alpha: value.alpha }
 	},
 	p3: (color) => rgb_triple(color.toP3(PRECISION)),
@@ -84,7 +84,7 @@ const CONVERTERS: Partial<Record<ColorFormat, (color: Colordx) => Converted>> = 
 }
 
 export function color_to_token(color: string): ColorValue | null {
-	let lowercased = color.toLowerCase()
+	const lowercased = color.toLowerCase()
 
 	if (
 		css_keywords.has(lowercased) ||
@@ -95,21 +95,21 @@ export function color_to_token(color: string): ColorValue | null {
 	}
 
 	// Cheap format lookup first, so unsupported formats never get fully parsed
-	let format = getFormat(color)
+	const format = getFormat(color)
 	if (!format) {
 		return null
 	}
 
-	let converter_fn = CONVERTERS[format]
+	const converter_fn = CONVERTERS[format]
 	if (!converter_fn) {
 		return null
 	}
 
-	let parsed = colordx(color)
+	const parsed = colordx(color)
 	if (!parsed.isValid()) {
 		return null
 	}
 
-	let colorSpace = (FORMAT_TO_SPACE[format] ?? format) as ColorSpace
+	const colorSpace = (FORMAT_TO_SPACE[format] ?? format) as ColorSpace
 	return { colorSpace, ...converter_fn(parsed) }
 }

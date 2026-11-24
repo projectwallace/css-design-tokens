@@ -3,7 +3,7 @@ import { parse_value } from '@projectwallace/css-parser/parse-value'
 import type { Length } from './types.ts'
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/absolute-size#values
-let absolute_size_map = new Map([
+const absolute_size_map = new Map([
 	['xx-small', 0.6],
 	['x-small', 0.75],
 	['small', 0.89],
@@ -22,17 +22,17 @@ let absolute_size_map = new Map([
  * Anything else returns `null`.
  */
 export function parse_length(value: string): Length | null {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null
 	}
-	let maybe_length = ast.first_child
+	const maybe_length = ast.first_child
 
 	switch (maybe_length.type) {
 		case DIMENSION: {
-			let unit = maybe_length.unit.toLowerCase()
+			const unit = maybe_length.unit.toLowerCase()
 			if (unit === 'px' || unit === 'rem') {
-				let value = Number(maybe_length.value)
+				const value = Number(maybe_length.value)
 				// Always return `0px`, `0`, or `0rem` as `0px`
 				if (value === 0) {
 					return {
@@ -49,7 +49,7 @@ export function parse_length(value: string): Length | null {
 		}
 		case IDENTIFIER: {
 			// https://drafts.csswg.org/css-fonts/#absolute-size-mapping, relative to `medium` (1rem)
-			let name = maybe_length.name.toLowerCase()
+			const name = maybe_length.name.toLowerCase()
 			if (absolute_size_map.has(name)) {
 				return {
 					value: absolute_size_map.get(name)!,

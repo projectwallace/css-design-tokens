@@ -37,30 +37,30 @@ function create_destructured(): ShadowValue {
 }
 
 export function destructure_box_shadow(value: string): null | ShadowValue[] {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 
 	if (ast.child_count < 2) {
 		return null
 	}
 
 	let current_shadow = create_destructured()
-	let destructured: ShadowValue[] = [current_shadow]
+	const destructured: ShadowValue[] = [current_shadow]
 
-	for (let node of ast) {
+	for (const node of ast) {
 		if (node.type === IDENTIFIER) {
 			if (node.name.toLowerCase() === 'inset') {
 				current_shadow.inset = true
 			} else {
 				// Named colors and `transparent` resolve; system colors, `currentcolor` and
 				// unknown keywords don't, and would otherwise silently become a black shadow
-				let color_token = color_to_token(node.name)
+				const color_token = color_to_token(node.name)
 				if (color_token === null) {
 					return null
 				}
 				current_shadow.color = color_token
 			}
 		} else if (node.type === DIMENSION || (node.type === NUMBER && node.value === 0)) {
-			let length =
+			const length =
 				node.type === DIMENSION
 					? {
 							value: Number(node.value),
@@ -87,13 +87,13 @@ export function destructure_box_shadow(value: string): null | ShadowValue[] {
 			if (!color_functions.has(node.name)) {
 				return null
 			}
-			let color_token = color_to_token(node.text)
+			const color_token = color_to_token(node.text)
 			if (color_token === null) {
 				return null
 			}
 			current_shadow.color = color_token
 		} else if (node.type === HASH) {
-			let color_token = color_to_token(node.text)
+			const color_token = color_to_token(node.text)
 			if (color_token === null) {
 				return null
 			}

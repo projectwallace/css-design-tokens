@@ -7,17 +7,17 @@ import { parse_value } from '@projectwallace/css-parser/parse-value'
  * @see https://drafts.csswg.org/css-values/#time
  */
 export function parse_duration(value: string): number | null {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 	if (ast.child_count !== 1) {
 		return null
 	}
-	let node = ast.first_child!
+	const node = ast.first_child!
 	if (node.type !== DIMENSION) {
 		return null
 	}
 
-	let unit = node.unit.toLowerCase()
-	let amount = Number(node.value)
+	const unit = node.unit.toLowerCase()
+	const amount = Number(node.value)
 	if (unit === 'ms') {
 		return amount
 	}
