@@ -29,18 +29,18 @@ function family_name(nodes: CSSNode[]): string | undefined {
 }
 
 export function destructure_font_family(value: string): FontFamilyValue | undefined {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 
-	let families: string[] = []
+	const families: string[] = []
 	let current: CSSNode[] = []
 
-	for (let node of ast) {
+	for (const node of ast) {
 		// var(), env(), attr(), ... can't be resolved statically
 		if (node.type === FUNCTION) {
 			return undefined
 		}
 		if (node.type === OPERATOR && node.value === ',') {
-			let name = family_name(current)
+			const name = family_name(current)
 			if (name === undefined) {
 				return undefined
 			}
@@ -55,7 +55,7 @@ export function destructure_font_family(value: string): FontFamilyValue | undefi
 	if (current.length === 0 && families.length === 0) {
 		return families
 	}
-	let name = family_name(current)
+	const name = family_name(current)
 	if (name === undefined) {
 		return undefined
 	}

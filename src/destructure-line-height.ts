@@ -13,15 +13,17 @@ const ALLOWED_UNITS = new Set(['px', 'rem'])
  * - the keyword `normal`.
  */
 export function destructure_line_height(value: string): Length | number | null {
-	let ast = parse_value(value)
+	const ast = parse_value(value)
 	if (!ast.has_children || ast.child_count !== 1) {
 		return null
 	}
-	let maybe_dimension = ast.first_child
+	const maybe_dimension = ast.first_child
 
 	switch (maybe_dimension.type) {
 		case DIMENSION: {
-			let { value, unit } = maybe_dimension
+			const { value } = maybe_dimension
+			let unit = maybe_dimension.unit
+
 			if (value === 0) {
 				return 0
 			}

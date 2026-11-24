@@ -19,14 +19,14 @@ type AuthoredColor = string
 export function group_colors(
 	colors: Record<AuthoredColor, unknown>,
 ): [ColorGroup, AuthoredColor[]][] {
-	let color_groups = new Map<ColorGroup, AuthoredColor[]>()
+	const color_groups = new Map<ColorGroup, AuthoredColor[]>()
 
-	for (let color in colors) {
+	for (const color in colors) {
 		let group: ColorGroup = 'unknown'
 
 		if (!color.includes('var(') && !color.includes('calc(')) {
-			let converted = convert(color)
-			let { hue, saturation, lightness } = converted
+			const converted = convert(color)
+			const { hue, saturation, lightness } = converted
 
 			if (saturation < 10 && lightness === 100) {
 				group = 'white'

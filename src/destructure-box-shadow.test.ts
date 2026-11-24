@@ -176,14 +176,14 @@ test('multiple shadows', () => {
 
 describe('color formats', () => {
 	// Generate a list of colors to test with all different color formats (hsl, oklch, color(), etc.)
-	let colors = [
+	const colors = [
 		'#222222',
 		'hsl(1, 20%, 30%)',
 		'rgb(1, 1, 1)',
 		'color(display-p3 -0.6112 1.0079 -0.2192)',
 		'tomato',
 	]
-	for (let color of colors) {
+	for (const color of colors) {
 		test(`1px ${color}`, () => {
 			expect(destructure_box_shadow(`1px ${color}`)).toEqual([
 				{
@@ -200,7 +200,7 @@ describe('color formats', () => {
 })
 
 test('defaulted lengths are not shared between shadows', () => {
-	let [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
+	const [a, b] = destructure_box_shadow('1px 1px #000, 2px 2px #000')!
 	expect(a!.blur).not.toBe(b!.blur)
 	expect(a!.blur).not.toBe(a!.spread)
 	a!.blur!.value = 10

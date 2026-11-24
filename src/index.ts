@@ -49,7 +49,7 @@ export {
 export type { CssLength, ShadowValue } from './destructure-box-shadow.ts'
 
 export function css_to_tokens(css: string): Tokens {
-	let analysis = analyze(css)
+	const analysis = analyze(css)
 	// The analyze function has overloads and TypeScript's ReturnType only captures the last overload's return type,
 	// making the two variants structurally incompatible for a direct cast.
 	// The as unknown as CssAnalysis double assertion is the standard escape hatch for this.
@@ -137,14 +137,14 @@ function to_tokens<T extends BaseToken = never>(
 	unique: UniqueCount | UniqueWithLocations,
 	parse?: (value: string) => Parsed<T> | null,
 ): Record<TokenID, T | UnparsedToken> {
-	let tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
+	const tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
 
-	for (let authored in unique) {
-		let extensions = {
+	for (const authored in unique) {
+		const extensions = {
 			[EXTENSION_AUTHORED_AS]: authored,
 			[EXTENSION_USAGE_COUNT]: get_count(unique[authored]!),
 		}
-		let parsed = parse?.(authored) ?? null
+		const parsed = parse?.(authored) ?? null
 
 		if (parsed === null) {
 			tokens[`${prefix}-${hash(authored)}`] = {
@@ -154,7 +154,7 @@ function to_tokens<T extends BaseToken = never>(
 			continue
 		}
 
-		let name = `${prefix}-${hash(parsed.key)}`
+		const name = `${prefix}-${hash(parsed.key)}`
 		if (tokens[name]) {
 			tokens[name].$extensions[EXTENSION_USAGE_COUNT] += extensions[EXTENSION_USAGE_COUNT]
 		} else {
@@ -167,21 +167,21 @@ function to_tokens<T extends BaseToken = never>(
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			let colors = Object.create(null) as Record<TokenID, ColorToken>
-			let unique = get_unique(analysis.values.colors)
-			let color_groups = group_colors(unique)
+			const colors = Object.create(null) as Record<TokenID, ColorToken>
+			const unique = get_unique(analysis.values.colors)
+			const color_groups = group_colors(unique)
 
 			// Build a color -> properties lookup once, instead of scanning every context for every color
-			let properties_per_color = new Map<string, Set<string>>()
-			let items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-			for (let property in items_per_context) {
-				let collection = items_per_context[property]!
-				for (let source of [collection.unique, collection.uniqueWithLocations]) {
+			const properties_per_color = new Map<string, Set<string>>()
+			const items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
+			for (const property in items_per_context) {
+				const collection = items_per_context[property]!
+				for (const source of [collection.unique, collection.uniqueWithLocations]) {
 					if (!source) {
 						continue
 					}
-					for (let color in source) {
-						let properties = properties_per_color.get(color)
+					for (const color in source) {
+						const properties = properties_per_color.get(color)
 						if (properties === undefined) {
 							properties_per_color.set(color, new Set([property]))
 						} else {
@@ -191,19 +191,19 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 			}
 
-			for (let [group, group_colors] of color_groups) {
-				for (let color of group_colors) {
-					let color_token = color_to_token(color)
-					let count = get_count(unique[color]!)
+			for (const [group, group_colors] of color_groups) {
+				for (const color of group_colors) {
+					const color_token = color_to_token(color)
+					const count = get_count(unique[color]!)
 
 					if (color_token !== null) {
-						let { colorSpace, components, alpha } = color_token
-						let name = `${group}-${hash([colorSpace, ...components, alpha].join(','))}`
+						const { colorSpace, components, alpha } = color_token
+						const name = `${group}-${hash([colorSpace, ...components, alpha].join(','))}`
 
-						let new_properties = properties_per_color.get(color) ?? new Set<string>()
+						const new_properties = properties_per_color.get(color) ?? new Set<string>()
 
 						if (colors[name]) {
-							let old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
+							const old_properties = colors[name].$extensions[EXTENSION_CSS_PROPERTIES]
 							colors[name].$extensions[EXTENSION_CSS_PROPERTIES] = Array.from(
 								new Set(old_properties).union(new_properties),
 							)
@@ -228,7 +228,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'fontSize',
 			get_unique(analysis.values.fontSizes),
 			(value) => {
-				let parsed = parse_length(value)
+				const parsed = parse_length(value)
 				if (parsed === null) {
 					return null
 				}
@@ -242,7 +242,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'fontFamily',
 			get_unique(analysis.values.fontFamilies),
 			(value) => {
-				let parsed = destructure_font_family(value)
+				const parsed = destructure_font_family(value)
 				if (!parsed) {
 					return null
 				}
@@ -257,7 +257,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'lineHeight',
 			get_unique(analysis.values.lineHeights),
 			(value) => {
-				let parsed = destructure_line_height(value)
+				const parsed = destructure_line_height(value)
 				if (parsed === null) {
 					return null
 				}
@@ -276,7 +276,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'boxShadow',
 			get_unique(analysis.values.boxShadows),
 			(value) => {
-				let parsed = destructure_box_shadow(value)
+				const parsed = destructure_box_shadow(value)
 				if (parsed === null) {
 					return null
 				}
@@ -292,7 +292,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'duration',
 			get_unique(analysis.values.animations.durations),
 			(value) => {
-				let parsed = parse_duration(value)
+				const parsed = parse_duration(value)
 				if (parsed === null) {
 					return null
 				}
@@ -306,7 +306,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			'easing',
 			get_unique(analysis.values.animations.timingFunctions),
 			(value) => {
-				let parsed = destructure_easing(value)
+				const parsed = destructure_easing(value)
 				if (parsed === null) {
 					return null
 				}
