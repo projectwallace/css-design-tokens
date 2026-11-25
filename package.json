@@ -1,6 +1,6 @@
 {
 	"name": "@projectwallace/css-design-tokens",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"description": "Generate spec-compliant Design Tokens from CSS.",
 	"keywords": [
 		"color",
