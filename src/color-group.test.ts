@@ -2,8 +2,7 @@ import { test, expect } from 'vitest'
 import { group_colors } from './color-group.ts'
 
 function group_names(colors: string[]) {
-	const input = Object.fromEntries(colors.map((color) => [color, 1]))
-	return group_colors(input).map(([group]) => group)
+	return group_colors(colors).map(([group]) => group)
 }
 
 test('sorts groups by size, largest first', () => {
@@ -27,7 +26,7 @@ test('always puts the unknown group last', () => {
 
 test('puts var() and calc() in the unknown group, case-insensitively', () => {
 	const input = { 'VAR(--a)': 1, 'Var(--b)': 1, 'rgb(CALC(255 - 0) 0 0)': 1 }
-	expect(group_colors(input)).toEqual([
+	expect(group_colors(Object.keys(input))).toEqual([
 		['unknown', ['VAR(--a)', 'Var(--b)', 'rgb(CALC(255 - 0) 0 0)']],
 	])
 })

@@ -1,6 +1,7 @@
 import { test, expect, describe } from 'vitest'
 import {
 	analysis_to_tokens,
+	create_collectors,
 	css_to_tokens,
 	EXTENSION_AUTHORED_AS,
 	EXTENSION_CSS_PROPERTIES,
@@ -59,18 +60,14 @@ describe('analysis_to_tokens', () => {
 	}
 
 	test('allows analysis without locations', () => {
-		const analysis = analyze(css, {
-			useLocations: false,
-		})
-		const actual = analysis_to_tokens(analysis as any)
+		const analysis = analyze(css, create_collectors())
+		const actual = analysis_to_tokens(analysis)
 		expect(actual).toEqual(expected)
 	})
 
 	test('allows analysis with locations', () => {
-		const analysis = analyze(css, {
-			useLocations: true,
-		})
-		const actual = analysis_to_tokens(analysis as any)
+		const analysis = analyze(css, create_collectors({ locations: true }))
+		const actual = analysis_to_tokens(analysis)
 		expect(actual).toEqual(expected)
 	})
 })

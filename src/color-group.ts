@@ -17,12 +17,10 @@ type ColorGroup =
 
 type AuthoredColor = string
 
-export function group_colors(
-	colors: Record<AuthoredColor, unknown>,
-): [ColorGroup, AuthoredColor[]][] {
+export function group_colors(colors: Iterable<AuthoredColor>): [ColorGroup, AuthoredColor[]][] {
 	const color_groups = new Map<ColorGroup, AuthoredColor[]>()
 
-	for (const color in colors) {
+	for (const color of colors) {
 		let group: ColorGroup = 'unknown'
 
 		if (str_index_of('var(', color) === -1 && str_index_of('calc(', color) === -1) {

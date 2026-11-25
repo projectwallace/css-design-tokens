@@ -1,4 +1,16 @@
-import { analyze } from '@projectwallace/css-analyzer'
+import { analyze, type CountMap, type ResultOf } from '@projectwallace/css-analyzer'
+import {
+	colors,
+	font_sizes,
+	font_families,
+	line_heights,
+	gradients,
+	box_shadows,
+	border_radiuses,
+	durations,
+	timing_functions,
+	type CountOptions,
+} from '@projectwallace/css-analyzer/collectors'
 import { group_colors } from './color-group.ts'
 import { destructure_box_shadow, type ShadowToken } from './destructure-box-shadow.ts'
 import { destructure_easing, type CubicBezierToken } from './destructure-easing.ts'
@@ -15,7 +27,6 @@ import {
 	type NumberToken,
 	type UnparsedToken,
 	type BaseToken,
-	type CssAnalysis,
 } from './types.ts'
 import { color_to_token, type ColorToken } from './color.ts'
 
@@ -41,42 +52,41 @@ export {
 	type DimensionToken,
 	type NumberToken,
 	type UnparsedToken,
-	type CssAnalysis,
 } from './types.ts'
 
 export function css_to_tokens(css: string): Tokens {
-	const analysis = analyze(css)
-	// The analyze function has overloads and TypeScript's ReturnType only captures the last overload's return type,
-	// making the two variants structurally incompatible for a direct cast.
-	// The as unknown as CssAnalysis double assertion is the standard escape hatch for this.
-	return analysis_to_tokens(analysis as unknown as CssAnalysis)
+	return analysis_to_tokens(analyze(css, create_collectors()))
 }
 
-// TODO: get @projectwallace/css-analyzer types in order
-type UniqueCount = Record<string, number>
-type CssLocation = {
-	line: number
-	column: number
-	offset: number
-	length: number
+/** The analyzer collectors that `analysis_to_tokens` needs */
+export type Collectors = {
+	colors: ReturnType<typeof colors<{ contexts: true }>>
+	font_sizes: ReturnType<typeof font_sizes>
+	font_families: ReturnType<typeof font_families>
+	line_heights: ReturnType<typeof line_heights>
+	gradients: ReturnType<typeof gradients>
+	box_shadows: ReturnType<typeof box_shadows>
+	border_radiuses: ReturnType<typeof border_radiuses>
+	durations: ReturnType<typeof durations>
+	timing_functions: ReturnType<typeof timing_functions>
 }
-type UniqueWithLocations = Record<string, CssLocation[]>
-type Collection =
-	| {
-			unique: UniqueCount
-			uniqueWithLocations?: UniqueWithLocations | null
-	  }
-	| {
-			unique?: UniqueCount
-			uniqueWithLocations: UniqueWithLocations
-	  }
-type ItemsPerContext = Record<
-	string,
-	{
-		unique: Record<string, number>
-		uniqueWithLocations?: UniqueWithLocations
+
+export function create_collectors(options: Pick<CountOptions, 'locations'> = {}): Collectors {
+	return {
+		colors: colors({ ...options, contexts: true }),
+		font_sizes: font_sizes(options),
+		font_families: font_families(options),
+		line_heights: line_heights(options),
+		gradients: gradients(options),
+		box_shadows: box_shadows(options),
+		border_radiuses: border_radiuses(options),
+		durations: durations(options),
+		timing_functions: timing_functions(options),
 	}
->
+}
+
+/** The analyzer result that `analysis_to_tokens` consumes */
+export type CssAnalysis = ResultOf<Collectors>
 
 type TokenID = string
 
@@ -92,32 +102,6 @@ export type Tokens = {
 	easing: Record<TokenID, CubicBezierToken | UnparsedToken>
 }
 
-/**
- * Function to get the unique values from a collection regardless of whether the analysis was run with
- * locations enabled or not.
- */
-function get_unique(collection: Collection): UniqueCount | UniqueWithLocations {
-	if (
-		'uniqueWithLocations' in collection &&
-		collection.uniqueWithLocations !== null &&
-		collection.uniqueWithLocations !== undefined
-	) {
-		return collection.uniqueWithLocations
-	}
-	return collection.unique!
-}
-
-/**
- * Function to get the count of a specific value from a collection item regardless of whether the
- * analysis was run with locations enabled or not.
- */
-function get_count(collection_item: number | CssLocation[]) {
-	if (Array.isArray(collection_item)) {
-		return collection_item.length
-	}
-	return collection_item
-}
-
 type Parsed<T extends BaseToken> = {
 	/** Value to dedupe on, so equivalent notations merge into a single token */
 	key: string | number
@@ -130,15 +114,15 @@ type Parsed<T extends BaseToken> = {
  */
 function to_tokens<T extends BaseToken = never>(
 	prefix: string,
-	unique: UniqueCount | UniqueWithLocations,
+	unique: CountMap,
 	parse?: (value: string) => Parsed<T> | null,
 ): Record<TokenID, T | UnparsedToken> {
 	const tokens = Object.create(null) as Record<TokenID, T | UnparsedToken>
 
-	for (const authored in unique) {
+	for (const [authored, { count }] of unique) {
 		const extensions = {
 			[EXTENSION_AUTHORED_AS]: authored,
-			[EXTENSION_USAGE_COUNT]: get_count(unique[authored]!),
+			[EXTENSION_USAGE_COUNT]: count,
 		}
 		const parsed = parse?.(authored) ?? null
 
@@ -163,26 +147,19 @@ function to_tokens<T extends BaseToken = never>(
 export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 	return {
 		color: (() => {
-			const colors = Object.create(null)
-			const unique = get_unique(analysis.values.colors)
-			const color_groups = group_colors(unique)
+			const colors = Object.create(null) as Record<TokenID, ColorToken>
+			const unique = analysis.colors.unique
+			const color_groups = group_colors(unique.keys())
 
 			// Build a color -> properties lookup once, instead of scanning every context for every color
 			const properties_per_color = new Map<string, Set<string>>()
-			const items_per_context = analysis.values.colors.itemsPerContext as ItemsPerContext
-			for (const property in items_per_context) {
-				const collection = items_per_context[property]!
-				for (const source of [collection.unique, collection.uniqueWithLocations]) {
-					if (!source) {
-						continue
-					}
-					for (const color in source) {
-						const properties = properties_per_color.get(color)
-						if (properties === undefined) {
-							properties_per_color.set(color, new Set([property]))
-						} else {
-							properties.add(property)
-						}
+			for (const [property, collection] of analysis.colors.by_context) {
+				for (const color of collection.unique.keys()) {
+					const properties = properties_per_color.get(color)
+					if (properties === undefined) {
+						properties_per_color.set(color, new Set([property]))
+					} else {
+						properties.add(property)
 					}
 				}
 			}
@@ -190,7 +167,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			for (const [group, group_colors] of color_groups) {
 				for (const color of group_colors) {
 					const color_token = color_to_token(color)
-					const count = get_count(unique[color]!)
+					const count = unique.get(color)!.count
 
 					if (color_token !== null) {
 						const { colorSpace, components, alpha } = color_token
@@ -220,23 +197,19 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 			}
 			return colors
 		})(),
-		font_size: to_tokens<DimensionToken>(
-			'fontSize',
-			get_unique(analysis.values.fontSizes),
-			(value) => {
-				const parsed = parse_length(value)
-				if (parsed === null) {
-					return null
-				}
-				return {
-					key: parsed.value.toString() + parsed.unit,
-					token: { $type: 'dimension', $value: parsed },
-				}
-			},
-		),
+		font_size: to_tokens<DimensionToken>('fontSize', analysis.font_sizes.unique, (value) => {
+			const parsed = parse_length(value)
+			if (parsed === null) {
+				return null
+			}
+			return {
+				key: parsed.value.toString() + parsed.unit,
+				token: { $type: 'dimension', $value: parsed },
+			}
+		}),
 		font_family: to_tokens<FontFamilyToken>(
 			'fontFamily',
-			get_unique(analysis.values.fontFamilies),
+			analysis.font_families.unique,
 			(value) => {
 				const parsed = destructure_font_family(value)
 				if (!parsed) {
@@ -251,7 +224,7 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 		),
 		line_height: to_tokens<DimensionToken | NumberToken>(
 			'lineHeight',
-			get_unique(analysis.values.lineHeights),
+			analysis.line_heights.unique,
 			(value) => {
 				const parsed = destructure_line_height(value)
 				if (parsed === null) {
@@ -267,51 +240,39 @@ export function analysis_to_tokens(analysis: CssAnalysis): Tokens {
 				}
 			},
 		),
-		gradient: to_tokens('gradient', get_unique(analysis.values.gradients)),
-		box_shadow: to_tokens<ShadowToken>(
-			'boxShadow',
-			get_unique(analysis.values.boxShadows),
-			(value) => {
-				const parsed = destructure_box_shadow(value)
-				if (parsed === null) {
-					return null
-				}
-				// Dedupe on the parsed value so equivalent notations (`0 0 0 #000` vs `0px 0px #000000`) merge
-				return {
-					key: JSON.stringify(parsed),
-					token: { $type: 'shadow', $value: parsed.length === 1 ? parsed[0]! : parsed },
-				}
-			},
-		),
-		radius: to_tokens('radius', get_unique(analysis.values.borderRadiuses)),
-		duration: to_tokens<DurationToken>(
-			'duration',
-			get_unique(analysis.values.animations.durations),
-			(value) => {
-				const parsed = parse_duration(value)
-				if (parsed === null) {
-					return null
-				}
-				return {
-					key: parsed.toString(),
-					token: { $type: 'duration', $value: { value: parsed, unit: 'ms' } },
-				}
-			},
-		),
-		easing: to_tokens<CubicBezierToken>(
-			'easing',
-			get_unique(analysis.values.animations.timingFunctions),
-			(value) => {
-				const parsed = destructure_easing(value)
-				if (parsed === null) {
-					return null
-				}
-				// Dedupe on the parsed value so `ease` and `cubic-bezier(0.25, 0.1, 0.25, 1)` merge
-				return {
-					key: parsed.join(','),
-					token: { $value: parsed, $type: 'cubicBezier' },
-				}
-			},
-		),
+		gradient: to_tokens('gradient', analysis.gradients.unique),
+		box_shadow: to_tokens<ShadowToken>('boxShadow', analysis.box_shadows.unique, (value) => {
+			const parsed = destructure_box_shadow(value)
+			if (parsed === null) {
+				return null
+			}
+			// Dedupe on the parsed value so equivalent notations (`0 0 0 #000` vs `0px 0px #000000`) merge
+			return {
+				key: JSON.stringify(parsed),
+				token: { $type: 'shadow', $value: parsed.length === 1 ? parsed[0]! : parsed },
+			}
+		}),
+		radius: to_tokens('radius', analysis.border_radiuses.unique),
+		duration: to_tokens<DurationToken>('duration', analysis.durations.unique, (value) => {
+			const parsed = parse_duration(value)
+			if (parsed === null) {
+				return null
+			}
+			return {
+				key: parsed.toString(),
+				token: { $type: 'duration', $value: { value: parsed, unit: 'ms' } },
+			}
+		}),
+		easing: to_tokens<CubicBezierToken>('easing', analysis.timing_functions.unique, (value) => {
+			const parsed = destructure_easing(value)
+			if (parsed === null) {
+				return null
+			}
+			// Dedupe on the parsed value so `ease` and `cubic-bezier(0.25, 0.1, 0.25, 1)` merge
+			return {
+				key: parsed.join(','),
+				token: { $value: parsed, $type: 'cubicBezier' },
+			}
+		}),
 	}
 }

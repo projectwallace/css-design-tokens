@@ -1,9 +1,3 @@
-import type { analyze } from '@projectwallace/css-analyzer'
-
-// CssAnalysis represents the result of analyze() which can be called with or without useLocations
-// TypeScript infers this as the union of both overload return types
-export type CssAnalysis = ReturnType<typeof analyze>
-
 export const EXTENSION_AUTHORED_AS = 'com.projectwallace.css-authored-as'
 export const EXTENSION_USAGE_COUNT = 'com.projectwallace.usage-count'
 export const EXTENSION_CSS_PROPERTIES = 'com.projectwallace.css-properties'
