@@ -80,7 +80,7 @@
 	"dependencies": {
 		"@colordx/core": "catalog:",
 		"@projectwallace/color-sorter": "^9.0.0",
-		"@projectwallace/css-analyzer": "https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b",
+		"@projectwallace/css-analyzer": "^10.0.0",
 		"@projectwallace/css-parser": "catalog:"
 	},
 	"devDependencies": {

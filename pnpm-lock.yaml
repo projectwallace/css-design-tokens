@@ -19,8 +19,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@projectwallace/css-analyzer':
-        specifier: https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b
-        version: https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b
+        specifier: ^10.0.0
+        version: 10.0.0
       '@projectwallace/css-parser':
         specifier: ~0.20.0
         version: 0.20.0
@@ -596,9 +596,8 @@ packages:
     resolution: {integrity: sha512-yBHv8jSNWUG4KF/G+3AgA4dCR3M/KPSQ4xCTQTZMo2Gq3p0+9mCwavHVp3nJfUGpCFCgojcF3BbS+v8erYAYwg==}
     engines: {node: '>=18.0.0'}
 
-  '@projectwallace/css-analyzer@https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b':
-    resolution: {integrity: sha512-pSh4u8zRKNKB2qApbJdB6ePgROeSFVEx0xOLaVUy1uJCqU0fyXm1GOQP4OBFWY7Fki01s0K45P2imF+xk438Nw==, tarball: https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b}
-    version: 10.0.0-alpha.0
+  '@projectwallace/css-analyzer@10.0.0':
+    resolution: {integrity: sha512-xk/hi+dvgyC4FU1ru/jvwA00ztEJWnJwp2D3SMgeqhm7Ws2a97v3Yp4zWZqYEvNWILuDPTnCuHaQmVXpEQCd8Q==}
     engines: {node: '>=22.18.0', pnpm: '>=11.0.0'}
 
   '@projectwallace/css-parser@0.20.0':
@@ -1810,7 +1809,7 @@ snapshots:
     dependencies:
       '@colordx/core': 7.3.0
 
-  '@projectwallace/css-analyzer@https://pkg.pr.new/@projectwallace/css-analyzer@e0c555b':
+  '@projectwallace/css-analyzer@10.0.0':
     dependencies:
       '@projectwallace/css-parser': 0.20.0
 
